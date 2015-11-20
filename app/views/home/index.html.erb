@@ -12,7 +12,13 @@
     <% @products.each do |product| %>
       <tr>
         <td>
-          <a href='https://<%="#{@shop_session.url}/admin/products/#{product.id}"%>' target="_blank"> <%= product.id %> </a>
+          <%= product[:id] %>
+        </td>
+        <td>
+          <%= product[:image] %>
+        </td>
+        <td>
+          Product has<%= product[:variants].count %> variants
         </td>
       </tr>
     <% end %>
