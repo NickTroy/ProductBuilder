@@ -7,8 +7,8 @@ Rails.application.routes.draw do
     get 'logout' => :destroy, :as => :logout
   end
 
-  resources :products, :only[:index, :new] do
-    
+  resources :products, only: [:index, :new] do
+
   end
 
   root :to => 'home#index'
