@@ -10,7 +10,7 @@
           <%= product.title %>
         </td>
         <td>
-          <%= product.image.src %>
+          <%= img_tag(product.image.src) unless product.image.nil? %>
         </td>
         <td>
           Product has <%= product.variants.count %> variants
