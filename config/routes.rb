@@ -7,7 +7,7 @@ Rails.application.routes.draw do
     get 'logout' => :destroy, :as => :logout
   end
 
-  resources :products
+  get '/products' :to => 'products#index'
 
   root :to => 'home#index'
   
