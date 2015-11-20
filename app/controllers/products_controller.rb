@@ -10,7 +10,7 @@ class ProductsController < AuthenticatedController
 
   def create
     @product = ShopifyAPI::Product.new
-    @product.title = product_params[:title]
+    @product.title = params[:title]
     if @product.save
       redirect_to products_path
     end
@@ -18,10 +18,13 @@ class ProductsController < AuthenticatedController
 
   private
 
+=begin
     def product_params
       params.require(:product).permit(:body_html, :handle, :images, :options, 
                                       :product_type, :published_scope, :tags,
                                       :template_suffix, :title, :variants, :vendor)
     end
+=end
+
 
 end
