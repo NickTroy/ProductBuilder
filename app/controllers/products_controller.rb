@@ -9,7 +9,8 @@ class ProductsController < AuthenticatedController
   end
 
   def create
-    @product = ShopifyAPI::Product.new(product_params)
+    @product = ShopifyAPI::Product.new
+    @product.title = product_params[:title]
     if @product.save
       redirect_to products_path
     end
