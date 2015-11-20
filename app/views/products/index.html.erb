@@ -1,2 +1,23 @@
-<h1> Products </h1>
+<h3>Products</h3>
+<table>
+  <tbody>
+    <% @products.each do |product| %>
+      <tr>
+        <td>
+          <%= product.id %>
+        </td>
+        <td>
+          <%= product.title %>
+        </td>
+        <td>
+          <%= product.image %>
+        </td>
+        <td>
+          Product has <%= product.variants.count %> variants
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
 
+<%= link_to 'Main Page', root_url %>

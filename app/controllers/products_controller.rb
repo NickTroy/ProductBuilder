@@ -1,7 +1,7 @@
-class ProductsController < ApplicationController
+class ProductsController < AuthenticatedController
 
   def index
-    @products = ShopifyAPI::Product.all
+    @products = ShopifyAPI::Product.find(:all, :params => {:limit => 10})
   end
 
 end
