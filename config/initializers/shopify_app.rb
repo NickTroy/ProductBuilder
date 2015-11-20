@@ -3,5 +3,5 @@ ShopifyApp.configure do |config|
   config.secret = "e9d6d614db13892494ae4b22c849fa36"
   config.redirect_uri = "https://productbuilder.herokuapp.com/auth/shopify/callback"
   config.scope = "read_orders, read_products"
-  config.embedded_app = false
+  config.embedded_app = true
 end
