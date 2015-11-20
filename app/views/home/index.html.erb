@@ -12,13 +12,16 @@
     <% @products.each do |product| %>
       <tr>
         <td>
-          <%= product[:id] %>
+          <%= product.id %>
         </td>
         <td>
-          <%= product[:image] %>
+          <%= product.title %>
         </td>
         <td>
-          Product has<%= product[:variants].count %> variants
+          <%= product.image %>
+        </td>
+        <td>
+          Product has<%= product.variants.count %> variants
         </td>
       </tr>
     <% end %>
