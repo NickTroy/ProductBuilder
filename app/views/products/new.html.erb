@@ -1,18 +1,14 @@
-<%= form_for @product, class: "product-form" do |f| %>
+<%= form_tag("/products/new", method: "post") do %>
 
 <div class="row">
   
   <div class="col-md-12">
-    <div class="form-group">
-      <%= label_tag 'product[title]', "Product title:" %>
-      <%= f.text_field :name, class: "form-control", placeholder: "ENTER TEXT HERE" %>
-    </div>
+    <%= label_tag 'product[title]', "Product title:" %>
+    <%= f.text_field :name, class: "form-control", placeholder: "ENTER TEXT HERE" %>
   </div>
 
   <div class="col-md-2">
-    <div class="actions">
       <%= f.submit "Save", class: "btn btn-success", style: "width: 80%;"%>
-    </div>
   </div>
 
 </div>
