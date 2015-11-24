@@ -15,6 +15,18 @@ class ProductsController < AuthenticatedController
       redirect_to products_path
     end
   end
+  
+  def destroy
+    @product = ShopifyAPI::Product.find(params[:id])
+    
+    @product.destroy
+    
+    respond_to do |format|
+      format.html { redirect_to root_url, notice: 'Product was successfully deleted.' }
+      format.json { head :no_content }
+    end
+    
+  end
 
   private
 
