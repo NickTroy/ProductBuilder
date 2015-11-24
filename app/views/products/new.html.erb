@@ -1,3 +1,20 @@
-<% form_for @product %>
+<%= form_for @product, class: "product-form" do |f| %>
+
+<div class="row">
   
+  <div class="col-md-12">
+    <div class="form-group">
+      <%= label_tag 'product[title]', "Product title:" %>
+      <%= f.text_field :name, class: "form-control", placeholder: "ENTER TEXT HERE" %>
+    </div>
+  </div>
+
+  <div class="col-md-2">
+    <div class="actions">
+      <%= f.submit "Save", class: "btn btn-success", style: "width: 80%;"%>
+    </div>
+  </div>
+
+</div>
+
 <% end %>
