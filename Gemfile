@@ -5,7 +5,7 @@ gem 'shopify_app', '6.2.0'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.4'
 # Use postgresql as the database for Active Record
-gem 'pg'
+gem 'mysql2', '~> 0.3.13'
 
 gem 'sqlite3', group: :development
 # Use SCSS for stylesheets
