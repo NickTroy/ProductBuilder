@@ -1,14 +1,14 @@
-<%= form_tag("/products/new", method: "post") do %>
+<%= form_tag(new_product_path, method: "post") do %>
 
 <div class="row">
   
   <div class="col-md-12">
     <%= label_tag 'product[title]', "Product title:" %>
-    <%= f.text_field :name, class: "form-control", placeholder: "ENTER TEXT HERE" %>
+    <%= text_field_tag :title %>
   </div>
 
   <div class="col-md-2">
-      <%= f.submit "Save", class: "btn btn-success", style: "width: 80%;"%>
+      <%= submit_tag "Save", :class => "btn btn-success" %>
   </div>
 
 </div>

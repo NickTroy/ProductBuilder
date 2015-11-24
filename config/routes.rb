@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   
 
-  resources :products, only: [:index, :new] do
+  resources :products, only: [:index, :new, :create] do
 
   end
 
