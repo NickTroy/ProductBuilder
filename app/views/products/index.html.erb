@@ -1,23 +1,43 @@
 <h3>Products</h3>
 <table>
   <tbody>
+    <th>
+      Product ID
+    </th>
+    <th>
+      Product Title
+    </th>
+    <th>
+      Product Image
+    </th>
+    <th>
+      Product Description
+    </th>
+    <th>
+      Number of Product Variants
+    </th>
     <% @products.each do |product| %>
       <tr>
         <td>
           <%= product.id %>
         </td>
         <td>
-          <%= product.title %>
+          <%= link_to product.title, { :controller => "products", :action => "edit", :id => product.id }  %>
         </td>
         <td>
           <%= image_tag(product.image.src) unless product.image.nil? %>
         </td>
         <td>
+          <%= product.body_html %>
+        </td>
+        <td>
           Product has <%= product.variants.count %> variants
         </td>
         <td>
-          <%= link_to 'Delete', { :controller => "products", :action => "destroy", :id => product.id }, class: "btn btn-danger", style: "width: 80%;",
-                               data: { confirm: 'Are you sure, you want to delete this product?' } %>
+          <%= link_to 'Delete', { :controller => "products", :action => "destroy", :id => product.id }, 
+                                { :method => :delete, 
+                                class: "btn btn-danger", style: "width: 80%;",
+                                data: { confirm: 'Are you sure, you want to delete this product?' } } %>
         </td>
       </tr>
     <% end %>

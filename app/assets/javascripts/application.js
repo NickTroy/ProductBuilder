@@ -12,5 +12,8 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require bootstrap-sprockets
+//= require tinymce-jquery
+//= require dropzone
 //= require turbolinks
 //= require_tree .

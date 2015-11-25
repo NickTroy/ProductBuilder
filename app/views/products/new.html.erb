@@ -1,16 +1,1 @@
-<%= form_tag(products_path, method: "post") do %>
-
-<div class="row">
-  
-  <div class="col-md-12">
-    <%= label_tag 'product[title]', "Product title:" %>
-    <%= text_field_tag :title %>
-  </div>
-
-  <div class="col-md-2">
-      <%= submit_tag "Save", :class => "btn btn-success" %>
-  </div>
-
-</div>
-
-<% end %>
+<%= render 'form' %>

@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   
 
-  resources :products, :except => [:delete]
+  resources :products
 
   root :to => 'home#index'
 

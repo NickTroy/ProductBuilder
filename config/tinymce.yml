@@ -1,0 +1,10 @@
+statusbar: false
+menubar: false
+resize: false
+theme: 'modern'
+fontsize_formats: "8pt 10pt 12pt 14pt 18pt 24pt 36pt"
+theme_advanced_fonts : "Arial=arial,Times New Roman=times new roman,times;"
+toolbar:
+  -  undo redo | removeformat bold italic underline | fontsizeselect | forecolor backcolor | fontselect
+plugins:
+  - textcolor
