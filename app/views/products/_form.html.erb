@@ -10,12 +10,71 @@
 </div>  
 
 <div class="row">
+  
+  <div class="col-md-12">
+    <%= label_tag 'product[type]', "Product type:" %>
+    <%= text_field_tag :product_type %>
+  </div>
+
+</div>  
+
+<div class="row">
+  
+  <div class="col-md-12">
+    <%= label_tag 'product[published_scope]', "Product published scope:" %>
+    <%= text_field_tag :published_scope%>
+  </div>
+
+</div> 
+
+<div class="row">
+  
+  <div class="col-md-12">
+    <%= label_tag 'product[vendor]', "Product vendor:" %>
+    <%= text_field_tag :vendor%>
+  </div>
+
+</div> 
+
+<div class="row">
   <div class="col-md-12">
     <%= label_tag 'product[body_html]', "Product description:" %>
     <%= text_area_tag :body_html, nil, class: "tinymce" %>
     <%= tinymce %>      
   </div>
 </div>
+
+<script>
+  function changeImages(){
+    image_src = document.querySelector('img#product_image').src;
+    document.querySelector('input#images').value =image_src;
+  }
+  
+  function previewFile(){
+       var preview = document.querySelector('img#product_image'); //selects the query named img
+       var file    = document.querySelector('input[type=file]').files[0]; //sames as here
+       var reader  = new FileReader();
+       reader.onloadend = function () {
+           preview.src = reader.result;
+       }
+
+       if (file) {
+           reader.readAsDataURL(file); //reads the data as a URL
+       } else {
+           preview.src = "";
+       }
+  }
+  
+  function encodeImage() {
+    previewFile();  
+    changeImages();  
+  }
+
+    
+</script>
+<input type="file" onchange="encodeImage()"><br>
+<img src="" id="product_image" height="200" alt="Image preview...">
+<input type="hidden" id="images" name="images"/>
 
 <div class="row">
   <div class="col-md-2">

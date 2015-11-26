@@ -28,7 +28,7 @@
           <%= image_tag(product.image.src) unless product.image.nil? %>
         </td>
         <td>
-          <%= product.body_html %>
+          <%= render html: product.body_html.html_safe unless product.body_html.nil? %>
         </td>
         <td>
           Product has <%= product.variants.count %> variants

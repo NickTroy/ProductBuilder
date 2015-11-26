@@ -18,6 +18,33 @@
 </div>
 
 <div class="row">
+  
+  <div class="col-md-12">
+    <%= label_tag 'product[type]', "Product type:" %>
+    <%= text_field_tag :product_type, @product.product_type %>
+  </div>
+
+</div>  
+
+<div class="row">
+  
+  <div class="col-md-12">
+    <%= label_tag 'product[published_scope]', "Product published scope:" %>
+    <%= text_field_tag :published_scope, @product.published_scope %>
+  </div>
+
+</div> 
+
+<div class="row">
+  
+  <div class="col-md-12">
+    <%= label_tag 'product[vendor]', "Product vendor:" %>
+    <%= text_field_tag :vendor, @product.vendor %>
+  </div>
+
+</div> 
+
+<div class="row">
   <div class="col-md-2">
     <%= submit_tag "Save", :class => "btn btn-success" %>
   </div>
