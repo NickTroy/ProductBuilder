@@ -14,12 +14,13 @@ class ProductsController < AuthenticatedController
   
   def create
     @product = ShopifyAPI::Product.new(product_params)   
-    @product.images.push({
-      "attachment": product_params[:images]
-    })
     respond_to do |format|
       format.html do 
         if @product.save
+          image_params[:product_id] = @product.id
+          @image = ShopifyAPI::Image.new(:product_id => @product.id)
+          @image.attachment = params[:images].split(',')[1]
+          @image.save
           redirect_to products_path
         end
       end
@@ -55,19 +56,15 @@ class ProductsController < AuthenticatedController
   private
 
     def product_params
-      params.permit(:body_html, :handle, :images, :options, 
+      params.permit(:body_html, :handle, :options, 
                     :product_type, :published_scope, :tags,
                     :template_suffix, :title, :variants, :vendor)
     end
     
     def image_params
-      { 
-        image: 
-        {
-          attachment: product_params[:images]
-        },
-        product_id: params[:id]
-      }  
+      {
+        attachment: params[:images].split(',')[1],
+      }
     end
     
 
