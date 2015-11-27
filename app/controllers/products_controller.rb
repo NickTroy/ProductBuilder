@@ -17,7 +17,7 @@ class ProductsController < AuthenticatedController
     respond_to do |format|
       format.html do 
         if @product.save
-          image_params[:product_id] = @product.id
+          # image_params[:product_id] = @product.id
           @image = ShopifyAPI::Image.new(:product_id => @product.id)
           @image.attachment = params[:images].split(',')[1]
           @image.save
@@ -29,10 +29,11 @@ class ProductsController < AuthenticatedController
   
   def update
     @product = ShopifyAPI::Product.find(params[:id])
-    
+    @image = @product.images[0] || ShopifyAPI::Image.new(:product_id => @product.id)
+    @image.attachment = params[:images].split(',')[1]
     respond_to do |format|
       format.html do 
-        if @product.update_attributes(product_params)
+        if @product.update_attributes(product_params) and @image.save
           redirect_to products_path
         end
       end
@@ -63,7 +64,8 @@ class ProductsController < AuthenticatedController
     
     def image_params
       {
-        attachment: params[:images].split(',')[1],
+        :product_id => @product.id,
+        :attachment => params[:images].split(',')[1]
       }
     end
     

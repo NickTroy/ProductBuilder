@@ -1,3 +1,32 @@
+<script>
+  function changeImages(){
+    image_src = document.querySelector('img#product_image').src;
+    document.querySelector('input#images').value =image_src;
+  }
+  
+  function previewFile(){
+       var preview = document.querySelector('img#product_image'); //selects the query named img
+       var file    = document.querySelector('input[type=file]').files[0]; //sames as here
+       var reader  = new FileReader();
+       reader.onloadend = function () {
+           preview.src = reader.result;
+       }
+
+       if (file) {
+           reader.readAsDataURL(file); //reads the data as a URL
+       } else {
+           preview.src = "";
+       }
+  }
+  
+  function encodeImage() {
+    previewFile();  
+    changeImages();  
+  }
+
+    
+</script>
+
 <%= form_tag products_path, method: "post", class: 'dropzone', id: 'dropzone' do %>
 
 <div class="row">
@@ -44,37 +73,14 @@
   </div>
 </div>
 
-<script>
-  function changeImages(){
-    image_src = document.querySelector('img#product_image').src;
-    document.querySelector('input#images').value =image_src;
-  }
-  
-  function previewFile(){
-       var preview = document.querySelector('img#product_image'); //selects the query named img
-       var file    = document.querySelector('input[type=file]').files[0]; //sames as here
-       var reader  = new FileReader();
-       reader.onloadend = function () {
-           preview.src = reader.result;
-       }
+<div class="row">
+  <div class="col-md-12">
+    <input type="file" onchange="encodeImage()"><br>
+    <img src="" id="product_image" height="200" alt="Image preview...">
+    <input type="hidden" id="images" name="images"/>    
+  </div>
+</div>
 
-       if (file) {
-           reader.readAsDataURL(file); //reads the data as a URL
-       } else {
-           preview.src = "";
-       }
-  }
-  
-  function encodeImage() {
-    previewFile();  
-    changeImages();  
-  }
-
-    
-</script>
-<input type="file" onchange="encodeImage()"><br>
-<img src="" id="product_image" height="200" alt="Image preview...">
-<input type="hidden" id="images" name="images"/>
 
 <div class="row">
   <div class="col-md-2">
