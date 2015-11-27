@@ -1,29 +1,33 @@
 <script>
-  function changeImages(){
-    image_src = document.querySelector('img#product_image').src;
-    document.querySelector('input#images').value =image_src;
-  }
-  
   function previewFile(){
-       var preview = document.querySelector('img#product_image'); //selects the query named img
-       var file    = document.querySelector('input[type=file]').files[0]; //sames as here
-       var reader  = new FileReader();
-       reader.onloadend = function () {
-           preview.src = reader.result;
-       }
+    var preview = document.querySelector('img#product_image'); 
+    var file    = document.querySelector('input[type=file]').files[0];
+    var reader  = new FileReader();
+    reader.onloadend = function () {
+      preview.src = reader.result;
+      document.querySelector('input#images').value = preview.src;
+    }
 
-       if (file) {
-           reader.readAsDataURL(file); //reads the data as a URL
-       } else {
-           preview.src = "";
-       }
+    if (file) {
+      reader.readAsDataURL(file); //reads the data as a URL
+    } else {
+      preview.src = "";
+    }
+    
   }
   
-  function encodeImage() {
-    previewFile();  
-    changeImages();  
-  }
+  
+</script>
 
+<script type="text/javascript">
+$(document).ready( function() {
+  $('#delete_image').on('click', function(){
+    document.querySelector('img#product_image').src = "";
+    document.querySelector('input#images').value = "";
+    document.querySelector('input[type=file]').value = "";
+  });
+});
+    
 </script>
 
 <%= form_tag product_path, method: "patch", :html => { :controller => "products", :action => "update", :id => @product.id } do %>
@@ -73,17 +77,20 @@
 </div> 
 
 <div class="row">
+  <div class="col-md-12">
+    <input type="file" onchange="previewFile()"><br>
+    <img src="<%= @product.images[0].src unless @product.images[0].nil? %>" id="product_image" height="200" alt="Image preview...">
+    <input type="hidden" id="images" name="images"/>    
+    <button id="delete_image" class="btn" type="button">Delete Image</button>
+  </div>
+</div>
+
+<div class="row">
   <div class="col-md-2">
     <%= submit_tag "Save", :class => "btn btn-success" %>
   </div>
 </div>
 
-<div class="row">
-  <div class="col-md-12">
-    <input type="file" onchange="encodeImage()"><br>
-    <img src="<%= @product.images[0].src unless @product.images[0].nil? %>" id="product_image" height="200" alt="Image preview...">
-    <input type="hidden" id="images" name="images"/>    
-  </div>
-</div>
+
 
 <% end %>

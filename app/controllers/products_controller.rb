@@ -17,7 +17,6 @@ class ProductsController < AuthenticatedController
     respond_to do |format|
       format.html do 
         if @product.save
-          # image_params[:product_id] = @product.id
           @image = ShopifyAPI::Image.new(:product_id => @product.id)
           @image.attachment = params[:images].split(',')[1]
           @image.save
@@ -48,8 +47,7 @@ class ProductsController < AuthenticatedController
     @product.destroy
     
     respond_to do |format|
-      format.html { render 'products#index', notice: 'Product was successfully deleted.' }
-      format.json { head :no_content }
+      format.html { redirect_to products_path, notice: 'Product was successfully deleted.' }
     end
     
   end
