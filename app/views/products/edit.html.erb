@@ -1,36 +1,49 @@
-<script>
-  function previewFile(){
-    var preview = document.querySelector('img#product_image'); 
-    var file    = document.querySelector('input[type=file]').files[0];
-    var reader  = new FileReader();
-    reader.onloadend = function () {
-      preview.src = reader.result;
-      document.querySelector('input#images').value = preview.src;
-    }
-
-    if (file) {
-      reader.readAsDataURL(file); //reads the data as a URL
-    } else {
-      preview.src = "";
-    }
-    
-  }
-  
-  
-</script>
-
 <script type="text/javascript">
-$(document).ready( function() {
-  $('#delete_image').on('click', function(){
-    document.querySelector('img#product_image').src = "";
-    document.querySelector('input#images').value = "";
-    document.querySelector('input[type=file]').value = "";
-  });
-});
+$(document).ready(function () {
+Dropzone.autoDiscover = false;
+$("#my-awesome-dropzone").dropzone({ 
+  autoProcessQueue: false,
+  uploadMultiple: true,
+  parallelUploads: 100,
+  maxFiles: 100,
+  paramName: 'images',
+  accept: function(file, done){
+    reader = new FileReader();
+    reader.onload = handleReaderLoad;
+    reader.readAsDataURL(file);
+    function handleReaderLoad(evt) {
+      document.getElementById("images")
+              .setAttribute('value', evt.target.result);
+    }
+    done();  
+  },
+
+  init: function() {
+    var myDropzone = this;
+
     
+    this.on("sendingmultiple", function() {
+      
+    });
+    this.on("successmultiple", function(files, response) {
+      
+    });
+    this.on("errormultiple", function(files, response) {
+      
+    });
+  }
+
+});
+});
 </script>
 
-<%= form_tag product_path, method: "patch", :html => { :controller => "products", :action => "update", :id => @product.id } do %>
+<%= form_tag product_path, id: "my-awesome-dropzone", class: "dropzone", method: "patch", :html => { :controller => "products", :action => "update", :id => @product.id } do %>
+
+<div class="row">
+  <div class="dropzone-previews">
+    
+  </div>
+</div>
 
 <div class="row">
   
@@ -78,7 +91,10 @@ $(document).ready( function() {
 
 <div class="row">
   <div class="col-md-12">
-    <input type="file" onchange="previewFile()"><br>
+    <div id="file-previews">
+      
+    </div>
+    <input type="file" onchange="previewFile()" multiple><br>
     <img src="<%= @product.images[0].src unless @product.images[0].nil? %>" id="product_image" height="200" alt="Image preview...">
     <input type="hidden" id="images" name="images"/>    
     <button id="delete_image" class="btn" type="button">Delete Image</button>

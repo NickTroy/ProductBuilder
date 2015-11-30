@@ -1,1 +1,116 @@
-<%= render 'form' %>
+<script>
+(function () {
+Dropzone.options.myAwesomeDropzone = { // The camelized version of the ID of the form element
+
+  // The configuration we've talked about above
+  autoProcessQueue: false,
+  uploadMultiple: true,
+  parallelUploads: 100,
+  maxFiles: 100,
+  previewsContainer: '.dropzone-previews',
+  paramName: 'images',
+  accept: function(file, done){
+    reader = new FileReader();
+    reader.onload = handleReaderLoad;
+    reader.readAsDataURL(file);
+    function handleReaderLoad(evt) {
+      document.getElementById("id_base64_data")
+              .setAttribute('value', evt.target.result);
+      }
+      document.getElementById("id_base64_name")
+              .setAttribute('value', file.name);
+      document.getElementById("id_base64_content_type")
+              .setAttribute('value', file.type);
+   },
+
+  // The setting up of the dropzone
+  init: function() {
+    var myDropzone = this;
+
+    // First change the button to actually tell Dropzone to process the queue.
+    document.querySelector("input[type=submit]").addEventListener("click", function(e) {
+      // Make sure that the form isn't actually being sent.
+      e.preventDefault();
+      e.stopPropagation();
+      myDropzone.processQueue();
+    });
+
+    // Listen to the sendingmultiple event. In this case, it's the sendingmultiple event instead
+    // of the sending event because uploadMultiple is set to true.
+    this.on("sendingmultiple", function() {
+      // Gets triggered when the form is actually being sent.
+      // Hide the success button or the complete form.
+    });
+    this.on("successmultiple", function(files, response) {
+      // Gets triggered when the files have successfully been sent.
+      // Redirect user or notify of success.
+    });
+    this.on("errormultiple", function(files, response) {
+      // Gets triggered when there was an error sending the files.
+      // Maybe show form again, and notify user of error
+    });
+  }
+
+}
+})
+</script>
+
+
+<%= form_tag products_path, id: "my-awesome-dropzone", class: "dropzone", method: "post" do %>
+
+<div class="row">
+  <div class="dropzone-previews">
+    
+  </div>
+</div>
+<div class="row">
+  
+  <div class="col-md-12">
+    <%= label_tag 'product[title]', "Product title:" %>
+    <%= text_field_tag :title %>
+  </div>
+
+</div>  
+
+<div class="row">
+  
+  <div class="col-md-12">
+    <%= label_tag 'product[type]', "Product type:" %>
+    <%= text_field_tag :product_type %>
+  </div>
+
+</div>  
+
+<div class="row">
+  
+  <div class="col-md-12">
+    <%= label_tag 'product[published_scope]', "Product published scope:" %>
+    <%= text_field_tag :published_scope%>
+  </div>
+
+</div> 
+
+<div class="row">
+  
+  <div class="col-md-12">
+    <%= label_tag 'product[vendor]', "Product vendor:" %>
+    <%= text_field_tag :vendor%>
+  </div>
+
+</div> 
+
+<div class="row">
+  <div class="col-md-12">
+    <%= label_tag 'product[body_html]', "Product description:" %>
+    <%= text_area_tag :body_html, nil, class: "tinymce" %>
+    <%= tinymce %>      
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-2">
+    <%= submit_tag "Save", :class => "btn btn-success" %>
+  </div>
+</div>
+
+<% end %>
