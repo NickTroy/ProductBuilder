@@ -30,11 +30,12 @@ $(document).ready(function () {
 Dropzone.autoDiscover = false;
   
   $("#my-awesome-dropzone").dropzone({ 
+    url: "/",
     autoProcessQueue: false,
     uploadMultiple: true,
     parallelUploads: 100,
     maxFiles: 100,
-    paramName: 'images',
+    addRemoveLinks: true,
     previewsContainer: ".dropzone-previews",
     accept: function(file, done){
       reader = new FileReader();
@@ -61,18 +62,21 @@ Dropzone.autoDiscover = false;
         this.emit("thumbnail", existingFiles[<%= index %>], "<%= image.src %>");
         convertImgToDataURLviaCanvas("<%= image.src %>", insertBase64);
       <% end %>
+      this.on("removedfile", function(file){
+        console.log(file);
+        //var reader = new FileReader();
+        //reader.readAsDataURL(file);
+        //reader.onload = (function (result){
+          //alert(result);
+        //}); 
+      });
     }
   });
 });
 </script>
 
-<%= form_tag product_path, id: "my-awesome-dropzone", class: "dropzone", method: "patch", :html => { :controller => "products", :action => "update", :id => @product.id } do %>
+<%= form_tag product_path, method: "patch", :html => { :controller => "products", :action => "update", :id => @product.id } do %>
 
-<div class="row">
-  <div class="dropzone-previews">
-    
-  </div>
-</div>
 
 <div class="row">
   
@@ -119,15 +123,17 @@ Dropzone.autoDiscover = false;
 </div> 
 
 <div class="row">
-  <div class="col-md-12">
-    <div id="file-previews">
-      
-    </div>
-    
-    <input type="hidden" id="images" name="images" />    
-    
+  <div class="dropzone" id="my-awesome-dropzone">
+    <div class="dropzone-previews">
+      <input type="hidden" id="images" name="images" />        
+    </div>  
   </div>
+  
 </div>
+
+
+
+    
 
 <div class="row">
   <div class="col-md-2">
