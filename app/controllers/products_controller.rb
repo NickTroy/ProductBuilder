@@ -11,6 +11,8 @@ class ProductsController < AuthenticatedController
   def edit
     @product = ShopifyAPI::Product.find(params[:id])
     @images = @product.images
+    @images_urls = ""
+    @images.each { |img| @images_urls += img.src + ','}
   end
   
   def create
@@ -18,11 +20,11 @@ class ProductsController < AuthenticatedController
     respond_to do |format|
       format.html do 
         if @product.save
-          @images = params[:images].split(',')
-          @images.delete("") if @images[0] == "" 
-          @images.each do |image|
+          @urls_of_images = params[:images].split(',')
+          @urls_of_images.delete("") if @urls_of_images[0] == "" 
+          @urls_of_images.each do |url|
             @image = ShopifyAPI::Image.new(:product_id => @product.id)
-            @image.attachment = image
+            @image.attachment = url
             @image.save
           end
           
@@ -34,11 +36,21 @@ class ProductsController < AuthenticatedController
   
   def update
     @product = ShopifyAPI::Product.find(params[:id])
-    @image = @product.images[0] || ShopifyAPI::Image.new(:product_id => @product.id)
-    @image.attachment = params[:images].split(',')[1]
+    
+    @current_images = @product.images
+    @current_images.each { |img| img.destroy }
+    
     respond_to do |format|
       format.html do 
-        if @product.update_attributes(product_params) and @image.save
+        if @product.update_attributes(product_params)
+          @urls_of_images = params[:images].split(',')
+          @urls_of_images.delete("") if @urls_of_images[0] == "" 
+          @urls_of_images.each do |url|
+            @image = ShopifyAPI::Image.new(:product_id => @product.id)
+            @image.attachment = url
+            @image.save
+          end
+          
           redirect_to products_path
         end
       end
