@@ -1,39 +1,44 @@
 <script type="text/javascript">
 $(document).ready(function () {
-Dropzone.autoDiscover = false;
-$("#my-awesome-dropzone").dropzone({ 
-  autoProcessQueue: false,
-  uploadMultiple: true,
-  parallelUploads: 100,
-  maxFiles: 100,
-  paramName: 'images',
-  accept: function(file, done){
-    reader = new FileReader();
-    reader.onload = handleReaderLoad;
-    reader.readAsDataURL(file);
-    function handleReaderLoad(evt) {
-      document.getElementById("images")
-              .setAttribute('value', evt.target.result);
-    }
-    done();  
-  },
+  Dropzone.autoDiscover = false;
+  $("#my-awesome-dropzone").dropzone({ 
+    autoProcessQueue: false,
+    uploadMultiple: true,
+    parallelUploads: 100,
+    maxFiles: 100,
+    paramName: 'images',
+    accept: function(file, done){
+      reader = new FileReader();
+      reader.onload = handleReaderLoad;
+      reader.readAsDataURL(file);
+      function handleReaderLoad(evt) {
+        var images = document.getElementById("images")
+                             .getAttribute('value');
+        if (images === null) {
+          images = "";
+        }
+        document.getElementById("images")
+                .setAttribute('value', images + ',' + evt.target.result.split(',')[1]);
+      }
+      done();  
+    },
 
-  init: function() {
-    var myDropzone = this;
+    init: function() {
+      var myDropzone = this;
 
     
-    this.on("sendingmultiple", function() {
+      this.on("sendingmultiple", function() {
       
-    });
-    this.on("successmultiple", function(files, response) {
+      });
+      this.on("successmultiple", function(files, response) {
       
-    });
-    this.on("errormultiple", function(files, response) {
+      });
+      this.on("errormultiple", function(files, response) {
       
-    });
-  }
+      });
+    }
 
-});
+  });
 });
 </script>
 

@@ -10,6 +10,7 @@ class ProductsController < AuthenticatedController
   
   def edit
     @product = ShopifyAPI::Product.find(params[:id])
+    @images = @product.images
   end
   
   def create
@@ -17,9 +18,14 @@ class ProductsController < AuthenticatedController
     respond_to do |format|
       format.html do 
         if @product.save
-          @image = ShopifyAPI::Image.new(:product_id => @product.id)
-          @image.attachment = params[:images].split(',')[1]
-          @image.save
+          @images = params[:images].split(',')
+          @images.delete("") if @images[0] == "" 
+          @images.each do |image|
+            @image = ShopifyAPI::Image.new(:product_id => @product.id)
+            @image.attachment = image
+            @image.save
+          end
+          
           redirect_to products_path
         end
       end

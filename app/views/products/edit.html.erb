@@ -1,39 +1,58 @@
 <script type="text/javascript">
 $(document).ready(function () {
 Dropzone.autoDiscover = false;
-$("#my-awesome-dropzone").dropzone({ 
-  autoProcessQueue: false,
-  uploadMultiple: true,
-  parallelUploads: 100,
-  maxFiles: 100,
-  paramName: 'images',
-  accept: function(file, done){
-    reader = new FileReader();
-    reader.onload = handleReaderLoad;
-    reader.readAsDataURL(file);
-    function handleReaderLoad(evt) {
-      document.getElementById("images")
-              .setAttribute('value', evt.target.result);
-    }
-    done();  
-  },
+  
+  $("#my-awesome-dropzone").dropzone({ 
+    autoProcessQueue: false,
+    uploadMultiple: true,
+    parallelUploads: 100,
+    maxFiles: 100,
+    paramName: 'images',
+    previewsContainer: ".dropzone-previews",
+    accept: function(file, done){
+      reader = new FileReader();
+      reader.onload = handleReaderLoad;
+      reader.readAsDataURL(file);
+      function handleReaderLoad(evt) {
+        var images = document.getElementById("images")
+                             .getAttribute('value');
+        if (images === null) {
+          images = "";
+        }
+        document.getElementById("images")
+                .setAttribute('value', images + ',' + evt.target.result.split(',')[1]);
+      }
+      done();  
+    },
 
-  init: function() {
-    var myDropzone = this;
+    init: function() {
+      var myDropzone = this;
+      var existingFiles = [
+        { name: "image0" },
+        { name: "image1" },
+        { name: "image2", size: 12345678 },
+        { name: "image3", size: 12345678 },
+        { name: "Filename 5.pdf", size: 12345678 }
+      ];
+      <% @images.each_with_index do |image, index| %>
+        this.emit("addedfile", existingFiles[<%= index %>]);
+        this.emit("thumbnail", existingFiles[<%= index %>], "<%= image.src %>");
+        //this.emit("complete", existingFiles[<%= index %>]);                
+      <% end %>
 
     
-    this.on("sendingmultiple", function() {
+      this.on("sendingmultiple", function() {
       
-    });
-    this.on("successmultiple", function(files, response) {
+      });
+      this.on("successmultiple", function(files, response) {
       
-    });
-    this.on("errormultiple", function(files, response) {
+      });
+      this.on("errormultiple", function(files, response) {
       
-    });
-  }
+      });
+    }
 
-});
+  });
 });
 </script>
 
@@ -94,10 +113,9 @@ $("#my-awesome-dropzone").dropzone({
     <div id="file-previews">
       
     </div>
-    <input type="file" onchange="previewFile()" multiple><br>
-    <img src="<%= @product.images[0].src unless @product.images[0].nil? %>" id="product_image" height="200" alt="Image preview...">
+    
     <input type="hidden" id="images" name="images"/>    
-    <button id="delete_image" class="btn" type="button">Delete Image</button>
+    
   </div>
 </div>
 
