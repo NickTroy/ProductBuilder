@@ -1,4 +1,31 @@
 <script type="text/javascript">
+
+function convertImgToDataURLviaCanvas(url, callback){
+    var img = new Image();
+    img.crossOrigin = 'Anonymous';
+    img.onload = function(){
+        var canvas = document.createElement('CANVAS');
+        var ctx = canvas.getContext('2d');
+        var dataURL;
+        canvas.height = this.height;
+        canvas.width = this.width;
+        ctx.drawImage(this, 0, 0);
+        dataURL = canvas.toDataURL();
+        callback(dataURL);
+        canvas = null; 
+    };
+    img.src = url;
+}
+
+function insertBase64(dataUrl) {
+  if ($('#images').attr('value') === "") {
+    $('#images').attr('value', "");
+  } else {
+    images = $('#images').attr('value');
+    $('#images').attr('value', images + ',' + dataUrl);
+  }
+}
+
 $(document).ready(function () {
 Dropzone.autoDiscover = false;
   
@@ -38,20 +65,18 @@ Dropzone.autoDiscover = false;
         this.emit("addedfile", existingFiles[<%= index %>]);
         this.emit("thumbnail", existingFiles[<%= index %>], "<%= image.src %>");
         //this.emit("complete", existingFiles[<%= index %>]);                
+        convertImgToDataURLviaCanvas("<%= image.src %>", insertBase64);
       <% end %>
 
     
-      this.on("sendingmultiple", function() {
-      
-      });
-      this.on("successmultiple", function(files, response) {
-      
-      });
-      this.on("errormultiple", function(files, response) {
-      
+      this.on("thumbnail", function(file, dataUrl) {
+        var images = $('#images').attr("value");
+        if (images === null) {
+          images = "";
+        }
+        $('#images').attr("value", images + ',' + dataUrl);
       });
     }
-
   });
 });
 </script>
