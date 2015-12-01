@@ -54,28 +54,13 @@ Dropzone.autoDiscover = false;
 
     init: function() {
       var myDropzone = this;
-      var existingFiles = [
-        { name: "image0" },
-        { name: "image1" },
-        { name: "image2", size: 12345678 },
-        { name: "image3", size: 12345678 },
-        { name: "Filename 5.pdf", size: 12345678 }
-      ];
+      var existingFiles = [];
       <% @images.each_with_index do |image, index| %>
+        existingFiles.push({ name: "image<%= index %>"});
         this.emit("addedfile", existingFiles[<%= index %>]);
         this.emit("thumbnail", existingFiles[<%= index %>], "<%= image.src %>");
-        //this.emit("complete", existingFiles[<%= index %>]);                
         convertImgToDataURLviaCanvas("<%= image.src %>", insertBase64);
       <% end %>
-
-    
-      this.on("thumbnail", function(file, dataUrl) {
-        var images = $('#images').attr("value");
-        if (images === null) {
-          images = "";
-        }
-        $('#images').attr("value", images + ',' + dataUrl);
-      });
     }
   });
 });
