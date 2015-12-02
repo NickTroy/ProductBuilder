@@ -1,12 +1,16 @@
 @import "bootstrap-sprockets";
 @import "bootstrap";
+@import "dropzone/dropzone";
 
 .dz-details {
   display: none;  
 }
+
 .dz-progress {
   display: none;  
 }
+/*
+
 .dz-error-message {
   display: none;  
 }
@@ -22,6 +26,7 @@
 .dz-preview {
   display: inline-block;
 }
+*/
 /*
  * This is a manifest file that'll be compiled into application.css, which will include all the files
  * listed below.
