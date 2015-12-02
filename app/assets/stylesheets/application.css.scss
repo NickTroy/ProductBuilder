@@ -1,5 +1,27 @@
 @import "bootstrap-sprockets";
 @import "bootstrap";
+
+.dz-details {
+  display: none;  
+}
+.dz-progress {
+  display: none;  
+}
+.dz-error-message {
+  display: none;  
+}
+.dz-success-mark {
+  display: none;  
+}
+.dz-error-mark {
+  display: none;  
+}
+.dz-image {
+  display: inline-block;
+}
+.dz-preview {
+  display: inline-block;
+}
 /*
  * This is a manifest file that'll be compiled into application.css, which will include all the files
  * listed below.

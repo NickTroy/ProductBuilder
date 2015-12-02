@@ -3,8 +3,9 @@ Rails.application.routes.draw do
 
   resources :products
   resources :images
+  
 
-  root :to => 'home#index'
+  root :to => 'products#index'
 
   mount ShopifyApp::Engine, at: '/'
 
