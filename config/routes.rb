@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   
 
   resources :products
+  resources :images
 
   root :to => 'home#index'
 
