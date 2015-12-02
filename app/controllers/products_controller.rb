@@ -37,20 +37,9 @@ class ProductsController < AuthenticatedController
   def update
     @product = ShopifyAPI::Product.find(params[:id])
     
-    @current_images = @product.images
-    @current_images.each { |img| img.destroy }
-    
     respond_to do |format|
       format.html do 
         if @product.update_attributes(product_params)
-          @urls_of_images = params[:images].split(',')
-          @urls_of_images.delete("") if @urls_of_images[0] == "" 
-          @urls_of_images.each do |url|
-            @image = ShopifyAPI::Image.new(:product_id => @product.id)
-            @image.attachment = url
-            @image.save
-          end
-          
           redirect_to products_path
         end
       end
@@ -78,14 +67,4 @@ class ProductsController < AuthenticatedController
                     :template_suffix, :title, :variants, :vendor)
     end
     
-    def image_params
-      {
-        :product_id => @product.id,
-        :attachment => params[:images].split(',')[1]
-      }
-    end
-    
-
-
-
 end
