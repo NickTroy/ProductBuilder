@@ -1,30 +1,6 @@
 <script type="text/javascript">
 
-function convertImgToDataURLviaCanvas(url, callback){
-    var img = new Image();
-    img.crossOrigin = 'Anonymous';
-    img.onload = function(){
-        var canvas = document.createElement('CANVAS');
-        var ctx = canvas.getContext('2d');
-        var dataURL;
-        canvas.height = this.height;
-        canvas.width = this.width;
-        ctx.drawImage(this, 0, 0);
-        dataURL = canvas.toDataURL();
-        callback(dataURL);
-        canvas = null; 
-    };
-    img.src = url;
-}
 
-function insertBase64(dataUrl) {
-  if ($('#images').attr('value') === "") {
-    $('#images').attr('value', "");
-  } else {
-    images = $('#images').attr('value');
-    $('#images').attr('value', images + ',' + dataUrl);
-  }
-}
 
 $(document).ready(function(){
   Dropzone.autoDiscover = false;
@@ -35,26 +11,9 @@ $(document).ready(function(){
     uploadMultiple: false,
     autoProcessQueue: false,
     addRemoveLinks: true,
-    accept: function(file, done){
-      reader = new FileReader();
-      reader.onload = handleReaderLoad;
-      reader.readAsDataURL(file);
-      function handleReaderLoad(evt) {
-        document.getElementById("image_url")
-                .setAttribute('value', evt.target.result.split(',')[1]);
-        document.getElementById("image_name")
-                .setAttribute('value', file.name);
-        form = $('#file-form');
-        $.ajax( {
-          method: "POST",
-          timeout: 2000,
-          url: "<%= images_path %>",
-          data: form.serialize(),
-        });
-      }
-      done();
-    },
+
     init: function() {
+      _this = this;
       var existingFiles = [];
       <% @images.each_with_index do |image, index| %>
         existingFiles.push({ id: "<%= image.id %>"});
@@ -62,8 +21,29 @@ $(document).ready(function(){
         this.emit("thumbnail", existingFiles[<%= index %>], "<%= image.src %>");
       <% end %>
       
+      this.on("addedfile", function(file){
+        reader = new FileReader();
+        reader.onload = handleReaderLoad;
+        reader.readAsDataURL(file);
+        function handleReaderLoad(evt) {
+          document.getElementById("image_url")
+                  .setAttribute('value', evt.target.result.split(',')[1]);
+          document.getElementById("image_name")
+                  .setAttribute('value', file.name);
+          form = $('#file-form');
+          $.ajax( {
+            method: "POST",
+            dataType: "json",
+            timeout: 2000,
+            url: "<%= images_path %>",
+            data: form.serialize(),
+          });
+        }
+        
+      });
+      
       this.on("removedfile", function(file){
-        console.log(file);
+        
         $.ajax( {
           method: "DELETE",
           timeout: 2000,
@@ -125,14 +105,6 @@ $(document).ready(function(){
 
 </div> 
 
-
-
-
-
-
-
-    
-
 <div class="row">
   <div class="col-md-2">
     <%= submit_tag "Save", :class => "btn btn-success" %>
@@ -147,8 +119,5 @@ $(document).ready(function(){
     <input id="image_url" name="image_url" type="hidden">
     <input id="image_name" name="image_name" type="hidden">
     <input id="product_id" name="product_id" value="<%= @product.id %>" type="hidden">
-    <div class="fileupload fileupload-new" data-provides="fileupload">
-        <legend>Search for file</legend>
-    </div>
-<div class="dz-default dz-message"><span>Drop files here to upload</span></div> 
+    <div class="dz-default dz-message"><span>Drop files here to upload</span></div>
 </form>

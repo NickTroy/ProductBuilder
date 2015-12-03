@@ -7,7 +7,7 @@ class ImagesController < AuthenticatedController
     @image.name = image_params[:name]
     @image.save
     respond_to do |format|
-      format.json { redirect_to edit_product_path(@product.id) }
+      format.json { redirect_to edit_product_path(@product.id, :image_id => @image.id) }
     end
   end
   
