@@ -1,8 +1,11 @@
 Rails.application.routes.draw do
   
 
-  resources :products
+  resources :products do
+    resources :variants
+  end
   resources :images
+  
   
 
   root :to => 'products#index'

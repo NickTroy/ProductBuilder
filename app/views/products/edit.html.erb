@@ -111,6 +111,19 @@ $(document).ready(function(){
   </div>
 </div>
 
+<div class="row">
+  <div class="col-md-12">
+    <%= label_tag "Number of variants" %>
+    Product has <%= @product.variants.count %> variants
+  </div>
+</div>
+<% @product.variants.each do |variant| %>
+  <div>
+    product variant metafield<%= variant.metafields[0].key + ' ' + variant.metafields[0].value unless variant.metafields[0].nil?  %>
+  </div>
+<% end %>
+
+<%= link_to "Add new product variant", new_product_variant_path(:product_id => @product.id) %>
 
 
 <% end %>
