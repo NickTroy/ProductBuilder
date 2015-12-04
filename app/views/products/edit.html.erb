@@ -1,17 +1,19 @@
+<div class="container">
 <script type="text/javascript">
 
 
 
 $(document).ready(function(){
   Dropzone.autoDiscover = false;
-  $("#file-form").dropzone({
+  $("#dropzone").dropzone({
     url: '<%= images_path %>',
     paramName: 'images',
     clickable: true,
     uploadMultiple: false,
     autoProcessQueue: false,
     addRemoveLinks: true,
-
+    previewsContainer: '.dropzone-previews',
+    clickable: true,
     init: function() {
       _this = this;
       var existingFiles = [];
@@ -103,12 +105,10 @@ $(document).ready(function(){
     <%= text_field_tag :vendor, @product.vendor %>
   </div>
 
-</div> 
+</div>
 
-<div class="row">
-  <div class="col-md-2">
-    <%= submit_tag "Save", :class => "btn btn-success" %>
-  </div>
+<div class="dropzone-previews dropzone" id="dropzone"> 
+  <div class="dz-default dz-message"><span>Drop files here to upload</span></div>
 </div>
 
 <div class="row">
@@ -117,20 +117,36 @@ $(document).ready(function(){
     Product has <%= @product.variants.count %> variants
   </div>
 </div>
-<% @product.variants.each do |variant| %>
-  <div>
-    product variant metafield<%= variant.metafields[0].key + ' ' + variant.metafields[0].value unless variant.metafields[0].nil?  %>
+<div class="row">
+  <div class="col-md-12">
+    <%= label_tag "Number of options" %>
+    Product has <%= @product.metafields.count %> options
   </div>
-<% end %>
+  <% @product.metafields.each do |option| %>
+    <p>Option name: <%= option.key.to_s %></p>
+    <p>Option values: <%= option.value.to_s %></p>
+    <input type="hidden" value="<%= option.id  %>"/>
+    <%= link_to 'Delete option', { :controller => "options", :action => "destroy", :product_id => @product.id, :option_id => option.id }, 
+                          { :method => :delete, class: "btn btn-danger", 
+                          data: { confirm: 'Are you sure, you want to delete this option?' } } %>                               
+  <% end %>
+</div>
 
 <%= link_to "Add new product variant", new_product_variant_path(:product_id => @product.id) %>
-
+<%= link_to "Add options to your product", new_product_option_path(:product_id => @product.id) %>
+<div class="row">
+  <div class="col-md-2">
+    <%= submit_tag "Save", :class => "btn btn-success" %>
+  </div>
+</div>
 
 <% end %>
 
-<form class="dropzone" id="file-form" action="<%= images_path %>" method="post" name="file-form">
+<form id="file-form" action="<%= images_path %>" method="post" name="file-form">
     <input id="image_url" name="image_url" type="hidden">
     <input id="image_name" name="image_name" type="hidden">
     <input id="product_id" name="product_id" value="<%= @product.id %>" type="hidden">
-    <div class="dz-default dz-message"><span>Drop files here to upload</span></div>
-</form>
+    
+</form>  
+</div>
+

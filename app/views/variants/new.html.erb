@@ -1,0 +1,35 @@
+<script type="text/javascript">
+  function createOptionTypeSelect() {
+    var num_of_opts = $("#number_of_options").val();
+    alert(num_of_opts);
+    $("#number_of_options").attr('value', parseInt(num_of_opts) + 1);
+    $('<div id="option' + num_of_opts + '" style="inline-block;"> Option #'+ num_of_opts + ' type' + 
+        '<select name="option' + num_of_opts + 'type" id="option' + num_of_opts + 'type"> '+
+        '<option id="option' + num_of_opts + 'type" value="string">string</option> ' + 
+        '<option id="option' + num_of_opts + 'type" value="integer">number</option> ' +
+      '</select><br> Option #'+ num_of_opts + ' name <input name="option' + num_of_opts + 'name" id="option' + num_of_opts + 'name" type="text"/> ' +
+      '<br> Option #'+ num_of_opts + ' value <input name="option' + num_of_opts + 'value" id="option' + num_of_opts + 'value" type="text"/></div>').appendTo('.options')
+  }
+</script>
+<%= form_tag product_variants_path(:product_id => params[:product_id]), method: "post" do %>
+
+
+<div class="row">
+  <div class="col-md-12">
+    <%= label_tag 'variant[price]', "Product variant price:" %>
+    <%= number_field_tag :price %>
+  </div>  
+</div>
+
+<div class="options">
+  <button type="button" onclick="createOptionTypeSelect()">Add new option</button>
+  <%= hidden_field_tag 'number_of_options', 0 %>  
+</div>
+
+<div class="row">
+  <div class="col-md-2">
+    <%= submit_tag "Save", :class => "btn btn-success" %>
+  </div>
+</div>
+
+<% end %>
