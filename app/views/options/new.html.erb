@@ -1,27 +1,29 @@
 <script type="text/javascript">
   function createOptionTypeSelect() {
-    var num_of_opts = $("#number_of_options").val();
-    $("#number_of_options").attr('value', parseInt(num_of_opts) + 1);
+    var num_of_opts = $("#number_of_option_values").val();
+    $("#number_of_option_values").attr('value', parseInt(num_of_opts) + 1);
     num_of_opts = parseInt(num_of_opts) + 1;
-    $('<div id="option' + num_of_opts + '" style="inline-block;"> Option #'+ num_of_opts + ' type' + 
-        '<select name="option' + num_of_opts + 'type" id="option' + num_of_opts + 'type"> '+
-        '<option id="option' + num_of_opts + 'type" value="string">string</option> ' + 
-        '<option id="option' + num_of_opts + 'type" value="integer">number</option> ' +
-      '</select><br> Option #'+ num_of_opts + ' name <input name="option' + num_of_opts + 'name" id="option' + num_of_opts + 'name" type="text"/> ' +
-      '<br> Option #'+ num_of_opts + ' values, enter separated by comas <input name="option' + num_of_opts + 'value" id="option' + num_of_opts + 'value" type="text"/></div>').prependTo('.options')
+    $('<div id="option' + num_of_opts + '" style="inline-block;"> '+ 
+      '<br> Option value #'+ num_of_opts + '<input name="option_value' + num_of_opts + '" id="option_value' + num_of_opts + '" type="text"/></div>').appendTo('.options')
   }
 </script>
-<%= form_tag product_options_path(:product_id => params[:product_id]), method: "post" do %>
+<%= form_for @option, url: product_options_path(:product_id => params[:product_id]) do |f| %> <!-- (:product_id => params[:product_id]) -->
 
+<div class="row">
+  <div class="col-md-12">
+    <%= f.label 'option[name]', "Option name:" %>
+    <%= f.text_field :name %>
+  </div>
+</div>  
 
 <div class="options">
-  <button type="button" onclick="createOptionTypeSelect()">Add new option</button>
-  <%= hidden_field_tag 'number_of_options', 0 %>  
+  <button type="button" onclick="createOptionTypeSelect()">Add option value</button>
+  <%= hidden_field_tag 'number_of_option_values', 0 %>  
 </div>
 
 <div class="row">
   <div class="col-md-2">
-    <%= submit_tag "Save", :class => "btn btn-success" %>
+    <%= f.submit "Save", :class => "btn btn-success" %>
   </div>
 </div>
 

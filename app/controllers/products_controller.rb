@@ -11,8 +11,9 @@ class ProductsController < AuthenticatedController
   def edit
     @product = ShopifyAPI::Product.find(params[:id])
     @images = @product.images
-    @images_urls = ""
-    @images.each { |img| @images_urls += img.src + ','}
+    @options = Option.where(product_id: @product.id)
+    #@images_urls = ""
+    #@images.each { |img| @images_urls += img.src + ','}
   end
   
   def create

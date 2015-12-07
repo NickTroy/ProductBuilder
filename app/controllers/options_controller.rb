@@ -1,32 +1,36 @@
 class OptionsController < AuthenticatedController
+  
+  def new
+    @product = ShopifyAPI::Product.find(params[:product_id])
+    @option = Option.new
+  end
+  
   def create
     @product = ShopifyAPI::Product.find(params[:product_id])
-    options = []
-    1.upto(5) do |i|
-      name = "option#{i}name".to_sym
-      value = "option#{i}value".to_sym
-      type = "option#{i}type".to_sym
-      options.push([name,value,type])
+    @option = Option.new(option_params)
+    @option.name = params[:option][:name]
+    @option.save
+    1.upto(params[:number_of_option_values].to_i) do |i|
+      @option_value = OptionValue.new(option_id:@option.id, value:params["option_value#{i}".to_sym])
+      @option_value.save
     end
-    options.each do |opt|
-      @product.add_metafield(ShopifyAPI::Metafield.new(:namespace => "option", 
-                                                     :key => params[opt[0]], 
-                                                     :value => params[opt[1]], 
-                                                     :value_type => params[opt[2]]))
-      @product.save
-    end
-    
-    
-    respond_to do |format|
-      format.html{ redirect_to edit_product_path(@product.id) }
+    if @option.save
+      redirect_to edit_product_path :id => params[:product_id]
     end
   end
   
   def destroy
-    @option = ShopifyAPI::Metafield.find(params[:option_id])
     @product = ShopifyAPI::Product.find(params[:product_id])
+    @option = Option.find(params[:option_id])
+    
     if @option.destroy
-      redirect_to edit_product_path(@product.id)
+      redirect_to edit_product_path :id => params[:product_id]
     end
+  end
+  
+  private
+  
+  def option_params
+    params.permit(:product_id, :name)
   end
 end

@@ -11,7 +11,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151120102823) do
+ActiveRecord::Schema.define(version: 20151207095817) do
+
+  create_table "option_values", force: :cascade do |t|
+    t.integer  "option_id",  limit: 4
+    t.string   "value",      limit: 255
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
+  add_index "option_values", ["option_id"], name: "index_option_values_on_option_id", using: :btree
+
+  create_table "options", force: :cascade do |t|
+    t.string   "name",       limit: 255
+    t.integer  "product_id", limit: 8
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
 
   create_table "shops", force: :cascade do |t|
     t.string   "shopify_domain", limit: 255, null: false
@@ -22,4 +38,5 @@ ActiveRecord::Schema.define(version: 20151120102823) do
 
   add_index "shops", ["shopify_domain"], name: "index_shops_on_shopify_domain", unique: true, using: :btree
 
+  add_foreign_key "option_values", "options"
 end

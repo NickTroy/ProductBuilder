@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class VariantsControllerTest < ActionController::TestCase
+class OptionTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

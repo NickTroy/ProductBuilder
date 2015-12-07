@@ -111,29 +111,17 @@ $(document).ready(function(){
   <div class="dz-default dz-message"><span>Drop files here to upload</span></div>
 </div>
 
-<div class="row">
-  <div class="col-md-12">
-    <%= label_tag "Number of variants" %>
-    Product has <%= @product.variants.count %> variants
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-12">
-    <%= label_tag "Number of options" %>
-    Product has <%= @product.metafields.count %> options
-  </div>
-  <% @product.metafields.each do |option| %>
-    <p>Option name: <%= option.key.to_s %></p>
-    <p>Option values: <%= option.value.to_s %></p>
-    <input type="hidden" value="<%= option.id  %>"/>
-    <%= link_to 'Delete option', { :controller => "options", :action => "destroy", :product_id => @product.id, :option_id => option.id }, 
-                          { :method => :delete, class: "btn btn-danger", 
-                          data: { confirm: 'Are you sure, you want to delete this option?' } } %>                               
-  <% end %>
-</div>
+<p> Product has <%= @options.count%> options</p>
 
-<%= link_to "Add new product variant", new_product_variant_path(:product_id => @product.id) %>
-<%= link_to "Add options to your product", new_product_option_path(:product_id => @product.id) %>
+<% @options.each do |opt| %>
+  <p>Option <%= opt.name %> has <%= opt.option_values.count %> values</p> 
+  <%= link_to 'Delete option', { :controller => "options", :action => "destroy", :product_id => @product.id, :option_id => opt.id }, 
+                          { :method => :delete, class: "btn btn-danger", 
+                          data: { confirm: 'Are you sure, you want to delete this option?' } } %>   
+<% end %><br><br>
+
+<%= link_to "Add new option", new_product_option_path(:product_id => @product.id), class: "btn btn-primary" %><br>
+
 <div class="row">
   <div class="col-md-2">
     <%= submit_tag "Save", :class => "btn btn-success" %>
@@ -143,10 +131,9 @@ $(document).ready(function(){
 <% end %>
 
 <form id="file-form" action="<%= images_path %>" method="post" name="file-form">
-    <input id="image_url" name="image_url" type="hidden">
-    <input id="image_name" name="image_name" type="hidden">
-    <input id="product_id" name="product_id" value="<%= @product.id %>" type="hidden">
-    
+  <input id="image_url" name="image_url" type="hidden">
+  <input id="image_name" name="image_name" type="hidden">
+  <input id="product_id" name="product_id" value="<%= @product.id %>" type="hidden">
 </form>  
 </div>
 
