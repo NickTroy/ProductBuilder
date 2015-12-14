@@ -60,6 +60,50 @@ $(document).ready(function(){
 
 </script>
 
+<script>
+
+  function showVariantsForm (){
+    $('.variants_form').show();
+  }
+  
+  function previewVariants() {
+    $('.option_values_row').each(function(){
+      alert($(this).find('p').text());
+      $(this).find('.option_values').each(function(){
+        if ($(this).find('.option_value').is(":checked")) {
+          alert($(this).find('label').text());
+        }  
+      })
+      
+    });
+  }
+  
+$(document).ready(function(){
+  $('.option_value').change(function(){
+    var options_selected, number_of_variants;
+    options_selected = parseInt($(this).parents('.option_values_row').children('.number_of_values_selected').text());
+    if($(this).is(":checked")) {
+      options_selected = options_selected + 1;
+    } else {
+      options_selected = options_selected - 1;
+    }
+    
+    $(this).parents('.option_values_row').children('.number_of_values_selected').text(options_selected);
+    $(this).parents('.option_values_row').children('#options_selected').val(options_selected);
+    
+    number_of_variants = 1;
+    $('.variants_form #options_selected').each(function(){
+      var num_of_opts = parseInt($(this).val());
+      if (num_of_opts > 1) {
+        number_of_variants = number_of_variants * num_of_opts;
+      }
+    });
+    $('.number_of_variants').text(number_of_variants);
+  });
+});
+  
+</script>
+
 <%= form_tag product_path, method: "patch", :html => { :controller => "products", :action => "update", :id => @product.id } do %>
 
 
@@ -114,13 +158,44 @@ $(document).ready(function(){
 <p> Product has <%= @options.count%> options</p>
 
 <% @options.each do |opt| %>
-  <p>Option <%= opt.name %> has <%= opt.option_values.count %> values</p> 
+  <p>Option <%= opt.name.upcase %> has <%= opt.option_values.count %> values:</p>
+  <p>
+    <% opt.option_values.each do |value| %> 
+    <span><%=value.value %>,</span>
+    <% end %>
+  </p>
   <%= link_to 'Delete option', { :controller => "options", :action => "destroy", :product_id => @product.id, :option_id => opt.id }, 
                           { :method => :delete, class: "btn btn-danger", 
                           data: { confirm: 'Are you sure, you want to delete this option?' } } %>   
 <% end %><br><br>
 
-<%= link_to "Add new option", new_product_option_path(:product_id => @product.id), class: "btn btn-primary" %><br>
+<%= link_to "Add new option", new_product_option_path(:product_id => @product.id), class: "btn btn-primary" %><br><br>
+
+<input type='button' value="Add product variants" onclick="showVariantsForm()" class="btn btn-primary add-variants"/><br>
+<div class="variants_form" style="display:none;">
+  <% @options.each do |opt| %>
+    
+    <div class="option_values_row <%= opt.name %>">
+      <p><%= opt.name.upcase %></p>
+      <% opt.option_values.each do |value| %>
+        <span class="option_values">
+          <%= label_tag value.value %>
+          <input type="checkbox" class="option_value" />
+        </span>
+      <% end %>
+      <span class="number_of_values_selected">0</span>
+      <span><%= opt.name %> is selected</span>
+      <%= hidden_field_tag 'options_selected', 0 %>
+    </div> 
+  <% end %>
+  <p>
+    <span class="number_of_variants">0</span>
+    <span> variants will be created </span>
+  </p>
+  <input type='button' value="Preview product variants" onclick="previewVariants()" class="btn btn-primary"/><br>
+  <%= hidden_field_tag nil, {} %>
+</div>
+
 
 <div class="row">
   <div class="col-md-2">
