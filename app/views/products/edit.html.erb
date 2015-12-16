@@ -139,8 +139,27 @@ $(document).ready(function(){
     $.ajax({
       url: "<%= generate_variants_path %>",
       method: "POST",
+      dataType: 'json',
       data: variants_json
     });
+    
+    updateCurrentVariants();
+  }
+  
+  function updateCurrentVariants(){
+    $.ajax({
+      url: "<%= product_variants_path(product_id: @product.id) %>",
+      method: "GET",
+      dataType: 'json',
+      success: function(data){
+        handleVariantsJSON(data);
+      }
+    })
+  }
+  
+  function handleVariantsJSON(data){
+    alert("Data: " + JSON.stringify(data) + "\nStatus: " + status);
+    $('.current_number_of_variants').text(data.length);
   }
   
 $(document).ready(function(){
@@ -239,7 +258,10 @@ $(document).ready(function(){
 
 <%= link_to "Add new option", new_product_option_path(:product_id => @product.id), class: "btn btn-primary" %><br><br>
 
-<p>Product has <%= Variant.where(product_id: @product.id).count %> variants</p>
+<div class="current-variants">
+  <p>Product has <span class="current_number_of_variants"><%= Variant.where(product_id: @product.id).count %></span> variants</p>  
+</div>
+
 
 <input type='button' value="Add product variants" onclick="showVariantsForm()" class="btn btn-primary add-variants"/><br>
 <div class="variants_form" style="display:none;">

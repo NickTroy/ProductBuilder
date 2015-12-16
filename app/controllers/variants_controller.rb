@@ -1,4 +1,12 @@
 class VariantsController < ApplicationController
+
+  def index
+    @variants = Variant.all
+    respond_to do |format|
+      format.json { render :json => @variants}
+    end
+  end
+  
   def generate_product_variants
     respond_to do |format|
       format.json do
@@ -16,4 +24,8 @@ class VariantsController < ApplicationController
       end
     end
   end
+  
+
+
+
 end
