@@ -12,6 +12,7 @@ class ProductsController < AuthenticatedController
     @product = ShopifyAPI::Product.find(params[:id])
     @images = @product.images
     @options = Option.where(product_id: @product.id)
+    @variants = Variant.where(product_id: @product.id)
     #@images_urls = ""
     #@images.each { |img| @images_urls += img.src + ','}
   end

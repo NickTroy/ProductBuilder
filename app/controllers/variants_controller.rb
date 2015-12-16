@@ -3,7 +3,7 @@ class VariantsController < ApplicationController
   def index
     @variants = Variant.all
     respond_to do |format|
-      format.json { render :json => @variants}
+      format.json { render 'index' }
     end
   end
   

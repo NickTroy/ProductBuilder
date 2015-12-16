@@ -158,8 +158,12 @@ $(document).ready(function(){
   }
   
   function handleVariantsJSON(data){
-    alert("Data: " + JSON.stringify(data) + "\nStatus: " + status);
+    alert("Data: " + JSON.stringify(data));
     $('.current_number_of_variants').text(data.length);
+    data.each(function(){
+      $('').appendTo('.current_variants');
+    })
+      
   }
   
 $(document).ready(function(){
@@ -259,7 +263,17 @@ $(document).ready(function(){
 <%= link_to "Add new option", new_product_option_path(:product_id => @product.id), class: "btn btn-primary" %><br><br>
 
 <div class="current-variants">
-  <p>Product has <span class="current_number_of_variants"><%= Variant.where(product_id: @product.id).count %></span> variants</p>  
+  <p>Product has <span class="current_number_of_variants"><%= Variant.where(product_id: @product.id).count %></span> variants:</p>  
+  
+  <% @variants.each do |variant| %>
+    <div class="variant-info">
+      <% variant.option_values.each do |opt_val| %>
+        <span class="option-name-and-value">
+          <%= opt_val.option.name %> : <%= opt_val.value %> 
+        </span>
+      <% end %>
+    </div>
+  <% end %>
 </div>
 
 
