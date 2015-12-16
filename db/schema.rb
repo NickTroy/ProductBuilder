@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151214075929) do
+ActiveRecord::Schema.define(version: 20151216092647) do
 
   create_table "option_values", force: :cascade do |t|
     t.integer  "option_id",  limit: 4
@@ -44,17 +44,17 @@ ActiveRecord::Schema.define(version: 20151214075929) do
     t.datetime "updated_at",           null: false
   end
 
-  create_table "variants_options", force: :cascade do |t|
-    t.integer  "variant_id", limit: 4
-    t.integer  "option_id",  limit: 4
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
+  create_table "variants_option_values", force: :cascade do |t|
+    t.integer  "variant_id",      limit: 4
+    t.integer  "option_value_id", limit: 4
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
   end
 
-  add_index "variants_options", ["option_id"], name: "index_variants_options_on_option_id", using: :btree
-  add_index "variants_options", ["variant_id"], name: "index_variants_options_on_variant_id", using: :btree
+  add_index "variants_option_values", ["option_value_id"], name: "index_variants_option_values_on_option_value_id", using: :btree
+  add_index "variants_option_values", ["variant_id"], name: "index_variants_option_values_on_variant_id", using: :btree
 
   add_foreign_key "option_values", "options"
-  add_foreign_key "variants_options", "options"
-  add_foreign_key "variants_options", "variants"
+  add_foreign_key "variants_option_values", "option_values"
+  add_foreign_key "variants_option_values", "variants"
 end

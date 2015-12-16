@@ -109,18 +109,38 @@ $(document).ready(function(){
   var variants = permute(options,0,[],{});
   $('#variants').val(JSON.stringify(variants));
   //alert(variants.length);
-  //alert(JSON.stringify(variants[0]));
+  //alert(JSON.stringify(variants));
   $('.preview_product_variants').text('');
   for(var i=0;i<variants.length;i++){
-    $('<h2>').appendTo('.preview_product_variants');
+    $('<div class="variant_row"></div><br>').appendTo('.preview_product_variants');
     for (option_value in variants[i]) {
-      $('<span>' + variants[i][option_value]+ ' </span>').appendTo('.preview_product_variants');
+      $('<span class="value">' + variants[i][option_value]+ '</span>').appendTo('.variant_row:last');
     }
-    $('</h2><br>').appendTo('.preview_product_variants');
+    
     
   };
-  $('<input value="Save product variants" onclick="alert(\'sent\')" class="btn btn-primary" type="button">').appendTo('.preview_product_variants');
+  $('<input value="Save product variants" onclick="createProductVariants()" class="btn btn-primary" type="button">').appendTo('.preview_product_variants');
   
+  }
+  
+  function createProductVariants(){
+    var variants_json = {};
+    variants_json = { _method: 'PUT', product_id: <%= params[:id] %> };
+    variants_json["variants"] = [];
+    $('.variant_row').each(function(){
+      var option_names = [];
+      $(this).find('.value').each(function(){
+        option_names.push($(this).text());
+      });
+      //alert(JSON.stringify(variant));
+      variants_json["variants"].push(option_names);
+    });
+    //alert(JSON.stringify(variants_json));
+    $.ajax({
+      url: "<%= generate_variants_path %>",
+      method: "POST",
+      data: variants_json
+    });
   }
   
 $(document).ready(function(){
@@ -218,6 +238,8 @@ $(document).ready(function(){
 <% end %><br><br>
 
 <%= link_to "Add new option", new_product_option_path(:product_id => @product.id), class: "btn btn-primary" %><br><br>
+
+<p>Product has <%= Variant.where(product_id: @product.id).count %> variants</p>
 
 <input type='button' value="Add product variants" onclick="showVariantsForm()" class="btn btn-primary add-variants"/><br>
 <div class="variants_form" style="display:none;">
