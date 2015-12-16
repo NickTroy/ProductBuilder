@@ -62,8 +62,22 @@ $(document).ready(function(){
 
 <script>
 
-  function showVariantsForm (){
+  function showVariantsForm(){
     $('.variants_form').show();
+    $('.cancel-adding-variants').show();
+    $('.add-variants').hide();
+  }
+  
+  function clearVariantsForm(){
+    $('.add-variants').show();
+    $('.cancel-adding-variants').hide();
+    $('.variants_form').hide();
+    $('.option_value').prop('checked', false);
+    $('.number_of_values_selected').text('0');
+    $('.number_of_variants').text('0');
+    $('.options_selected').val(0);
+    $('#variants').val('{}');
+    $('.preview_product_variants').text('');
   }
   
   function previewVariants() {
@@ -116,7 +130,7 @@ $(document).ready(function(){
     for (option_value in variants[i]) {
       $('<span class="value">' + variants[i][option_value]+ '</span>').appendTo('.variant_row:last');
     }
-    
+  
     
   };
   $('<input value="Save product variants" onclick="createProductVariants()" class="btn btn-primary" type="button">').appendTo('.preview_product_variants');
@@ -144,6 +158,7 @@ $(document).ready(function(){
     });
     
     updateCurrentVariants();
+    clearVariantsForm();
   }
   
   function updateCurrentVariants(){
@@ -174,6 +189,7 @@ $(document).ready(function(){
   }
   
 $(document).ready(function(){
+  clearVariantsForm();
   $('.option_value').change(function(){
     var options_selected, number_of_variants;
     options_selected = parseInt($(this).parents('.option_values_row').children('.number_of_values_selected').text());
@@ -184,10 +200,10 @@ $(document).ready(function(){
     }
     
     $(this).parents('.option_values_row').children('.number_of_values_selected').text(options_selected);
-    $(this).parents('.option_values_row').children('#options_selected').val(options_selected);
+    $(this).parents('.option_values_row').children('.options_selected').val(options_selected);
     
     number_of_variants = 1;
-    $('.variants_form #options_selected').each(function(){
+    $('.variants_form .options_selected').each(function(){
       var num_of_opts = parseInt($(this).val());
       if (num_of_opts > 1) {
         number_of_variants = number_of_variants * num_of_opts;
@@ -285,6 +301,7 @@ $(document).ready(function(){
 
 
 <input type='button' value="Add product variants" onclick="showVariantsForm()" class="btn btn-primary add-variants"/><br>
+<input type='button' value="Canel adding product variants" onclick="clearVariantsForm()" class="btn btn-warning cancel-adding-variants" style ="display:none;"/><br>
 <div class="variants_form" style="display:none;">
   <% @options.each do |opt| %>
     
@@ -298,7 +315,7 @@ $(document).ready(function(){
       <% end %>
       <span class="number_of_values_selected">0</span>
       <span><%= opt.name %> is selected</span>
-      <%= hidden_field_tag 'options_selected', 0 %>
+      <input name="options_selected" class="options_selected" value="0" type="hidden">
     </div> 
   <% end %>
   <p>
