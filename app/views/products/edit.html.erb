@@ -151,19 +151,26 @@ $(document).ready(function(){
       url: "<%= product_variants_path(product_id: @product.id) %>",
       method: "GET",
       dataType: 'json',
-      success: function(data){
-        handleVariantsJSON(data);
+      success: function(variants_json){
+        handleVariantsJSON(variants_json);
       }
     })
   }
   
-  function handleVariantsJSON(data){
-    alert("Data: " + JSON.stringify(data));
-    $('.current_number_of_variants').text(data.length);
-    data.each(function(){
-      $('').appendTo('.current_variants');
-    })
-      
+  function handleVariantsJSON(variants_json){
+    $('.current_number_of_variants').text(variants_json.length);
+    $('.variant-info').remove();
+    for(var i = 0; i < variants_json.length; i++) {
+      $('<div class="variant-info"></div>').appendTo('.current-variants');
+      var options = variants_json[i]["options"];
+      for(var j = 0; j< options.length; j++){
+        var option_name = JSON.stringify(options[j]["option_name"]);
+        var option_value = JSON.stringify(options[j]["option_value"]);
+        $('<span class="option-name-and-value">' +
+          option_name + ' : ' + option_value + 
+        '</span>').appendTo(".variant-info:last");
+      }
+    }
   }
   
 $(document).ready(function(){
