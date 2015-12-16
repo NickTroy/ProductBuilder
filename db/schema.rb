@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151214080949) do
+ActiveRecord::Schema.define(version: 20151214075929) do
 
   create_table "option_values", force: :cascade do |t|
     t.integer  "option_id",  limit: 4
