@@ -10,7 +10,8 @@ class ProductsController < AuthenticatedController
   
   def edit
     @product = ShopifyAPI::Product.find(params[:id])
-    @images = @product.images
+    #@images = @product.images
+    @images = Image.where(product_id: @product.id)
     @options = Option.where(product_id: @product.id)
     @variants = Variant.where(product_id: @product.id)
     #@images_urls = ""

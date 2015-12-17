@@ -11,7 +11,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151217074655) do
+ActiveRecord::Schema.define(version: 20151217102701) do
+
+  create_table "images", force: :cascade do |t|
+    t.integer  "product_id",   limit: 8
+    t.text     "image_source", limit: 65535
+    t.string   "title",        limit: 255
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+  end
+
+  create_table "images_variants", force: :cascade do |t|
+    t.integer  "image_id",   limit: 4
+    t.integer  "variant_id", limit: 4
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
+
+  add_index "images_variants", ["image_id"], name: "index_images_variants_on_image_id", using: :btree
+  add_index "images_variants", ["variant_id"], name: "index_images_variants_on_variant_id", using: :btree
 
   create_table "option_values", force: :cascade do |t|
     t.integer  "option_id",  limit: 4
@@ -56,6 +74,8 @@ ActiveRecord::Schema.define(version: 20151217074655) do
   add_index "variants_option_values", ["option_value_id"], name: "index_variants_option_values_on_option_value_id", using: :btree
   add_index "variants_option_values", ["variant_id"], name: "index_variants_option_values_on_variant_id", using: :btree
 
+  add_foreign_key "images_variants", "images"
+  add_foreign_key "images_variants", "variants"
   add_foreign_key "option_values", "options"
   add_foreign_key "variants_option_values", "option_values"
   add_foreign_key "variants_option_values", "variants"

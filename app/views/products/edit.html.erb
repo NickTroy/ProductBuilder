@@ -6,7 +6,7 @@
 $(document).ready(function(){
   Dropzone.autoDiscover = false;
   $("#dropzone").dropzone({
-    url: '<%= images_path %>',
+    url: '<%= product_images_path %>',
     paramName: 'images',
     clickable: true,
     uploadMultiple: false,
@@ -20,7 +20,7 @@ $(document).ready(function(){
       <% @images.each_with_index do |image, index| %>
         existingFiles.push({ id: "<%= image.id %>"});
         this.emit("addedfile", existingFiles[<%= index %>]);
-        this.emit("thumbnail", existingFiles[<%= index %>], "<%= image.src %>");
+        this.emit("thumbnail", existingFiles[<%= index %>], "data:image/png;base64,<%= image.image_source %>");
       <% end %>
       
       this.on("addedfile", function(file){
@@ -28,16 +28,16 @@ $(document).ready(function(){
         reader.onload = handleReaderLoad;
         reader.readAsDataURL(file);
         function handleReaderLoad(evt) {
-          document.getElementById("image_url")
+          document.getElementById("image_source")
                   .setAttribute('value', evt.target.result.split(',')[1]);
-          document.getElementById("image_name")
+          document.getElementById("title")
                   .setAttribute('value', file.name);
           form = $('#file-form');
           $.ajax( {
             method: "POST",
             dataType: "json",
             timeout: 2000,
-            url: "<%= images_path %>",
+            url: "<%= product_images_path %>",
             data: form.serialize(),
           });
         }
@@ -49,7 +49,7 @@ $(document).ready(function(){
         $.ajax( {
           method: "DELETE",
           timeout: 2000,
-          url: "/images/" + file.id,
+          url: "<%= product_images_path%>" + file.id,
           data: { image_id: file.id, product_id: <%= @product.id%> }
         });
       });
@@ -365,8 +365,8 @@ $(document).ready(function(){
 <% end %>
 
 <form id="file-form" action="<%= images_path %>" method="post" name="file-form">
-  <input id="image_url" name="image_url" type="hidden">
-  <input id="image_name" name="image_name" type="hidden">
+  <input id="image_source" name="image_source" type="hidden">
+  <input id="title" name="title" type="hidden">
   <input id="product_id" name="product_id" value="<%= @product.id %>" type="hidden">
 </form>  
 </div>
