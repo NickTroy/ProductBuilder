@@ -1,9 +1,31 @@
-class VariantsController < ApplicationController
+class VariantsController < AuthenticatedController
 
   def index
     @variants = Variant.all
     respond_to do |format|
       format.json { render 'index' }
+    end
+  end
+  
+  def edit
+    @variant = Variant.find(params[:variant_id])
+    
+  end
+  
+  def update
+    @variant = Variant.find(params[:variant_id])
+    
+    @variant.update_attributes(variant_attributes)
+    
+    redirect_to edit_product_path :id => params[:product_id]
+  end
+  
+  def destroy
+    @product = ShopifyAPI::Product.find(params[:product_id])
+    @variant = Variant.find(params[:variant_id])
+    
+    if @variant.destroy
+      redirect_to edit_product_path :id => params[:product_id]
     end
   end
   
@@ -25,7 +47,10 @@ class VariantsController < ApplicationController
     end
   end
   
-
-
+  private
+  
+    def variant_attributes
+      params.require(:variant).permit(:price, :sku)
+    end
 
 end

@@ -83,7 +83,7 @@ $(document).ready(function(){
   function previewVariants() {
     var options = {};
     $('.option_values_row').each(function(){
-      var option_name = $(this).find('p').text();
+      var option_name = $(this).find('.option-name').text();
       options[option_name] = [];
       $(this).find('.option_values').each(function(){
         if ($(this).find('.option_value').is(":checked")) {
@@ -92,7 +92,6 @@ $(document).ready(function(){
         }  
       });
       if (options[option_name] == '') {
-        //alert(options[option_name]);
         delete options[option_name];
       }
       
@@ -178,13 +177,17 @@ $(document).ready(function(){
     for(var i = 0; i < variants_json.length; i++) {
       $('<div class="variant-info"></div>').appendTo('.current-variants');
       var options = variants_json[i]["options"];
+      var variant_id = variants_json[i]["variant_id"];
       for(var j = 0; j< options.length; j++){
         var option_name = JSON.stringify(options[j]["option_name"]);
         var option_value = JSON.stringify(options[j]["option_value"]);
         $('<span class="option-name-and-value">' +
           option_name + ' : ' + option_value + 
-        '</span>').appendTo(".variant-info:last");
+          '</span>').appendTo(".variant-info:last");
       }
+      $('<a class="btn" href="/products/<%= @product.id %>/variants/<%= @product.id %>/edit?variant_id=' + variant_id + '">Edit variant</a>').appendTo(".variant-info:last");
+      $('<a class="btn btn-danger" data-confirm="Are you sure, you want to delete this product variant?" rel="nofollow" data-method="delete"' +
+      'href="/products/<%= @product.id %>/variants/<%= @product.id %>?variant_id=' + variant_id + '">Delete variant</a>').appendTo(".variant-info:last");
     }
   }
   
@@ -220,114 +223,129 @@ $(document).ready(function(){
 
 <div class="row">
   
-  <div class="col-md-12">
+  <div class="col-md-12 form-group">
     <%= label_tag 'product[title]', "Product title:" %>
-    <%= text_field_tag :title, @product.title %>
+    <%= text_field_tag :title, @product.title, class: "form-control" %>
   </div>
 
 </div>  
 
 <div class="row">
-  <div class="col-md-12">
+  <div class="col-md-12 form-group">
     <%= label_tag 'product[body_html]', "Product description:" %>
-    <%= text_area_tag :body_html, @product.body_html, class: "tinymce" %>
+    <%= text_area_tag :body_html, @product.body_html, class: "tinymce form-control" %>
     <%= tinymce %>      
   </div>
 </div>
 
 <div class="row">
   
-  <div class="col-md-12">
+  <div class="col-md-4 form-group">
     <%= label_tag 'product[type]', "Product type:" %>
-    <%= text_field_tag :product_type, @product.product_type %>
+    <%= text_field_tag :product_type, @product.product_type, class: "form-control" %>
+  </div>
+  
+  <div class="col-md-4 form-group">
+    <%= label_tag 'product[published_scope]', "Product published scope:" %>
+    <%= text_field_tag :published_scope, @product.published_scope, class: "form-control" %>
+  </div>
+  
+  <div class="col-md-4 form-group">
+    <%= label_tag 'product[vendor]', "Product vendor:" %>
+    <%= text_field_tag :vendor, @product.vendor, class: "form-control" %>
   </div>
 
 </div>  
 
 <div class="row">
-  
   <div class="col-md-12">
-    <%= label_tag 'product[published_scope]', "Product published scope:" %>
-    <%= text_field_tag :published_scope, @product.published_scope %>
+    <div class="dropzone-previews dropzone" id="dropzone"> 
+      <div class="dz-default dz-message"><span>Drop files here to upload</span>
+      </div>
+    </div>  
   </div>
+</div><br>
 
-</div> 
-
-<div class="row">
+<div class="options-container">
   
-  <div class="col-md-12">
-    <%= label_tag 'product[vendor]', "Product vendor:" %>
-    <%= text_field_tag :vendor, @product.vendor %>
-  </div>
+  <h2>OPTIONS</h2>
+  <h3> Product has <%= @options.count%> options:</h3>    
 
+  <div class="row">
+    <% @options.each do |opt| %>
+      <div class="col-md-4">
+        <p>Option <%= opt.name.upcase %> has <%= opt.option_values.count %> values:</p>
+        <p>
+          <% opt.option_values.each do |value| %> 
+          <span><%=value.value %>,</span>
+          <% end %>
+        </p>
+        <%= link_to 'Delete option', { :controller => "options", :action => "destroy", :product_id => @product.id, :option_id => opt.id }, 
+                            { :method => :delete, class: "btn btn-danger", 
+                            data: { confirm: 'Are you sure, you want to delete this option?' } } %>     
+      </div>
+    <% end %>
+  
+  </div><br>
+
+  <%= link_to "Add new option", new_product_option_path(:product_id => @product.id), class: "btn btn-primary" %><br><br>
+  
 </div>
 
-<div class="dropzone-previews dropzone" id="dropzone"> 
-  <div class="dz-default dz-message"><span>Drop files here to upload</span></div>
-</div>
-
-<p> Product has <%= @options.count%> options</p>
-
-<% @options.each do |opt| %>
-  <div style="display:inline-block;">
-    <p>Option <%= opt.name.upcase %> has <%= opt.option_values.count %> values:</p>
-    <p>
-      <% opt.option_values.each do |value| %> 
-      <span><%=value.value %>,</span>
-      <% end %>
-    </p>
-    <%= link_to 'Delete option', { :controller => "options", :action => "destroy", :product_id => @product.id, :option_id => opt.id }, 
+<div class="variants-container">
+  
+  <h2>VARIANTS</h2>
+  
+  <div class="current-variants">
+    <h3>Product variants list (currently has <span class="current_number_of_variants"><%= Variant.where(product_id: @product.id).count %></span> variants):</h3>  
+  
+    <% @variants.each do |variant| %>
+      <div class="variant-info">
+        <% variant.option_values.each do |opt_val| %>
+          <span class="option-name-and-value">
+            <%= opt_val.option.name %> : <%= opt_val.value %> 
+          
+          </span>
+        <% end %>
+        <%= link_to 'Edit variant', { :controller => "variants", :action => "edit", :product_id => @product.id, :variant_id => variant.id }, { class: "btn"}  %>
+        <%= link_to 'Delete variant', { :controller => "variants", :action => "destroy", :product_id => @product.id, :variant_id => variant.id }, 
                           { :method => :delete, class: "btn btn-danger", 
-                          data: { confirm: 'Are you sure, you want to delete this option?' } } %>     
+                          data: { confirm: 'Are you sure, you want to delete this product variant?' } } %>
+      </div>
+    <% end %>
   </div>
-  
-<% end %><br><br>
 
-<%= link_to "Add new option", new_product_option_path(:product_id => @product.id), class: "btn btn-primary" %><br><br>
 
-<div class="current-variants">
-  <p>Product has <span class="current_number_of_variants"><%= Variant.where(product_id: @product.id).count %></span> variants:</p>  
-  
-  <% @variants.each do |variant| %>
-    <div class="variant-info">
-      <% variant.option_values.each do |opt_val| %>
-        <span class="option-name-and-value">
-          <%= opt_val.option.name %> : <%= opt_val.value %> 
-        </span>
-      <% end %>
+  <input type='button' value="Add product variants" onclick="showVariantsForm()" class="btn btn-primary add-variants"/><br>
+  <input type='button' value="Canel adding product variants" onclick="clearVariantsForm()" class="btn btn-warning cancel-adding-variants" style ="display:none;"/><br>
+  <div class="variants_form" style="display:none;">
+    <% @options.each do |opt| %>
+     
+      <div class="option_values_row <%= opt.name %>">
+        <h4 class="option-name"><%= opt.name %></h4>
+        <% opt.option_values.each do |value| %>
+          <span class="option_values">
+            <label for="<%= value.value %>"><%= value.value %></label>
+            <input type="checkbox" class="option_value" value=0 />
+          </span>
+        <% end %>
+        <span class="number_of_values_selected">0</span>
+        <span><%= opt.name %> is selected</span>
+        <input name="options_selected" class="options_selected" value="0" type="hidden">
+      </div> 
+    <% end %>
+    <p>
+      <span class="number_of_variants">0</span>
+      <span> variants will be created </span>
+    </p>
+    <input type='button' value="Preview product variants" onclick="previewVariants()" class="btn btn-primary"/><br>
+    <%= hidden_field_tag :variants, {} %>
+    <div class="preview_product_variants">
+    
     </div>
-  <% end %>
-</div>
-
-
-<input type='button' value="Add product variants" onclick="showVariantsForm()" class="btn btn-primary add-variants"/><br>
-<input type='button' value="Canel adding product variants" onclick="clearVariantsForm()" class="btn btn-warning cancel-adding-variants" style ="display:none;"/><br>
-<div class="variants_form" style="display:none;">
-  <% @options.each do |opt| %>
-    
-    <div class="option_values_row <%= opt.name %>">
-      <p><%= opt.name %></p>
-      <% opt.option_values.each do |value| %>
-        <span class="option_values">
-          <label for="<%= value.value %>"><%= value.value %></label>
-          <input type="checkbox" class="option_value" value=0 />
-        </span>
-      <% end %>
-      <span class="number_of_values_selected">0</span>
-      <span><%= opt.name %> is selected</span>
-      <input name="options_selected" class="options_selected" value="0" type="hidden">
-    </div> 
-  <% end %>
-  <p>
-    <span class="number_of_variants">0</span>
-    <span> variants will be created </span>
-  </p>
-  <input type='button' value="Preview product variants" onclick="previewVariants()" class="btn btn-primary"/><br>
-  <%= hidden_field_tag :variants, {} %>
-  <div class="preview_product_variants">
-    
   </div>
-</div>
+</div><br>
+  
 
 
 <div class="row">

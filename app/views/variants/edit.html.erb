@@ -1,0 +1,22 @@
+<%= form_for @variant, url: product_variant_path(:product_id => params[:product_id], :variant_id => @variant.id ) do |f| %>
+  <div class="row">
+    <div class="col-md-12">
+      <%= f.label 'variant[sku]', "SKU (Stock Keeping Unit)" %>
+      <%= f.text_field :sku %>
+    </div>
+  </div>  
+
+  <div class="row">
+    <div class="col-md-12">
+      <%= f.label 'variant[price]', "Price" %>
+      <%= f.text_field :price %>
+    </div>
+  </div>  
+
+  <div class="row">
+    <div class="col-md-2">
+      <%= f.submit "Save", :class => "btn btn-success" %>
+    </div>
+  </div>
+
+<% end %>
