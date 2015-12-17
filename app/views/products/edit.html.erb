@@ -20,7 +20,7 @@ $(document).ready(function(){
       <% @images.each_with_index do |image, index| %>
         existingFiles.push({ id: "<%= image.id %>"});
         this.emit("addedfile", existingFiles[<%= index %>]);
-        this.emit("thumbnail", existingFiles[<%= index %>], "data:image/png;base64,<%= image.image_source %>");
+        this.emit("thumbnail", existingFiles[<%= index %>], "<%= image.image_source %>");
       <% end %>
       
       this.on("addedfile", function(file){
@@ -29,8 +29,8 @@ $(document).ready(function(){
         reader.readAsDataURL(file);
         function handleReaderLoad(evt) {
           document.getElementById("image_source")
-                  .setAttribute('value', evt.target.result.split(',')[1]);
-          document.getElementById("title")
+                  .setAttribute('value', evt.target.result);
+          document.getElementById("image_title")
                   .setAttribute('value', file.name);
           form = $('#file-form');
           $.ajax( {
@@ -261,7 +261,7 @@ $(document).ready(function(){
 
 <div class="images-container">
   <div class="row">
-    <div class="col-md-12 form-group">
+    <div class="col-md-12">
       <h2>PRODUCT IMAGES</h2>
       <div class="dropzone-previews dropzone" id="dropzone"> 
         <div class="dz-default dz-message"><span>Drop files here to upload</span>
@@ -370,7 +370,7 @@ $(document).ready(function(){
 
 <form id="file-form" action="<%= product_images_path(:product_id => @product.id) %>" method="post" name="file-form">
   <input id="image_source" name="image_source" type="hidden">
-  <input id="title" name="title" type="hidden">
+  <input id="image_title" name="title" type="hidden">
   <input id="product_id" name="product_id" value="<%= @product.id %>" type="hidden">
 </form>  
 </div>

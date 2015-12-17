@@ -1,3 +1,13 @@
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/image-picker/0.2.4/image-picker.min.js"></script>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/image-picker/0.2.4/image-picker.min.css' rel='stylesheet' type='text/css'>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $("select").imagepicker();
+});
+  
+</script>
 <div class="container">
   <%= form_for @variant, url: product_variant_path(:product_id => params[:product_id], :variant_id => @variant.id ) do |f| %>
     <div class="row">
@@ -13,6 +23,13 @@
         <%= f.text_field :price, class: "form-control" %>
       </div>
     </div>  
+    
+    <select class="image-picker show-html">
+  <option value=""></option>
+  <option data-img-src="http://placekitten.com/300/200" value="1">Cute Kitten 1</option>
+  <option data-img-src="http://placekitten.com/150/200" value="2">Cute Kitten 2</option>
+  <option data-img-src="http://placekitten.com/400/200" value="3">Cute Kitten 3</option>
+</select>
 
     <div class="row">
       <div class="col-md-2">

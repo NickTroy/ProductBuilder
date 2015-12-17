@@ -45,64 +45,54 @@ $(document).ready(function () {
 
 
 
-<%= form_tag products_path, id: "my-awesome-dropzone", class: "dropzone", method: "post" do %>
 
-<div class="row">
-  <div class="dropzone-previews">
-    
-  </div>
-</div>
-<div class="row">
+
+<div class="container">
+  <%= form_tag products_path, method: "post" do %>
+    <div class="row">
   
-  <div class="col-md-12">
-    <%= label_tag 'product[title]', "Product title:" %>
-    <%= text_field_tag :title %>
-  </div>
+      <div class="col-md-12 form-group">
+        <%= label_tag 'product[title]', "Product title:" %>
+        <%= text_field_tag :title, nil, class: "form-control" %>
+      </div>
 
-</div>  
+    </div>  
 
-<div class="row">
+    <div class="row">
+      <div class="col-md-12 form-group">
+        <%= label_tag 'product[body_html]', "Product description:" %>
+        <%= text_area_tag :body_html, nil, class: "tinymce form-control" %>
+        <%= tinymce %>      
+      </div>
+   </div>
+
+    <div class="row">
   
-  <div class="col-md-12">
-    <%= label_tag 'product[type]', "Product type:" %>
-    <%= text_field_tag :product_type %>
-  </div>
-
-</div>  
-
-<div class="row">
+      <div class="col-md-4 form-group">
+        <%= label_tag 'product[type]', "Product type:" %>
+        <%= text_field_tag :product_type, nil, class: "form-control" %>
+      </div>
   
-  <div class="col-md-12">
-    <%= label_tag 'product[published_scope]', "Product published scope:" %>
-    <%= text_field_tag :published_scope%>
-  </div>
-
-</div> 
-
-<div class="row">
+      <div class="col-md-4 form-group">
+        <%= label_tag 'product[published_scope]', "Product published scope:" %>
+        <%= text_field_tag :published_scope, nil, class: "form-control" %>
+      </div>
   
-  <div class="col-md-12">
-    <%= label_tag 'product[vendor]', "Product vendor:" %>
-    <%= text_field_tag :vendor%>
-  </div>
+      <div class="col-md-4 form-group">
+        <%= label_tag 'product[vendor]', "Product vendor:" %>
+        <%= text_field_tag :vendor, nil, class: "form-control" %>
+      </div>
 
-</div> 
+    </div>  
 
-<div class="row">
-  <div class="col-md-12">
-    <%= label_tag 'product[body_html]', "Product description:" %>
-    <%= text_area_tag :body_html, nil, class: "tinymce" %>
-    <%= tinymce %>      
-  </div>
+    <div class="row">
+      <div class="col-md-2">
+        <%= submit_tag "Save and add extra information", :class => "btn btn-success" %>
+      </div>
+    </div>
+
+    <div class="row">
+      <input type="hidden" id="images" name="images"/> 
+    </div>
+  <% end %>  
 </div>
-
-<div class="row">
-  <div class="col-md-2">
-    <%= submit_tag "Save", :class => "btn btn-success" %>
-  </div>
-</div>
-
-<div class="row">
-  <input type="hidden" id="images" name="images"/> 
-</div>
-<% end %>

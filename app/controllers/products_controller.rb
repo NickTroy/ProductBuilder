@@ -2,6 +2,8 @@ class ProductsController < AuthenticatedController
 
   def index
     @products = ShopifyAPI::Product.find(:all)
+    @variants = Variant.all
+    @images = Image.all
   end
 
   def new
@@ -23,15 +25,7 @@ class ProductsController < AuthenticatedController
     respond_to do |format|
       format.html do 
         if @product.save
-          @urls_of_images = params[:images].split(',')
-          @urls_of_images.delete("") if @urls_of_images[0] == "" 
-          @urls_of_images.each do |url|
-            @image = ShopifyAPI::Image.new(:product_id => @product.id)
-            @image.attachment = url
-            @image.save
-          end
-          
-          redirect_to products_path
+          redirect_to edit_product_path :id => @product.id
         end
       end
     end
@@ -53,7 +47,12 @@ class ProductsController < AuthenticatedController
   
   def destroy
     @product = ShopifyAPI::Product.find(params[:id])
-    
+    @images = Image.where(product_id: params[:id])
+    @variants = Variant.where(product_id: params[:id])
+    @options = Option.where(product_id: params[:id])
+    @images.each { |img| img.destroy }
+    @variants.each { |var| var.destroy }
+    @options.each { |opt| opt.destroy }
     @product.destroy
     
     respond_to do |format|

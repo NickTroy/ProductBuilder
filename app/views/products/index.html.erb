@@ -1,50 +1,38 @@
 <div class="container">
-<h3>Products</h3>
-<table>
-  <tbody>
-    <th>
-      Product ID
-    </th>
-    <th>
-      Product Title
-    </th>
-    <th>
-      Product Image
-    </th>
-    <th>
-      Product Description
-    </th>
-    <th>
-      Number of Product Variants
-    </th>
+  <h3>Products</h3>
+    <div class="row">
+      <div class="col-md-2">Product Title</div>
+      <div class="col-md-2">Product Image</div>
+      <div class="col-md-2">Product Description</div>
+      <div class="col-md-2">Number of Product Variants</div>
+      <div class="col-md-2"></div>
+    </div>
+    
+
     <% @products.each do |product| %>
-      <tr>
-        <td>
-          <%= product.id %>
-        </td>
-        <td>
+      <div class="row">
+        <div class="col-md-2">
           <%= link_to product.title, { :controller => "products", :action => "edit", :id => product.id }  %>
-        </td>
-        <td>
-          <%= image_tag(product.image.src) unless product.image.nil? %>
-        </td>
-        <td>
+        </div>
+        <div class="col-md-2">
+          <%= image_tag(@images.where(product_id: product.id).first.image_source, style: "width:100px;") unless @images.where(product_id: product.id).empty? %>
+        </div>
+        <div class="col-md-2">
           <%= render html: product.body_html.html_safe unless product.body_html.nil? %>
-        </td>
-        <td>
-          Product has <%= product.variants.count %> variants
-        </td>
-        <td>
+        </div>
+        <div class="col-md-2">
+          Product has <%= @variants.where(product_id: product.id).count %> variants
+        </div>
+        <div class="col-md-2">
           <%= link_to 'Delete', { :controller => "products", :action => "destroy", :id => product.id }, 
                                 { :method => :delete, 
                                 class: "btn btn-danger", style: "width: 80%;",
-                                data: { confirm: 'Are you sure, you want to delete this product?' } } %>
-        </td>
-      </tr>
+                                data: { confirm: 'Are you sure, you want to delete this product?' } } %>      
+        </div>
+      </div>
     <% end %>
-  </tbody>
-</table>
+    
+    
 
-<%= link_to 'Main Page', root_url %>
 <%= link_to 'Add new product', new_product_path %>  
 </div>
