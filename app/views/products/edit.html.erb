@@ -310,7 +310,7 @@ $(document).ready(function(){
         <%= link_to 'Delete option', { :controller => "options", :action => "destroy", :product_id => @product.id, :option_id => opt.id }, 
                             { :method => :delete, class: "btn btn-danger", 
                             data: { confirm: 'Are you sure, you want to delete this option?' } } %>     
-        <%= link_to 'Edit option', { :controller => "options", :action => "edit", :product_id => @product.id, :option_id => opt.id }, { class: "btn btn-info", style:'display:none;' } %>                            
+        <%= link_to 'Edit option', { :controller => "options", :action => "edit", :product_id => @product.id, :option_id => opt.id }, { class: "btn btn-info" } %>                            
       </div>
     <% end %>
   
