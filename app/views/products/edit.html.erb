@@ -181,7 +181,12 @@ $(document).ready(function(){
       $('<div class="variant-info row"></div>').appendTo('.current-variants');
       var options = variants_json[i]["options"];
       var variant_id = variants_json[i]["variant_id"];
-      $('<div class="col-md-9 options_and_values"></div>').appendTo('.variant-info:last');
+      var image_source = variants_json[i]["image_source"];
+      if (image_source === undefined) {
+        image_source = '';
+      }
+      $('<div class="col-md-1"><img src="' + image_source + '" style="height:30px;"></img></div>').appendTo('.variant-info:last');
+      $('<div class="col-md-8 options_and_values"></div>').appendTo('.variant-info:last');
       for(var j = 0; j< options.length; j++){
         var option_name = JSON.stringify(options[j].option_name);
         var option_value = JSON.stringify(options[j].option_value);
@@ -323,7 +328,7 @@ $(document).ready(function(){
         <div class="col-md-8 options_and_values">
           <% variant.option_values.each do |opt_val| %>
             <div class="col-md-2">
-              <span class="option-name-and-value" style="width:">
+              <span class="option-name-and-value" >
                 <%= opt_val.option.name %> : <%= opt_val.value %> 
               </span>  
             </div>
