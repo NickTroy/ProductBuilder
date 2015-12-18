@@ -162,7 +162,7 @@ $(document).ready(function(){
   
   function updateCurrentVariants(){
     $.ajax({
-      url: "<%= product_variants_path(product_id: @product.id) %>",
+      url: "<%= product_variant_path(product_id: @product.id) %>",
       method: "GET",
       dataType: 'json',
       success: function(variants_json){

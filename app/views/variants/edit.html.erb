@@ -14,6 +14,11 @@ $(document).ready(function(){
 });
   
 </script>
+<style>
+  img {
+    width:200px;
+  }
+</style>
 <div class="container">
   <%= form_for @variant, url: product_variant_path(:product_id => params[:product_id], :variant_id => @variant.id ) do |f| %>
     <div class="row">

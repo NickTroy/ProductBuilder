@@ -7,10 +7,15 @@ class VariantsController < AuthenticatedController
     end
   end
   
+  
   def edit
     @variant = Variant.find(params[:variant_id])
     @image = @variant.product_image
     @images = ProductImage.where(product_id: @variant.product_id)
+  end
+  
+  def show
+    @variants = Variant.where(product_id: params[:product_id])
   end
   
   def update
