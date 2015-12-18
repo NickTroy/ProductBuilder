@@ -15,5 +15,6 @@
 //= require bootstrap-sprockets
 //= require tinymce-jquery
 //= require dropzone
+//= require image-picker
 //= require turbolinks
 //= require_tree .

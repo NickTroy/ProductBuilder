@@ -3,8 +3,14 @@
 <link href='https://cdnjs.cloudflare.com/ajax/libs/image-picker/0.2.4/image-picker.min.css' rel='stylesheet' type='text/css'>
 
 <script type="text/javascript">
+
 $(document).ready(function(){
+  <% unless @variant.product_image.nil? %>
+    var selected_image = <%= @variant.product_image.id %>;
+    $("select").find('option[value="'+ selected_image +'"]').prop('selected',true);
+  <% end %>
   $("select").imagepicker();
+  
 });
   
 </script>
@@ -24,12 +30,12 @@ $(document).ready(function(){
       </div>
     </div>  
     
-    <select class="image-picker show-html">
-  <option value=""></option>
-  <option data-img-src="http://placekitten.com/300/200" value="1">Cute Kitten 1</option>
-  <option data-img-src="http://placekitten.com/150/200" value="2">Cute Kitten 2</option>
-  <option data-img-src="http://placekitten.com/400/200" value="3">Cute Kitten 3</option>
-</select>
+    <select class="image-picker show-html" id="selectImage" name="image_id">
+      
+      <% @images.each_with_index do |img, i| %>
+        <option data-img-src="<%= img.image_source %>" value="<%= img.id %>">Cute Kitten 1</option>
+      <% end %>
+    </select>
 
     <div class="row">
       <div class="col-md-2">

@@ -3,7 +3,7 @@ class ProductsController < AuthenticatedController
   def index
     @products = ShopifyAPI::Product.find(:all)
     @variants = Variant.all
-    @images = Image.all
+    @images = ProductImage.all
   end
 
   def new
@@ -13,7 +13,7 @@ class ProductsController < AuthenticatedController
   def edit
     @product = ShopifyAPI::Product.find(params[:id])
     #@images = @product.images
-    @images = Image.where(product_id: @product.id)
+    @images = ProductImage.where(product_id: @product.id)
     @options = Option.where(product_id: @product.id)
     @variants = Variant.where(product_id: @product.id)
     #@images_urls = ""
@@ -47,7 +47,7 @@ class ProductsController < AuthenticatedController
   
   def destroy
     @product = ShopifyAPI::Product.find(params[:id])
-    @images = Image.where(product_id: params[:id])
+    @images = ProductImage.where(product_id: params[:id])
     @variants = Variant.where(product_id: params[:id])
     @options = Option.where(product_id: params[:id])
     @images.each { |img| img.destroy }

@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   resources :products do
     resources :variants
     resources :options
-    resources :images
+    resources :product_images
   end
   put '/generate_variants', to: 'variants#generate_product_variants'
 

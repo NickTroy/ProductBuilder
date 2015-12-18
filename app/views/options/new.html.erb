@@ -3,28 +3,30 @@
     var num_of_opts = $("#number_of_option_values").val();
     $("#number_of_option_values").attr('value', parseInt(num_of_opts) + 1);
     num_of_opts = parseInt(num_of_opts) + 1;
-    $('<div id="option' + num_of_opts + '" style="inline-block;"> '+ 
-      '<br> Option value #'+ num_of_opts + '<input name="option_value' + num_of_opts + '" id="option_value' + num_of_opts + '" type="text"/></div>').appendTo('.options')
+    $('<div id="option' + num_of_opts + '" class="form-group" style="inline-block;"> '+ 
+      '<br> Option value #'+ num_of_opts + '<input class="form-control" name="option_value' + num_of_opts + '" id="option_value' + num_of_opts + '" type="text"/></div>').appendTo('.options')
   }
 </script>
-<%= form_for @option, url: product_options_path(:product_id => params[:product_id]) do |f| %> <!-- (:product_id => params[:product_id]) -->
+<div class="container">
+  <%= form_for @option, url: product_options_path(:product_id => params[:product_id]) do |f| %>
 
-<div class="row">
-  <div class="col-md-12">
-    <%= f.label 'option[name]', "Option name:" %>
-    <%= f.text_field :name %>
+  <div class="row">
+    <div class="col-md-6 form-group">
+      <%= f.label 'option[name]', "Option name:" %>
+      <%= f.text_field :name, class: "form-control" %>
+    </div>
+  </div>  
+  
+  <div class="options">
+    <button type="button" class="btn btn-info" onclick="createOptionTypeSelect()">Add option value</button>
+    <%= hidden_field_tag 'number_of_option_values', 0 %>  
+  </div><br>
+
+  <div class="row">
+    <div class="col-md-2">
+      <%= f.submit "Save", :class => "btn btn-success" %>
+    </div>
   </div>
-</div>  
 
-<div class="options">
-  <button type="button" onclick="createOptionTypeSelect()">Add option value</button>
-  <%= hidden_field_tag 'number_of_option_values', 0 %>  
+  <% end %>  
 </div>
-
-<div class="row">
-  <div class="col-md-2">
-    <%= f.submit "Save", :class => "btn btn-success" %>
-  </div>
-</div>
-
-<% end %>

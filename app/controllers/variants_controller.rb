@@ -9,12 +9,14 @@ class VariantsController < AuthenticatedController
   
   def edit
     @variant = Variant.find(params[:variant_id])
-    
+    @image = @variant.product_image
+    @images = ProductImage.where(product_id: @variant.product_id)
   end
   
   def update
     @variant = Variant.find(params[:variant_id])
-    
+    @image_selected = ProductImage.find(params[:image_id])
+    @variant.product_image = @image_selected
     @variant.update_attributes(variant_attributes)
     
     redirect_to edit_product_path :id => params[:product_id]
