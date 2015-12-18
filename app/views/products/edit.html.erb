@@ -317,7 +317,10 @@ $(document).ready(function(){
     </div>-->
     <% @variants.each do |variant| %>
       <div class="variant-info row">
-        <div class="col-md-9 options_and_values">
+        <div class="col-md-1">
+          <%= variant.product_image.nil? ? "" : image_tag(variant.product_image.image_source, style: "height:30px;") %>
+        </div>
+        <div class="col-md-8 options_and_values">
           <% variant.option_values.each do |opt_val| %>
             <div class="col-md-2">
               <span class="option-name-and-value" style="width:">
@@ -326,7 +329,7 @@ $(document).ready(function(){
             </div>
               
           <% end %>
-          <div class="col-md-3">
+          <div class="col-md-3" style="float:right;">
             <%= "price: #{((variant.price.nil?) or (variant.price == '')) ? "not set" : variant.price} sku: #{((variant.sku.nil?) or (variant.sku == '')) ? "not set" : variant.sku}" %>  
           </div>
           
