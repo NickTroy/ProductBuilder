@@ -3,7 +3,7 @@
     var num_of_opts = $("#number_of_option_values").val();
     $("#number_of_option_values").attr('value', parseInt(num_of_opts) + 1);
     num_of_opts = parseInt(num_of_opts) + 1;
-    $('<div id="option' + num_of_opts + '" class="form-group" style="inline-block;"> '+ 
+    $('<div id="option' + num_of_opts + '" class="form-group col-md-4" style="inline-block;"> '+ 
       '<br> Option value #'+ num_of_opts + '<input class="form-control" name="option_value' + num_of_opts + '" id="option_value' + num_of_opts + '" type="text"/></div>').appendTo('.options')
   }
 </script>
@@ -17,14 +17,24 @@
     </div>
   </div>  
   
-  <div class="options">
-    <button type="button" class="btn btn-info" onclick="createOptionTypeSelect()">Add option value</button>
+  <div class="options row">
+    
     <%= hidden_field_tag 'number_of_option_values', 0 %>  
   </div><br>
-
+  
+  <div class="row">
+    <div class="col-md-4">
+      <button type="button" class="btn btn-info" onclick="createOptionTypeSelect()">Add option value</button>  
+    </div>
+  </div><br>
+  
   <div class="row">
     <div class="col-md-2">
       <%= f.submit "Save", :class => "btn btn-success" %>
+    </div>
+    
+    <div class="col-md-2">
+        <%= f.submit "Cancel", :class => 'btn btn-warning' %>
     </div>
   </div>
 

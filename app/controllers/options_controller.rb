@@ -6,6 +6,12 @@ class OptionsController < AuthenticatedController
   end
   
   def create
+    
+    if params[:commit] == 'Cancel'
+      redirect_to edit_product_path :id => params[:product_id]
+      return true
+    end
+    
     @product = ShopifyAPI::Product.find(params[:product_id])
     @option = Option.new(option_params)
     @option.name = params[:option][:name]

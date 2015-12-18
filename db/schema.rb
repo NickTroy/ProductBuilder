@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151218101526) do
+ActiveRecord::Schema.define(version: 20151218125733) do
 
   create_table "option_values", force: :cascade do |t|
     t.integer  "option_id",  limit: 4
@@ -48,10 +48,10 @@ ActiveRecord::Schema.define(version: 20151218101526) do
 
   create_table "variants", force: :cascade do |t|
     t.integer  "product_id",       limit: 8
-    t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
-    t.decimal  "price",                      precision: 10
-    t.integer  "sku",              limit: 4
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
+    t.decimal  "price",                        precision: 10
+    t.string   "sku",              limit: 255
     t.integer  "image_id",         limit: 4
     t.integer  "product_image_id", limit: 4
   end
