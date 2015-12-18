@@ -137,8 +137,10 @@ $(document).ready(function(){
   }
   
   function createProductVariants(){
-    var variants_json = {};
-    variants_json = { _method: 'PUT', product_id: <%= params[:id] %> };
+    var variants_json = { _method: 'PUT', product_id: <%= params[:id] %> }; 
+    var variants = JSON.parse($('#variants').val());
+    variants_json["variants"] = variants
+    /*variants_json = { _method: 'PUT', product_id: <%= params[:id] %> };
     variants_json["variants"] = [];
     $('.variant_row').each(function(){
       var option_names = [];
@@ -147,8 +149,8 @@ $(document).ready(function(){
       });
       //alert(JSON.stringify(variant));
       variants_json["variants"].push(option_names);
-    });
-    //alert(JSON.stringify(variants_json));
+    });*/
+    alert(JSON.stringify(variants_json));
     $.ajax({
       url: "<%= generate_variants_path %>",
       method: "POST",
@@ -174,6 +176,7 @@ $(document).ready(function(){
   function handleVariantsJSON(variants_json){
     $('.current_number_of_variants').text(variants_json.length);
     $('.variant-info').remove();
+    alert(JSON.stringify(variants_json));
     for(var i = 0; i < variants_json.length; i++) {
       $('<div class="variant-info row"></div>').appendTo('.current-variants');
       var options = variants_json[i]["options"];

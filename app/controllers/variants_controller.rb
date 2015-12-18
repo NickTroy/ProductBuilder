@@ -19,6 +19,11 @@ class VariantsController < AuthenticatedController
   end
   
   def update
+    if params[:commit] == 'Cancel'
+      redirect_to edit_product_path :id => params[:product_id]
+      return true
+    end
+    
     @variant = Variant.find(params[:variant_id])
     @image_selected = ProductImage.find(params[:image_id])
     @variant.product_image = @image_selected
@@ -41,11 +46,12 @@ class VariantsController < AuthenticatedController
       format.json do
         params[:variants].each do |variant|
           @variant = Variant.new(product_id: params[:product_id])
-          variant[1].each do |option_value| 
+          variant[1].each do |option_value|
             @option_value = OptionValue.find_by(value: option_value)
             @variant.option_values << @option_value
           end
           @variant.save
+          
         end
         
         redirect_to :back#edit_product_path(params[:product_id])
