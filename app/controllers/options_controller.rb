@@ -1,7 +1,6 @@
 class OptionsController < AuthenticatedController
   
   def new
-    @product = ShopifyAPI::Product.find(params[:product_id])
     @option = Option.new
   end
   
@@ -50,6 +49,11 @@ class OptionsController < AuthenticatedController
     
   end
   
+  def show
+    @option = Option.find(params[:id])
+    @option_values = @option.option_values
+  end
+  
   def destroy
     @product = ShopifyAPI::Product.find(params[:product_id])
     @option = Option.find(params[:option_id])
@@ -59,9 +63,23 @@ class OptionsController < AuthenticatedController
     end
   end
   
+  def assign_option_to_product
+    @option = Option.find(params[:option_id])
+    @option.products_options.create(:product_id => params[:product_id])
+    
+    redirect_to edit_product_path :id => params[:product_id]
+  end
+  
+  def unassign_option_from_product
+    @product_option = ProductsOption.where(:product_id => params[:product_id], :option_id => params[:option_id])[0]
+    @product_option.destroy
+    
+    redirect_to edit_product_path :id => params[:product_id]
+  end
+  
   private
   
   def option_params
-    params.permit(:product_id, :name)
+    params.permit(:name)
   end
 end

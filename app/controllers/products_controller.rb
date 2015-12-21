@@ -12,13 +12,11 @@ class ProductsController < AuthenticatedController
   
   def edit
     @product = ShopifyAPI::Product.find(params[:id])
-    #@images = @product.images
     @images = ProductImage.where(product_id: @product.id)
     @options = Option.all
-    @product_options = Option.where(product_id: params[:id])
+    @product_options = Option.joins("inner join products_options on products_options.option_id = options.id")
+    ProductsOption.where(product_id: params[:id])
     @variants = Variant.where(product_id: @product.id)
-    #@images_urls = ""
-    #@images.each { |img| @images_urls += img.src + ','}
   end
   
   def create

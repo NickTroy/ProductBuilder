@@ -8,7 +8,7 @@
   }
 </script>
 <div class="container">
-  <%= form_for @option, url: product_option_path(:product_id => params[:product_id], :option_id => params[:option_id]) do |f| %>
+  <%= form_for @option, url: option_path(:product_id => params[:product_id], :option_id => params[:option_id]) do |f| %>
 
   <div class="row">
     <div class="col-md-6 form-group">
