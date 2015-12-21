@@ -225,8 +225,8 @@ $(document).ready(function(){
       },
       
     });
-    //alert(JSON.stringify($(this).parent().text()));
-    console.log($(this));
+    
+    $('#option' + option_id).insertAfter('.product_options > .col-md-4:last')
     //updateProductOptions(option_id);
   }
   
@@ -342,9 +342,9 @@ $(document).ready(function(){
   
   <h3>All available options:</h3>
   
-  <div class="row">
+  <div class="row options">
     <% @options.each do |opt| %>
-      <div class="col-md-4">
+      <div class="col-md-4" id="option<%= opt.id %>">
         <p>Option <%= opt.name.upcase %> has <%= opt.option_values.count %> values:</p>
         <p>
           <% opt.option_values.each do |value| %> 
@@ -368,9 +368,9 @@ $(document).ready(function(){
   
   <h3> Product has <%= @product_options.count %> options:</h3>    
 
-  <div class="row">
+  <div class="row product_options">
     <% @product_options.each do |opt| %>
-      <div class="col-md-4">
+      <div class="col-md-4" id="product-option<%= opt.id %>">
         <p>Option <%= opt.name.upcase %> has <%= opt.option_values.count %> values:</p>
         <p>
           <% opt.option_values.each do |value| %> 
