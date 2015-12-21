@@ -14,7 +14,8 @@ class ProductsController < AuthenticatedController
     @product = ShopifyAPI::Product.find(params[:id])
     #@images = @product.images
     @images = ProductImage.where(product_id: @product.id)
-    @options = Option.where(product_id: @product.id)
+    @options = Option.all
+    @product_options = Option.where(product_id: params[:id])
     @variants = Variant.where(product_id: @product.id)
     #@images_urls = ""
     #@images.each { |img| @images_urls += img.src + ','}
@@ -49,7 +50,7 @@ class ProductsController < AuthenticatedController
     @product = ShopifyAPI::Product.find(params[:id])
     @images = ProductImage.where(product_id: params[:id])
     @variants = Variant.where(product_id: params[:id])
-    @options = Option.where(product_id: params[:id])
+    @product_options = Option.where(product_id: params[:id])
     @images.each { |img| img.destroy }
     @variants.each { |var| var.destroy }
     @options.each { |opt| opt.destroy }
