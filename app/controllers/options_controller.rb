@@ -21,8 +21,10 @@ class OptionsController < AuthenticatedController
     @option.name = params[:option][:name]
     @option.save
     1.upto(params[:number_of_option_values].to_i) do |i|
-      @option_value = OptionValue.new(option_id:@option.id, value:params["option_value#{i}".to_sym])
-      @option_value.save
+      unless params["option_value#{i}".to_sym] = ''
+        @option_value = OptionValue.new(option_id:@option.id, value: params["option_value#{i}".to_sym])
+        @option_value.save
+      end
     end
     if @option.save
       redirect_to edit_product_path :id => params[:product_id]

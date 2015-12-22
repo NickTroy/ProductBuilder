@@ -26,5 +26,5 @@ class ProductImagesController < AuthenticatedController
     def image_params
       params.permit(:image_source, :title, :product_id)
     end
-
+    
 end

@@ -22,7 +22,7 @@
       <div id="option<%= i + 1 %>" class="form-group col-md-4" style="inline-block;"> 
         <br> 
         Option value #<%= i + 1 %>  
-        <input class="form-control" name="option_value<%= i + 1 %>" id="option_value<%= i + 1 %>" type="text" value="<%= option_value.value %>"/>
+        <input readonly class="form-control" name="option_value<%= i + 1 %>" id="option_value<%= i + 1 %>" type="text" value="<%= option_value.value %>"/>
       </div>
     <% end %>
     <%= hidden_field_tag 'number_of_option_values', @option.option_values.count %>  
