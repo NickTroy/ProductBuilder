@@ -16,5 +16,6 @@
 //= require tinymce-jquery
 //= require dropzone
 //= require image-picker
+//= require jquery.remotipart
 //= require turbolinks
 //= require_tree .

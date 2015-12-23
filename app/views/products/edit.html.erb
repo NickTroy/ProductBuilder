@@ -55,7 +55,40 @@ $(document).ready(function(){
       });
     }
   });
+  
+  $("#product-images").dropzone({
+		// restrict image size to a maximum 1MB
+		maxFilesize: 1,
+		// changed the passed param to one accepted by
+		// our rails app
+		paramName: "image",
+		// show remove links on each image upload
+		addRemoveLinks: true,
+		success: function(file, response){
+			// find the remove button link of the uploaded file and give it an id
+			// based of the fileID response from the server
+			$(file.previewTemplate).find('.dz-remove').attr('id', response.imageID);
+			// add the dz-success class (the green tick sign)
+			$(file.previewElement).addClass("dz-success");
+		},
+		//when the remove button is clicked
+		removedfile: function(file){
+			// grap the id of the uploaded file we set earlier
+			var id = $(file.previewTemplate).find('.dz-remove').attr('id'); 
+
+			// make a DELETE ajax request to delete the file
+			$.ajax({
+				type: 'DELETE',
+				url: '<%= product_product_images_path(@product.id) %>/' + id,
+				success: function(data){
+					console.log(data.message);
+				}
+			});
+		}
+	});	
 });
+
+  
 
 
 </script>
@@ -527,5 +560,9 @@ $(document).ready(function(){
   <input id="image_title" name="title" type="hidden">
   <input id="product_id" name="product_id" value="<%= @product.id %>" type="hidden">
 </form>  
+
+<form id="product-images" class="dropzone" action="<%= product_product_images_path(:product_id => @product.id) %>" method="post" name="product-images">
+  <input id="image" name="image" type="file">
+</form> 
 </div>
 
