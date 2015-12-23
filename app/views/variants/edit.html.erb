@@ -38,7 +38,7 @@ $(document).ready(function(){
     <select class="image-picker show-html" id="selectImage" name="image_id">
       
       <% @images.each_with_index do |img, i| %>
-        <option data-img-src="<%= img.image_source %>" value="<%= img.id %>">Cute Kitten 1</option>
+        <option data-img-src="<%= img.image.url(:medium) %>" value="<%= img.id %>">Cute Kitten 1</option>
       <% end %>
     </select>
 

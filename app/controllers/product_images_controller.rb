@@ -13,7 +13,7 @@ class ProductImagesController < AuthenticatedController
   
   def destroy
     #@image = ShopifyAPI::Image.find(params[:image_id], :params => {:product_id => params[:product_id]})
-    @image = ProductImage.find(params[:image_id])
+    @image = ProductImage.find(params[:id])
     if @image.destroy
       redirect_to edit_product_path :id => params[:product_id] 
     end

@@ -5,7 +5,7 @@
 
 $(document).ready(function(){
   Dropzone.autoDiscover = false;
-  $("#dropzone").dropzone({
+  /*$("#dropzone").dropzone({
     url: '<%= product_product_images_path(:product_id => @product.id) %>',
     paramName: 'images',
     clickable: true,
@@ -50,11 +50,11 @@ $(document).ready(function(){
           method: "POST",
           timeout: 2000,
           url: "<%= product_product_images_path(:product_id => @product.id) %>/" + file.id,
-          data: { image_id: file.id, product_id: <%= @product.id%>, _method: "delete" }
+          data: { id: file.id, product_id: <%= @product.id%>, _method: "delete" }
         });
       });
     }
-  });
+  });*/
   
   $("#product-images").dropzone({
 		// restrict image size to a maximum 1MB
@@ -62,29 +62,43 @@ $(document).ready(function(){
 		// changed the passed param to one accepted by
 		// our rails app
 		paramName: "image",
+		previewsContainer: '.dropzone-previews',
+		clickable: '.dropzone-previews',
 		// show remove links on each image upload
 		addRemoveLinks: true,
 		success: function(file, response){
 			// find the remove button link of the uploaded file and give it an id
 			// based of the fileID response from the server
-			$(file.previewTemplate).find('.dz-remove').attr('id', response.imageID);
+			$('.dropzone-previews').find('.dz-remove').attr('id', response.imageID);
 			// add the dz-success class (the green tick sign)
-			$(file.previewElement).addClass("dz-success");
+			$('.dropzone-previews').addClass("dz-success");
+			
 		},
 		//when the remove button is clicked
-		removedfile: function(file){
-			// grap the id of the uploaded file we set earlier
-			var id = $(file.previewTemplate).find('.dz-remove').attr('id'); 
+		init: function(){
+		  var existingFiles = [];
+      <% @images.each_with_index do |image, index| %>
+        existingFiles.push({ id: "<%= image.id %>"});
+        this.emit("addedfile", existingFiles[<%= index %>]);
+        this.emit("thumbnail", existingFiles[<%= index %>], "<%= image.image.url %>");
+        $('.dropzone-previews').find('.dz-remove:last').attr('id', <%= image.id %>);
+      <% end %>
+      
+		  this.on("removedfile", function(file){
+		    var id = $('.dropzone-previews').find('.dz-remove').attr('id'); 
 
-			// make a DELETE ajax request to delete the file
-			$.ajax({
-				type: 'DELETE',
-				url: '<%= product_product_images_path(@product.id) %>/' + id,
-				success: function(data){
-					console.log(data.message);
-				}
-			});
+			  // make a DELETE ajax request to delete the file
+			  $.ajax({
+				  type: 'POST',
+				  data: { _method: 'DELETE' },
+				  url: '<%= product_product_images_path(@product.id) %>/' + id,
+				  success: function(data){
+					  console.log(data.message);
+			  	}
+			  });  
+		  })
 		}
+		
 	});	
 });
 
@@ -400,7 +414,7 @@ $(document).ready(function(){
   <div class="row">
     <div class="col-md-12">
       <h2>PRODUCT IMAGES</h2>
-      <div class="dropzone-previews dropzone" id="dropzone"> 
+      <div class="dropzone-previews dropzone"> 
         <div class="dz-default dz-message"><span>Drop files here to upload</span>
         </div>
       </div>  
@@ -561,8 +575,8 @@ $(document).ready(function(){
   <input id="product_id" name="product_id" value="<%= @product.id %>" type="hidden">
 </form>  
 
-<form id="product-images" class="dropzone" action="<%= product_product_images_path(:product_id => @product.id) %>" method="post" name="product-images">
-  <input id="image" name="image" type="file">
+<form id="product-images" action="<%= product_product_images_path(:product_id => @product.id) %>" method="post" name="product-images">
+  <input id="image" style="display:none;" name="image" type="file">
 </form> 
 </div>
 
