@@ -500,7 +500,7 @@ $(document).ready(function(){
     <% @variants.each do |variant| %>
       <div class="variant-info row">
         <div class="col-md-1">
-          <%= variant.product_image.nil? ? "" : image_tag(variant.product_image.image_source, style: "height:30px;") %>
+          <%= variant.product_image.nil? ? "" : image_tag(variant.product_image.image.url(:thumb), style: "height:30px;") %>
         </div>
         <div class="col-md-8 options_and_values">
           <% variant.option_values.each do |opt_val| %>
@@ -568,12 +568,6 @@ $(document).ready(function(){
 </div>
 
 <% end %>
-
-<form id="file-form" action="<%= product_product_images_path(:product_id => @product.id) %>" method="post" name="file-form">
-  <input id="image_source" name="image_source" type="hidden">
-  <input id="image_title" name="title" type="hidden">
-  <input id="product_id" name="product_id" value="<%= @product.id %>" type="hidden">
-</form>  
 
 <form id="product-images" action="<%= product_product_images_path(:product_id => @product.id) %>" method="post" name="product-images">
   <input id="image" style="display:none;" name="image" type="file">
