@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151221132202) do
+ActiveRecord::Schema.define(version: 20151223110934) do
 
   create_table "option_values", force: :cascade do |t|
     t.integer  "option_id",  limit: 4
@@ -60,11 +60,9 @@ ActiveRecord::Schema.define(version: 20151221132202) do
     t.datetime "updated_at",                                  null: false
     t.decimal  "price",                        precision: 10
     t.string   "sku",              limit: 255
-    t.integer  "image_id",         limit: 4
     t.integer  "product_image_id", limit: 4
   end
 
-  add_index "variants", ["image_id"], name: "index_variants_on_image_id", using: :btree
   add_index "variants", ["product_image_id"], name: "index_variants_on_product_image_id", using: :btree
 
   create_table "variants_option_values", force: :cascade do |t|
