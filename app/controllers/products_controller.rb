@@ -15,8 +15,17 @@ class ProductsController < AuthenticatedController
     @images = ProductImage.where(product_id: @product.id)
     @options = Option.all
     @product_options = Option.joins("inner join products_options on products_options.option_id = options.id")
-    ProductsOption.where(product_id: params[:id])
+    #ProductsOption.where(product_id: params[:id])
     @variants = Variant.where(product_id: @product.id)
+  end
+  
+  def show
+    @product = ShopifyAPI::Product.find(params[:id])
+    @product_options = Option.joins("inner join products_options on products_options.option_id = options.id")
+    @variants = Variant.where(product_id: @product.id)
+    #respond_to do |format|
+     # format.json { render 'show.json.jbuilder' }
+    #end
   end
   
   def create

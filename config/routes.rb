@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     delete '/unassign_option', to: 'options#unassign_option_from_product'
   end
   
+  resources :product_info
   resources :options
   put '/generate_variants', to: 'variants#generate_product_variants'
 
