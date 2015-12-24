@@ -5,7 +5,7 @@ json.variants @variants do |variant|
     json.option_value option_value.value
   end
   if !(variant.product_image.nil?)
-    json.image_source variant.product_image.image.url 
+    json.image_source URI.join(request.url, variant.product_image.image.url)
   else 
     json.image_source ''
   end
