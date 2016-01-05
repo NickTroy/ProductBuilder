@@ -1,3 +1,12 @@
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('.container').css({'display': 'table'});
+    $('.row').css({'display': 'table-row'});  
+    $('.row').css({'margin-bot' : '10px'});
+    $('.row > div').css({'display': 'table-cell'});
+    
+  })
+</script>
 <div class="container">
   <h3>Products</h3>
     <div class="row">
@@ -34,5 +43,5 @@
     
     
 
-<%= link_to 'Add new product', new_product_path %>  
+<%= link_to 'Add new product', new_product_path, class:"btn btn-info" %>  
 </div>
