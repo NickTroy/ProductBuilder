@@ -1,7 +1,13 @@
 class ProductsController < AuthenticatedController
 
   def index
-    @products = ShopifyAPI::Product.find(:all)
+    @products = []
+    ShopifyAPI::Product.all.each do |p|
+      if p.metafields[0].namespace == "product"  
+        @products.push(p)    
+      end  
+    end
+    #@products = ShopifyAPI::Product.find(:all)
     @variants = Variant.all
     @images = ProductImage.all
   end
@@ -46,6 +52,7 @@ class ProductsController < AuthenticatedController
     respond_to do |format|
       format.html do 
         if @product.save
+          @product.add_metafield(ShopifyAPI::Metafield.new(:namespace => "product", :key => "key", :value => "value", :value_type => "string"))
           redirect_to edit_product_path :id => @product.id
         end
       end
