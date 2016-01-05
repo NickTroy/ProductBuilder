@@ -373,6 +373,11 @@ $(document).ready(function(){
 
 <%= form_tag product_path, method: "patch", :html => { :controller => "products", :action => "update", :id => @product.id } do %>
 
+<div class="row">
+  <div class="col-md-2">
+    <%= submit_tag "Back to all products", :class => "btn btn-info" %>
+  </div>
+</div><br>
 
 <div class="row">
   

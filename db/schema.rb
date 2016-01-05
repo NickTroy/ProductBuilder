@@ -13,6 +13,16 @@
 
 ActiveRecord::Schema.define(version: 20151223111559) do
 
+  create_table "images_variants", force: :cascade do |t|
+    t.integer  "image_id",   limit: 4
+    t.integer  "variant_id", limit: 4
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
+
+  add_index "images_variants", ["image_id"], name: "index_images_variants_on_image_id", using: :btree
+  add_index "images_variants", ["variant_id"], name: "index_images_variants_on_variant_id", using: :btree
+
   create_table "option_values", force: :cascade do |t|
     t.integer  "option_id",  limit: 4
     t.string   "value",      limit: 255
@@ -79,6 +89,8 @@ ActiveRecord::Schema.define(version: 20151223111559) do
   add_index "variants_option_values", ["option_value_id"], name: "index_variants_option_values_on_option_value_id", using: :btree
   add_index "variants_option_values", ["variant_id"], name: "index_variants_option_values_on_variant_id", using: :btree
 
+  add_foreign_key "images_variants", "product_images", column: "image_id"
+  add_foreign_key "images_variants", "variants"
   add_foreign_key "option_values", "options"
   add_foreign_key "products_options", "options"
   add_foreign_key "variants", "product_images"

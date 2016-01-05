@@ -26,7 +26,11 @@ class ProductInfoController < ApplicationController
   end
 
   def show
-    @product_options = Option.joins("inner join products_options on products_options.option_id = options.id")
+    @product_options = []
+    ProductsOption.where(:product_id => params[:id]).each do |product_option|
+      @product_options.push(Option.where(id: product_option.option_id)[0])
+    end
+    #@product_options = Option.joins("inner join products_options on products_options.option_id = options.id").uniq
     @variants = Variant.where(product_id: params[:id])
     @first_image = ProductImage.where(product_id: params[:id]).first
     respond_to do |format|

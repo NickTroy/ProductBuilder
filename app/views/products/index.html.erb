@@ -15,7 +15,7 @@
           <%= link_to product.title, { :controller => "products", :action => "edit", :id => product.id }  %>
         </div>
         <div class="col-md-2">
-          <%= image_tag(@images.where(product_id: product.id).first.image_source, style: "width:100px;") unless @images.where(product_id: product.id).empty? %>
+          <%= image_tag(@images.where(product_id: product.id).first.image.url, style: "width:100px;") unless @images.where(product_id: product.id).empty? %>
         </div>
         <div class="col-md-2">
           <%= render html: product.body_html.html_safe unless product.body_html.nil? %>
