@@ -35,8 +35,8 @@ class VariantsController < AuthenticatedController
   def destroy
     @product = ShopifyAPI::Product.find(params[:product_id])
     @variant = Variant.find(params[:variant_id])
-    
-    if @variant.destroy
+    @pseudo_product = ShopifyAPI::Product.find(@variant.pseudo_product_id)
+    if @variant.destroy and @pseudo_product.destroy
       redirect_to edit_product_path :id => params[:product_id]
     end
   end
@@ -45,13 +45,20 @@ class VariantsController < AuthenticatedController
     respond_to do |format|
       format.json do
         params[:variants].each do |variant|
+          
           @variant = Variant.new(product_id: params[:product_id])
+          @pseudo_product_title = ""
           variant[1].each do |option_value|
             @option_value = OptionValue.find_by(value: option_value)
             @variant.option_values << @option_value
+            @pseudo_product_title += " #{@option_value.option.name} : #{@option_value.value}"
           end
           @variant.save
-          
+          @pseudo_product = ShopifyAPI::Product.create(title: "#{@pseudo_product_title}")
+          @pseudo_product_variant = @pseudo_product.variants.first
+          @pseudo_product_variant.update_attributes(:option1 => @pseudo_product_title)
+          @variant.update_attributes(:pseudo_product_id => @pseudo_product.id)
+          @pseudo_product.add_metafield(ShopifyAPI::Metafield.new(:namespace => "variant", :key => "variant_id", :value => "#{@variant.id}", :value_type => "integer"))
         end
         
         redirect_to :back#edit_product_path(params[:product_id])
