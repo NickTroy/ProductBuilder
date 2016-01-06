@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151223111559) do
+ActiveRecord::Schema.define(version: 20160106071101) do
 
   create_table "images_variants", force: :cascade do |t|
     t.integer  "image_id",   limit: 4
@@ -69,12 +69,13 @@ ActiveRecord::Schema.define(version: 20151223111559) do
   add_index "shops", ["shopify_domain"], name: "index_shops_on_shopify_domain", unique: true, using: :btree
 
   create_table "variants", force: :cascade do |t|
-    t.integer  "product_id",       limit: 8
-    t.datetime "created_at",                                  null: false
-    t.datetime "updated_at",                                  null: false
-    t.decimal  "price",                        precision: 10
-    t.string   "sku",              limit: 255
-    t.integer  "product_image_id", limit: 4
+    t.integer  "product_id",        limit: 8
+    t.datetime "created_at",                                   null: false
+    t.datetime "updated_at",                                   null: false
+    t.decimal  "price",                         precision: 10
+    t.string   "sku",               limit: 255
+    t.integer  "product_image_id",  limit: 4
+    t.integer  "pseudo_product_id", limit: 8
   end
 
   add_index "variants", ["product_image_id"], name: "index_variants_on_product_image_id", using: :btree
