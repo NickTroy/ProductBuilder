@@ -25,18 +25,31 @@ class VariantsController < AuthenticatedController
     end
     
     @variant = Variant.find(params[:variant_id])
-    @image_selected = ProductImage.find(params[:image_id])
-    @variant.product_image = @image_selected
+    unless params[:image_id].nil? 
+      @image_selected = ProductImage.find(params[:image_id])
+      @variant.product_image = @image_selected
+    end
     @variant.update_attributes(variant_attributes)
     
+    @pseudo_product = ShopifyAPI::Product.find(@variant.pseudo_product_id)
+    @pseudo_product_variant = @pseudo_product.variants.first
+    @pseudo_product_variant.update_attributes(price: variant_attributes[:price], sku: variant_attributes[:sku] )
+    unless params[:image_id].nil? 
+      @pseudo_product_image = @pseudo_product.images.first || ShopifyAPI::Image.new(:product_id => @pseudo_product.id)
+      @pseudo_product_image.src = URI.join(request.url, @image_selected.image.url).to_s
+      @pseudo_product_image.save
+    end
     redirect_to edit_product_path :id => params[:product_id]
   end
   
   def destroy
     @product = ShopifyAPI::Product.find(params[:product_id])
     @variant = Variant.find(params[:variant_id])
-    @pseudo_product = ShopifyAPI::Product.find(@variant.pseudo_product_id)
-    if @variant.destroy and @pseudo_product.destroy
+    @pseudo_products = ShopifyAPI::Product.where(id: @variant.pseudo_product_id)
+    @pseudo_products.each do |p|
+      p.destroy
+    end
+    if @variant.destroy
       redirect_to edit_product_path :id => params[:product_id]
     end
   end
@@ -57,7 +70,8 @@ class VariantsController < AuthenticatedController
           @pseudo_product = ShopifyAPI::Product.create(title: "#{@pseudo_product_title}")
           @pseudo_product_variant = @pseudo_product.variants.first
           @pseudo_product_variant.update_attributes(:option1 => @pseudo_product_title)
-          @variant.update_attributes(:pseudo_product_id => @pseudo_product.id)
+          @variant.update_attributes(:pseudo_product_id => @pseudo_product.id, 
+                                     :pseudo_product_variant_id => @pseudo_product_variant.id)
           @pseudo_product.add_metafield(ShopifyAPI::Metafield.new(:namespace => "variant", :key => "variant_id", :value => "#{@variant.id}", :value_type => "integer"))
         end
         

@@ -83,12 +83,16 @@ class ProductsController < AuthenticatedController
     @product = ShopifyAPI::Product.find(params[:id])
     @images = ProductImage.where(product_id: params[:id])
     @variants = Variant.where(product_id: params[:id])
+    
     @product_options = Option.where(product_id: params[:id])
     @images.each { |img| img.destroy }
-    @variants.each { |var| var.destroy }
+    @variants.each do |var|  
+      @pseudo_product = ShopifyAPI::Product.find(var.pseudo_product_id)
+      @pseudo_product.destroy
+      var.destroy
+    end
     @options.each { |opt| opt.destroy } unless @options.nil?
     @product.destroy
-    
     respond_to do |format|
       format.html { redirect_to products_path, notice: 'Product was successfully deleted.' }
     end
