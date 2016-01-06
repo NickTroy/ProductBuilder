@@ -5,57 +5,6 @@
 
 $(document).ready(function(){
   Dropzone.autoDiscover = false;
-  /*$("#dropzone").dropzone({
-    url: '<%= product_product_images_path(:product_id => @product.id) %>',
-    paramName: 'images',
-    clickable: true,
-    uploadMultiple: false,
-    autoProcessQueue: false,
-    addRemoveLinks: true,
-    previewsContainer: '.dropzone-previews',
-    clickable: true,
-    init: function() {
-      _this = this;
-      var existingFiles = [];
-      <% @images.each_with_index do |image, index| %>
-        existingFiles.push({ id: "<%= image.id %>"});
-        this.emit("addedfile", existingFiles[<%= index %>]);
-        this.emit("thumbnail", existingFiles[<%= index %>], "<%= image.image_source %>");
-      <% end %>
-      
-      this.on("addedfile", function(file){
-        reader = new FileReader();
-        reader.onload = handleReaderLoad;
-        reader.readAsDataURL(file);
-        function handleReaderLoad(evt) {
-          document.getElementById("image_source")
-                  .setAttribute('value', evt.target.result);
-          document.getElementById("image_title")
-                  .setAttribute('value', file.name);
-          form = $('#file-form');
-          $.ajax( {
-            method: "POST",
-            dataType: "json",
-            timeout: 2000,
-            url: "<%= product_product_images_path(:product_id => @product.id) %>",
-            data: form.serialize(),
-          });
-        }
-        
-      });
-      
-      this.on("removedfile", function(file){
-        
-        $.ajax( {
-          method: "POST",
-          timeout: 2000,
-          url: "<%= product_product_images_path(:product_id => @product.id) %>/" + file.id,
-          data: { id: file.id, product_id: <%= @product.id%>, _method: "delete" }
-        });
-      });
-    }
-  });*/
-  
   $("#product-images").dropzone({
 		// restrict image size to a maximum 1MB
 		maxFilesize: 1,
