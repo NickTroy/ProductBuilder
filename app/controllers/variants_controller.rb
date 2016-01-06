@@ -36,7 +36,7 @@ class VariantsController < AuthenticatedController
     @pseudo_product_variant.update_attributes(price: variant_attributes[:price], sku: variant_attributes[:sku] )
     unless params[:image_id].nil? 
       @pseudo_product_image = @pseudo_product.images.first || ShopifyAPI::Image.new(:product_id => @pseudo_product.id)
-      @pseudo_product_image.src = "https://product-builder-nicktroy.c9users.io/system/product_images/images/000/000/010/original/car_grande.jpeg?1452071527"#URI.join(request.url, @image_selected.image.url).to_s
+      @pseudo_product_image.src = URI.join(request.url, @image_selected.image.url).to_s
       @pseudo_product_image.save
     end
     redirect_to edit_product_path :id => params[:product_id]

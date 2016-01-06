@@ -35,8 +35,7 @@ $(document).ready(function(){
       
 		  this.on("removedfile", function(file){
 		    var id = $('.dropzone-previews').find('.dz-remove').attr('id'); 
-
-			  // make a DELETE ajax request to delete the file
+        // make a DELETE ajax request to delete the file
 			  $.ajax({
 				  type: 'POST',
 				  data: { _method: 'DELETE' },
