@@ -18,10 +18,22 @@ $(document).ready(function(){
 		success: function(file, response){
 			// find the remove button link of the uploaded file and give it an id
 			// based of the fileID response from the server
-			$('.dropzone-previews').find('.dz-remove').attr('id', response.imageID);
+			$('.dropzone-previews').find('.dz-remove:last').attr('id', response.imageID);
 			// add the dz-success class (the green tick sign)
 			$('.dropzone-previews').addClass("dz-success");
-			
+	    
+	    $('.dz-remove:last').click(function(){
+	      var id = $(this).attr('id'); 
+        // make a DELETE ajax request to delete the file
+			  $.ajax({
+				  type: 'POST',
+				  data: { _method: 'DELETE' },
+				  url: '<%= product_product_images_path(@product.id) %>/' + id,
+				  success: function(data){
+					  console.log(data.message);
+			  	}
+			  });
+	    })		
 		},
 		//when the remove button is clicked
 		init: function(){
@@ -34,20 +46,25 @@ $(document).ready(function(){
       <% end %>
       
 		  this.on("removedfile", function(file){
-		    var id = $('.dropzone-previews').find('.dz-remove').attr('id'); 
-        // make a DELETE ajax request to delete the file
-			  $.ajax({
-				  type: 'POST',
-				  data: { _method: 'DELETE' },
-				  url: '<%= product_product_images_path(@product.id) %>/' + id,
-				  success: function(data){
-					  console.log(data.message);
-			  	}
-			  });  
+		      
 		  })
 		}
 		
 	});	
+	
+	$('.dz-remove').click(function(){
+	  var id = $(this).attr('id'); 
+    // make a DELETE ajax request to delete the file
+		$.ajax({
+		  type: 'POST',
+		  data: { _method: 'DELETE' },
+		  url: '<%= product_product_images_path(@product.id) %>/' + id,
+		  success: function(data){
+			  console.log(data.message);
+			}
+		});
+	})
+	
 });
 
   
