@@ -20,7 +20,7 @@ class VariantsController < AuthenticatedController
   
   def update
     if params[:commit] == 'Cancel'
-      redirect_to edit_product_path :id => params[:product_id]
+      redirect_to edit_product_url(:protocol => 'https', :id => params[:product_id])
       return true
     end
     
@@ -39,7 +39,7 @@ class VariantsController < AuthenticatedController
       @pseudo_product_image.src = URI.join(request.url, @image_selected.image.url).to_s
       @pseudo_product_image.save
     end
-    redirect_to edit_product_path :id => params[:product_id]
+    redirect_to edit_product_url(:protocol => 'https', :id => params[:product_id])
   end
   
   def destroy
@@ -48,7 +48,7 @@ class VariantsController < AuthenticatedController
     @pseudo_product = ShopifyAPI::Product.find(@variant.pseudo_product_id)
     @pseudo_product.destroy
     if @variant.destroy
-      redirect_to edit_product_path :id => params[:product_id]
+      redirect_to edit_product_url(:protocol => 'https', :id => params[:product_id])
     end
   end
   
@@ -73,8 +73,8 @@ class VariantsController < AuthenticatedController
           @pseudo_product.add_metafield(ShopifyAPI::Metafield.new(:namespace => "variant", :key => "variant_id", :value => "#{@variant.id}", :value_type => "integer"))
         end
         
-        redirect_to :back#edit_product_path(params[:product_id])
-        
+        redirect_to edit_product_url(:protocol => 'https', :id => params[:product_id])
+         #edit_product_path(params[:product_id])   
       end
     end
   end

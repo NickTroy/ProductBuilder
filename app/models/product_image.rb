@@ -2,6 +2,7 @@ class ProductImage < ActiveRecord::Base
   has_many :variants, dependent: :nullify
   
   has_attached_file :image, :styles => { :medium => "300x300>",:thumb => "100x100>" }
+                    
 	
   validates_attachment 	:image, 
 				#:presence => true,
