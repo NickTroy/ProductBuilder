@@ -48,7 +48,7 @@ $(document).ready(function () {
 
 
 <div class="container">
-  <%= form_tag products_path, method: "post" do %>
+  <%= form_tag products_url(:protocol => 'https'), method: "post" do %>
   
   <div class="row">
     <div class="col-md-2">
@@ -69,7 +69,49 @@ $(document).ready(function () {
       <div class="col-md-12 form-group">
         <%= label_tag 'product[body_html]', "Product description:" %>
         <%= text_area_tag :body_html, nil, class: "tinymce form-control" %>
-        <%= tinymce %>      
+         <script> 
+     //<![CDATA[
+          (function() {
+            if (typeof tinyMCE != 'undefined') {
+              tinyMCE.init({
+                selector: "textarea.tinymce",
+                statusbar: false,
+                menubar: false,
+                resize: false,
+                setup: function (editor) {
+                  editor.on('change', function (e) {  
+                    enable_save();
+                  });
+                },
+                theme: "modern",
+                fontsize_formats: "8pt 10pt 12pt 14pt 18pt 24pt 36pt",
+                font_formats: "Andale Mono=andale mono,times;"+
+                "Arial=arial,helvetica,sans-serif;"+
+                "Arial Black=arial black,avant garde;"+
+                "Book Antiqua=book antiqua,palatino;"+
+                "Comic Sans MS=comic sans ms,sans-serif;"+
+                "Courier New=courier new,courier;"+
+                "Georgia=georgia,palatino;"+
+                "Helvetica=helvetica;"+
+                "Impact=impact,chicago;"+
+                "Symbol=symbol;"+
+                "Tahoma=tahoma,arial,helvetica,sans-serif;"+
+                "Terminal=terminal,monaco;"+
+                "Times New Roman=times new roman,times;"+
+                "Trebuchet MS=trebuchet ms,geneva;"+
+                "Verdana=verdana,geneva;"+
+                "Webdings=webdings;"+
+                "Wingdings=wingdings,zapf dingbats; Open Sans='Open Sans', sans-serif;Playfair Display='Playfair Display', serif;",
+                toolbar: ["undo redo | removeformat bold italic underline | fontsizeselect | forecolor backcolor | fontselect | letterspacing | lineheight"],
+                plugins: "textcolor"
+              });
+            } else {
+              setTimeout(arguments.callee, 50);
+            }
+          })();
+          //]]>
+    </script>
+      
       </div>
    </div>
 

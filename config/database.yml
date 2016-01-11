@@ -24,11 +24,11 @@ default: &default
 development:
   adapter: mysql2
   encoding: utf8
-  database: c9_prodbuilder_dev
-  host: 127.0.0.1
-  username: <%=ENV['C9_USER']%>
-  host: <%=ENV['IP']%>
-  socket: /tmp/mysql.sock
+  database: productbuilder_db
+  host: localhost
+  username: root
+  password: 
+  socket: /var/lib/mysql/mysql.sock
 
   # The specified database role being used to connect to postgres.
   # To create additional roles in postgres see `$ createuser --help`.
@@ -88,8 +88,9 @@ test:
 production:
   adapter: mysql2
   encoding: utf8
-  database: c9_prodbuilder_production
-  host: 127.0.0.1
-  username: <%=ENV['C9_USER']%>
-  host: <%=ENV['IP']%>
-  socket: /tmp/mysql.sock
+  database: productbuilder_db
+  host: localhost
+  username: root
+  password:
+  socket: /var/lib/mysql/mysql.sock
+

@@ -53,7 +53,7 @@ class ProductsController < AuthenticatedController
       format.html do 
         if @product.save
           @product.add_metafield(ShopifyAPI::Metafield.new(:namespace => "product", :key => "key", :value => "value", :value_type => "string"))
-          redirect_to edit_product_path :id => @product.id
+          redirect_to edit_product_url(:id => @product.id, :protocol => 'https')
         end
       end
     end
@@ -62,7 +62,7 @@ class ProductsController < AuthenticatedController
   def update
     
     if params[:commit] == 'Back to all products'
-      redirect_to root_path
+      redirect_to root_url(:protocol => 'https')
       return true
     end
     
@@ -71,7 +71,7 @@ class ProductsController < AuthenticatedController
     respond_to do |format|
       format.html do 
         if @product.update_attributes(product_params)
-          redirect_to products_path
+          redirect_to products_url(:protocol => 'https')
         end
       end
     end
@@ -94,7 +94,7 @@ class ProductsController < AuthenticatedController
     @options.each { |opt| opt.destroy } unless @options.nil?
     @product.destroy
     respond_to do |format|
-      format.html { redirect_to products_path, notice: 'Product was successfully deleted.' }
+      format.html { redirect_to products_url(:protocol => 'https'), notice: 'Product was successfully deleted.' }
     end
     
   end
