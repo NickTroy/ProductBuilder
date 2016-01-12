@@ -1,5 +1,4 @@
 class ProductsController < AuthenticatedController
-
   def index
     @products = []
     ShopifyAPI::Product.all.each do |p|
