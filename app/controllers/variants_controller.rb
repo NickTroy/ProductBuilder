@@ -79,6 +79,17 @@ class VariantsController < AuthenticatedController
     end
   end
   
+  def delete_all_variants
+    @product = ShopifyAPI::Product.find(params[:product_id])
+    @variants = Variant.where(product_id: @product.id)
+    @variants.each do |variant|
+      @pseudo_product = ShopifyAPI::Product.find(variant.pseudo_product_id)
+      variant.destroy
+      @pseudo_product.destroy
+    end
+    redirect_to edit_product_url(:protocol => 'https', :id => params[:product_id])
+  end
+  
   private
   
     def variant_attributes

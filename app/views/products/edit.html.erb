@@ -261,6 +261,26 @@ $(document).ready(function(){
     bindCheckboxEvent(); 
   }
   
+  function deleteAllVariants(){
+    if (confirm('Are you sure, you want to delete all product variants?')) {
+    $.ajax({
+      url: "<%= product_delete_all_variants_path(product_id: @product.id) %>",
+      method: 'POST',
+      dataType: 'json',
+      data: {
+        _method: "delete",
+        product_id: <%= @product.id %>,
+        success: function(){
+          $('.variant-info').each(function (){
+            $(this).remove();
+          });
+          $('.current_number_of_variants').text('0');
+        }
+      }
+    })
+    }
+  }
+  
   
   
   
@@ -500,14 +520,6 @@ $(document).ready(function(){
   
   <div class="current-variants">
     <h3>Product variants list (currently has <span class="current_number_of_variants"><%= Variant.where(product_id: @product.id).count %></span> variants):</h3>  
-    <!--<div class="row">
-      <div class="col-md-9">
-        <span></span>
-      </div>
-      <div class="col-md-3">
-        <span>price</span>
-      </div>
-    </div>-->
     <% @variants.each do |variant| %>
       <div class="variant-info row">
         <div class="col-md-1">
@@ -537,10 +549,17 @@ $(document).ready(function(){
       </div>
     <% end %>
   </div>
-
-
-  <input type='button' value="Add product variants" onclick="showVariantsForm()" class="btn btn-primary add-variants"/><br>
-  <input type='button' value="Canel adding product variants" onclick="clearVariantsForm()" class="btn btn-warning cancel-adding-variants" style ="display:none;"/><br>
+  <div class="variants_actions row">
+    <div class="variants_form_actions col-md-4">
+      <input type='button' value="Canel adding product variants" onclick="clearVariantsForm()" class="btn btn-warning cancel-adding-variants" style ="display:none;"/>
+      <input type='button' value="Add product variants" onclick="showVariantsForm()" class="btn btn-primary add-variants"/>  
+    </div>
+    <div class="col-md-2 delete_all_variants_button">
+      <input type='button' value="Delete all product variants" onclick="deleteAllVariants()" class="btn btn-danger delete_all_variants"/><br>      
+    </div>
+  </div>
+  
+  
   <div class="variants_form" style="display:none;">
     <% @product_options.each do |opt| %>
      

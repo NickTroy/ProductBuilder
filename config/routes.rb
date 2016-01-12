@@ -7,6 +7,7 @@ Rails.application.routes.draw do
     resources :product_images
     post '/assign_option', to: 'options#assign_option_to_product'
     delete '/unassign_option', to: 'options#unassign_option_from_product'
+    delete '/delete_all_variants', to: 'variants#delete_all_variants'
   end
   
   resources :product_info, defaults: { format: 'json' }
