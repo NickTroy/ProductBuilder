@@ -43,11 +43,12 @@ class ProductsController < AuthenticatedController
   def create
     
     if params[:commit] == 'Back to all products'
-      redirect_to root_path
+      redirect_to root_url(:protocol => 'https')
       return true
     end
     
     @product = ShopifyAPI::Product.new(product_params)   
+    @product.attributes[:tags] = "product"
     respond_to do |format|
       format.html do 
         if @product.save
