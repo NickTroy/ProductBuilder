@@ -32,6 +32,7 @@ gem 'dropzonejs-rails'
 gem 'image-picker-rails'
 gem 'paperclip', '~> 4.1'
 gem 'remotipart'
+gem 'kaminari'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 

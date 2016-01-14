@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   
 
   resources :products do
+    get 'page/:page', :action => :index, :on => :collection
     resources :variants
 
     resources :product_images

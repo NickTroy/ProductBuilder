@@ -1,13 +1,14 @@
 class ProductsController < AuthenticatedController
   def index
-    @products = []
+    @all_products = []
     ShopifyAPI::Product.all.each_with_index do |p, i|
       sleep 3 if i % 10 == 0
       if p.metafields[0].namespace == "product"  
-        @products.push(p)    
+        @all_products.push(p)    
       end  
     end
     #@products = ShopifyAPI::Product.find(:all)
+    @products = Kaminari.paginate_array(@all_products, total_count: @all_products.count).page(params[:page]).per(10)
     @variants = Variant.all
     @images = ProductImage.all
   end
