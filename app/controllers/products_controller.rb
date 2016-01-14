@@ -1,7 +1,8 @@
 class ProductsController < AuthenticatedController
   def index
     @products = []
-    ShopifyAPI::Product.all.each do |p|
+    ShopifyAPI::Product.all.each_with_index do |p, i|
+      sleep 3 if i % 10 == 0
       if p.metafields[0].namespace == "product"  
         @products.push(p)    
       end  
