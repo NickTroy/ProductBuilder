@@ -5,8 +5,7 @@ class OptionValuesController < ApplicationController
   def assign_image
     @option_value = OptionValue.find(params[:option_value_id])
     @option_value.image = params[:image]
-    #@option_value.save
-    binding.pry
+    @option_value.save
     render json: { message: "success" }, :status => 200
   end
   

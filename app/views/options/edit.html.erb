@@ -44,10 +44,11 @@ $(document).ready(function(){
 	  	},
 		  //when the remove button is clicked
 		  init: function(){
-		    var existingFiles = [];
-      
-      
-		    this.on("removedfile", function(file){
+		    var url = $('input#image' + id + '_url').val();
+		    this.options.addedfile.call(this, { "id": id });
+        $('.option_value_image' + (index + 1)).find('.dz-image img').attr("src", url);
+        
+        this.on("removedfile", function(file){
 		      
 		    })
 		  }
@@ -68,6 +69,7 @@ $(document).ready(function(){
 	  })
 	
   });  
+  
 })
   
 </script>
@@ -83,7 +85,7 @@ $(document).ready(function(){
   
   <div class="options row">
     <% @option.option_values.each_with_index do |option_value, i| %>
-      <div id="option<%= i + 1 %>" class="form-group col-md-6" style="inline-block;"> 
+      <div id="option<%= i + 1 %>" class="form-group col-md-4" style="inline-block;"> 
         <br> 
         Option value #<%= i + 1 %>  
         <input readonly class="form-control" name="option_value<%= i + 1 %>" id="option_value<%= i + 1 %>" type="text" value="<%= option_value.value %>"/>
@@ -118,6 +120,7 @@ $(document).ready(function(){
   <% @option.option_values.each_with_index do |option_value, i| %>
     <form id="option_value_image<%= i + 1 %>" method="post" name="option_value_image<%= i + 1 %>">
       <input id="image<%= i + 1 %>" style="display:none;" name="image<%= i + 1 %>" type="file">
+      <input id="image<%= option_value.id %>_url" type="hidden" value="<%= asset_url(option_value.image.url) %>">
     </form> 
   <% end %>
 </div>
