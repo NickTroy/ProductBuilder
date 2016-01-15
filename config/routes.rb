@@ -12,7 +12,12 @@ Rails.application.routes.draw do
   end
   
   resources :product_info, defaults: { format: 'json' }
-  resources :options
+  resources :options do
+    resources :option_values do
+      post '/assign_image', to: 'option_values#assign_image'
+      post '/unassign_image', to: 'option_values#unassign_image'
+    end
+  end
   put '/generate_variants', to: 'variants#generate_product_variants'
 
   

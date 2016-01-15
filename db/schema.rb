@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160106125111) do
+ActiveRecord::Schema.define(version: 20160115080709) do
 
   create_table "images_variants", force: :cascade do |t|
     t.integer  "image_id",   limit: 4
@@ -24,10 +24,14 @@ ActiveRecord::Schema.define(version: 20160106125111) do
   add_index "images_variants", ["variant_id"], name: "index_images_variants_on_variant_id", using: :btree
 
   create_table "option_values", force: :cascade do |t|
-    t.integer  "option_id",  limit: 4
-    t.string   "value",      limit: 255
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.integer  "option_id",          limit: 4
+    t.string   "value",              limit: 255
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+    t.string   "image_file_name",    limit: 255
+    t.string   "image_content_type", limit: 255
+    t.integer  "image_file_size",    limit: 4
+    t.datetime "image_updated_at"
   end
 
   add_index "option_values", ["option_id"], name: "index_option_values_on_option_id", using: :btree
