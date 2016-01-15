@@ -25,10 +25,10 @@ $(document).ready(function(){
 		  success: function(file, response){
 		  	// find the remove button link of the uploaded file and give it an id
 			  // based of the fileID response from the server
-			  $('.dropzone-previews').find('.dz-remove:last').attr('id', response.imageID);
+			  //$('.dropzone-previews').find('.dz-remove:last').attr('id', response.imageID);
 			  // add the dz-success class (the green tick sign)
-			  $('.dropzone-previews').addClass("dz-success");
-	    
+			  //$('.dropzone-previews').addClass("dz-success");
+	      $('.option_value_image' + (index + 1)).find('.dz-preview:first').remove();
 	      $('.dz-remove:last').click(function(){
 	        var id = $(this).attr('id'); 
           // make a DELETE ajax request to delete the file
