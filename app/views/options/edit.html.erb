@@ -28,46 +28,29 @@ $(document).ready(function(){
 			  //$('.dropzone-previews').find('.dz-remove:last').attr('id', response.imageID);
 			  // add the dz-success class (the green tick sign)
 			  //$('.dropzone-previews').addClass("dz-success");
-	      $('.option_value_image' + (index + 1)).find('.dz-preview:first').remove();
-	      $('.dz-remove:last').click(function(){
-	        var id = $(this).attr('id'); 
-          // make a DELETE ajax request to delete the file
-			    $.ajax({
-				    type: 'POST',
-				    data: { _method: 'DELETE' },
-				    url: '<%= product_product_images_path(@product.id) %>/' + id,
-				    success: function(data){
-					    console.log(data.message);
-			    	}
-			    });
-	      })		
+			  if ( $('.option_value_image' + (index + 1)).find('.dz-preview').length === 2) {
+	        $('.option_value_image' + (index + 1)).find('.dz-preview:first').remove();
+			  }
+	      		
 	  	},
 		  //when the remove button is clicked
 		  init: function(){
 		    var url = $('input#image' + id + '_url').val();
-		    this.options.addedfile.call(this, { "id": id });
-        $('.option_value_image' + (index + 1)).find('.dz-image img').attr("src", url);
+		    if (url.indexOf("missing") === -1) {
+		      this.options.addedfile.call(this, { "id": id });
+          $('.option_value_image' + (index + 1)).find('.dz-image img').attr("src", url);  
+		    }
+		    
         
         this.on("removedfile", function(file){
-		      
+		      $.ajax({
+		        url: '/options/' + <%= @option.id %> + '/option_values/' + id + '/unassign_image',
+				    type: 'POST',
+				    data: { id: id }
+			    });  
 		    })
 		  }
-		
   	});	
-	
-	  $('.dz-remove').click(function(){
-	    var id = $(this).attr('id'); 
-      // make a DELETE ajax request to delete the file
-		  $.ajax({
-		    type: 'POST',
-		    data: { _method: 'DELETE' },
-		    url: '<%= product_product_images_path(@product.id) %>/' + id,
-		    success: function(data){
-			    console.log(data.message);
-		  	}
-	  	});
-	  })
-	
   });  
   
 })
@@ -120,7 +103,7 @@ $(document).ready(function(){
   <% @option.option_values.each_with_index do |option_value, i| %>
     <form id="option_value_image<%= i + 1 %>" method="post" name="option_value_image<%= i + 1 %>">
       <input id="image<%= i + 1 %>" style="display:none;" name="image<%= i + 1 %>" type="file">
-      <input id="image<%= option_value.id %>_url" type="hidden" value="<%= asset_url(option_value.image.url) %>">
+      <input id="image<%= option_value.id %>_url" type="hidden" value="<%= option_value.image.nil? ? "" : option_value.image.url %>">
     </form> 
   <% end %>
 </div>

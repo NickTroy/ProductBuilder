@@ -466,7 +466,7 @@ $(document).ready(function(){
         <p>Option <span class="option_name"><%= opt.name %></span> has <%= opt.option_values.count %> values:</p>
         <p class="option-values">
           <% opt.option_values.each do |value| %> 
-          <%=value.value %>,
+          <img style="width:20px" src="<%= value.image.url.include?("missing") ? "" : value.image.url(:thumb) %>"><%=value.value %>,
           <% end %>
         </p>
         <%= link_to 'Delete option', option_url(:option_id => opt.id, :protocol => 'https',  :product_id => @product.id), 
@@ -496,7 +496,7 @@ $(document).ready(function(){
         <p>Option <%= opt.name %> has <%= opt.option_values.count %> values:</p>
         <p>
           <% opt.option_values.each do |value| %> 
-          <span><%=value.value %>,</span>
+          <span><img style="width:20px" src="<%= value.image.url.include?("missing") ? "" : value.image.url(:thumb) %>"><%=value.value %>,</span>
           <% end %>
         </p>
         <%= link_to 'Delete option', { :controller => "options", :action => "destroy", :product_id => @product.id, :option_id => opt.id }, 

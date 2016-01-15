@@ -10,5 +10,9 @@ class OptionValuesController < ApplicationController
   end
   
   def unassign_image
+    @option_value = OptionValue.find(params[:option_value_id])
+    @option_value.image.destroy
+    @option_value.save
+    render json: { message: "success" }, :status => 200
   end
 end
