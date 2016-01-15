@@ -6,6 +6,71 @@
     $('<div id="option' + num_of_opts + '" class="form-group col-md-4" style="inline-block;"> '+ 
       '<br> Option value #'+ num_of_opts + '<input class="form-control" name="option_value' + num_of_opts + '" id="option_value' + num_of_opts + '" type="text"/></div>').appendTo('.options')
   }
+  
+$(document).ready(function(){
+  Dropzone.autoDiscover = false;
+  $('form[id^="option_value_image"]').each(function(index, form){
+    alert(index);
+    alert(form);
+    $(this).dropzone({
+    url: "/google",
+		// restrict image size to a maximum 1MB
+		maxFilesize: 1,
+		// changed the passed param to one accepted by
+		// our rails app
+		paramName: "image",
+		previewsContainer: '.option_value_image' + (index + 1),
+		clickable: '.option_value_image' + (index + 1),
+		// show remove links on each image upload
+		addRemoveLinks: true,
+		success: function(file, response){
+			// find the remove button link of the uploaded file and give it an id
+			// based of the fileID response from the server
+			$('.dropzone-previews').find('.dz-remove:last').attr('id', response.imageID);
+			// add the dz-success class (the green tick sign)
+			$('.dropzone-previews').addClass("dz-success");
+	    
+	    $('.dz-remove:last').click(function(){
+	      var id = $(this).attr('id'); 
+        // make a DELETE ajax request to delete the file
+			  $.ajax({
+				  type: 'POST',
+				  data: { _method: 'DELETE' },
+				  url: '<%= product_product_images_path(@product.id) %>/' + id,
+				  success: function(data){
+					  console.log(data.message);
+			  	}
+			  });
+	    })		
+		},
+		//when the remove button is clicked
+		init: function(){
+		  var existingFiles = [];
+      
+      
+		  this.on("removedfile", function(file){
+		      
+		  })
+		}
+		
+	});	
+	
+	$('.dz-remove').click(function(){
+	  var id = $(this).attr('id'); 
+    // make a DELETE ajax request to delete the file
+		$.ajax({
+		  type: 'POST',
+		  data: { _method: 'DELETE' },
+		  url: '<%= product_product_images_path(@product.id) %>/' + id,
+		  success: function(data){
+			  console.log(data.message);
+			}
+		});
+	})
+	
+});  
+  })
+  
 </script>
 <div class="container">
   <%= form_for @option, url: option_url(:product_id => params[:product_id], :option_id => params[:option_id], :protocol => 'https') do |f| %>
@@ -19,11 +84,17 @@
   
   <div class="options row">
     <% @option.option_values.each_with_index do |option_value, i| %>
-      <div id="option<%= i + 1 %>" class="form-group col-md-4" style="inline-block;"> 
+      <div id="option<%= i + 1 %>" class="form-group col-md-6" style="inline-block;"> 
         <br> 
         Option value #<%= i + 1 %>  
         <input readonly class="form-control" name="option_value<%= i + 1 %>" id="option_value<%= i + 1 %>" type="text" value="<%= option_value.value %>"/>
+        
+         <div class="option_value_image<%= i + 1 %> dropzone">
+    
+        </div>
       </div>
+      
+     
     <% end %>
     <%= hidden_field_tag 'number_of_option_values', @option.option_values.count %>  
   </div><br>
@@ -45,4 +116,9 @@
   </div>
 
   <% end %>  
+  <% @option.option_values.each_with_index do |option_value, i| %>
+    <form id="option_value_image<%= i + 1 %>" action="" method="post" name="option_value_image<%= i + 1 %>">
+      <input id="image<%= i + 1 %>" style="display:none;" name="image<%= i + 1 %>" type="file">
+    </form> 
+  <% end %>
 </div>
