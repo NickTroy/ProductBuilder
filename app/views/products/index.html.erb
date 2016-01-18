@@ -42,7 +42,12 @@
     
     
 
-<%= link_to 'Add new product', new_product_url(:protocol => 'https'), class:"btn btn-info" %>  
+  <%= link_to 'Add new product', new_product_url(:protocol => 'https'), class:"btn btn-info" %> 
+  <%= form_tag import_products_url do %>
+    <%= file_field_tag :file %>
+    <%= submit_tag "Import product" %>
+  <% end %> 
+
   <div class="paginator" style="text-align:center;">
     <%= paginate @products %>
   </div>

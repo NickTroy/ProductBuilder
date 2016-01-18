@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   resources :products do
     get 'page/:page', :action => :index, :on => :collection
     resources :variants
-
+    collection { post :import }
     resources :product_images
     post '/assign_option', to: 'options#assign_option_to_product'
     delete '/unassign_option', to: 'options#unassign_option_from_product'

@@ -101,6 +101,16 @@ class ProductsController < AuthenticatedController
     
   end
 
+  
+
+  def import
+    @product_spreadsheet = Excelx.new(params[:file].path, nil, :ignore)
+    puts @product_spreadsheet
+    redirect_to root_url, notice: "Product imported."
+  end
+
+
+
   private
 
     def product_params
