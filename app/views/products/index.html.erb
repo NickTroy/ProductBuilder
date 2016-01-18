@@ -43,7 +43,7 @@
     
 
   <%= link_to 'Add new product', new_product_url(:protocol => 'https'), class:"btn btn-info" %> <br><br>
-  <%= form_tag import_products_url, multipart: true do %>
+  <%= form_tag import_products_url(:protocol => 'https'), multipart: true do %>
     <span class="btn btn-default btn-file">
       <%= file_field_tag :file %>  
     </span>
