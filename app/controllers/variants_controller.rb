@@ -74,7 +74,6 @@ class VariantsController < AuthenticatedController
         end
         
         redirect_to edit_product_url(:protocol => 'https', :id => params[:product_id])
-         #edit_product_path(params[:product_id])   
       end
     end
   end

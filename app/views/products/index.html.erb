@@ -25,7 +25,7 @@
         <div class="col-md-2">
           <%= image_tag(@images.where(product_id: product.id).first.image.url, style: "width:100px;") unless @images.where(product_id: product.id).empty? %>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2" style="height:150px; overflow:hidden;">
           <%= render html: product.body_html.html_safe unless product.body_html.nil? %>
         </div>
         <div class="col-md-2">
@@ -42,10 +42,13 @@
     
     
 
-  <%= link_to 'Add new product', new_product_url(:protocol => 'https'), class:"btn btn-info" %> 
-  <%= form_tag import_products_url do %>
-    <%= file_field_tag :file %>
-    <%= submit_tag "Import product" %>
+  <%= link_to 'Add new product', new_product_url(:protocol => 'https'), class:"btn btn-info" %> <br><br>
+  <%= form_tag import_products_url, multipart: true do %>
+    <span class="btn btn-default btn-file">
+      <%= file_field_tag :file %>  
+    </span>
+    
+    <%= submit_tag "Import product", class: "btn-info btn" %>
   <% end %> 
 
   <div class="paginator" style="text-align:center;">
