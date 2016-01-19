@@ -26,13 +26,39 @@ class ProductInfoController < ApplicationController
   end
 
   def show
+    @variants = Variant.where(product_id: params[:id])
     @product_options = []
-    ProductsOption.where(:product_id => params[:id]).each do |product_option|
-      @product_options.push(Option.where(id: product_option.option_id)[0])
+    #ProductsOption.where(:product_id => params[:id]).each do |product_option|
+      #@product_options.push(Option.where(id: product_option.option_id)[0])
+    #end
+    Option.all.each do |option|
+      @product_options.push({ :option_name => option.name, :order_number => option.order_number, :option_values => [] })
+    end
+    @variants.each do |variant|
+      variant.option_values.each do |option_value|
+        @product_options.each do |option|
+          if option[:option_name].downcase == option_value.option.name.downcase
+            option[:option_values].push(option_value.value).uniq!
+          end
+        end
+      end
     end
     #@product_options = Option.joins("inner join products_options on products_options.option_id = options.id").uniq
-    @variants = Variant.where(product_id: params[:id])
+    @product_options.sort_by! { |option| option[:order_number] }
     @first_image = ProductImage.where(product_id: params[:id]).first
+    #@variants.each do || 
+    #@option_dependency = {}
+    #1.upto(@product_options.length - 1) do |i|
+      #@product_options[i-1].option_values.each do |current_option_value|
+        #@product_options[i].option_values.each do |next_option_value|   
+          #@variants.each do |variant|
+            #if variant.option_values.include?(current_option_value) and variant.option_values.include?(next_option_value)
+              #@option_dependency[current_option_value.value] = next_option_value.value
+            #end
+          #end
+        #end
+      #end
+    #end
     respond_to do |format|
       format.json { render status: :ok, :callback => params[:callback] }
     end
