@@ -328,7 +328,47 @@ $(document).ready(function(){
     });  
   }
   
+  function saveOptionsOrder(){
+    var options_data = { _method: 'put', options_order: {} };
+    $('.options_order tbody tr').each(function(){
+      var option_name, order_number;
+      order_number = $(this).find('td:nth-child(2)').text();
+      option_name = $(this).find('td:last').text();
+      options_data["options_order"][option_name] = order_number;
+    })
+    $.ajax({
+      url: "<%= update_order_url(:protocol => 'https', :product_id => @product.id) %>",
+      method: 'POST',
+      dataType: 'json',
+      data: options_data
+    })
+  }
+  
 $(document).ready(function(){
+  
+  
+  
+  function swapRows(row1,row2){
+    row1_order_number = row1.find("td:nth-child(2)").text();
+    row2_order_number = row2.find("td:nth-child(2)").text();
+    row1.find("td:nth-child(2)").text(row2_order_number);
+    row2.find("td:nth-child(2)").text(row1_order_number);
+    row1.find("td:first").insertBefore(row2.find("td:first"));
+    row2.find("td:nth-child(2)").insertBefore(row1.find("td:first"));
+    row1.insertBefore(row2);
+  }
+  $(".options_order").find('.up:first').hide();
+  $(".options_order").find('.down:last').hide();
+  $(".up,.down").click(function(e){
+    e.preventDefault();
+    var row = $(this).parents("tr:first");
+    if ($(this).is(".up")) {
+      swapRows(row, row.prev());
+    } else {
+      swapRows(row.next(), row);
+    }
+  });
+  
   clearVariantsForm();
   showNeccesaryOptionsActions();
   $('.option_values').on('change', '.option_value', function(){
@@ -458,6 +498,26 @@ $(document).ready(function(){
   
   <h2>OPTIONS</h2>
   
+  <h3>Options order</h3>
+  <table class="table table-bordered table-striped table-hover options_order" style="width:auto; text-align:center;">
+    <thead>
+      <th></th>
+      <th>Option order number</th>
+      <th>Option name</th>
+    </thead>
+    <% @options.order(:order_number).each do |option| %>
+      <tr>
+        <td>
+          <a href="#" class="up">Up</a>
+          <a href="#" class="down">Down</a>
+        </td>
+        <td><%= option.order_number %></td>
+        <td><%= option.name %></td>
+      </tr>
+    <% end %>
+  </table>
+  
+  <input type="button" onclick="saveOptionsOrder()" class="btn btn-success" value="Save order">
   <h3>All available options:</h3>
   
   <div class="row options">

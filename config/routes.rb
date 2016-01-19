@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   end
   
   resources :product_info, defaults: { format: 'json' }
+  put '/update_order', to: 'options#update_order_numbers'
   resources :options do
     resources :option_values do
       post '/assign_image', to: 'option_values#assign_image'
