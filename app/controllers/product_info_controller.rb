@@ -46,8 +46,22 @@ class ProductInfoController < ApplicationController
     #@product_options = Option.joins("inner join products_options on products_options.option_id = options.id").uniq
     @product_options.sort_by! { |option| option[:order_number] }
     @first_image = ProductImage.where(product_id: params[:id]).first
-    #@variants.each do || 
-    #@option_dependency = {}
+    @option_dependency = []
+    @variants.each do |variant|
+      @option_value_ordered = []
+      variant.option_values.each do |option_value| 
+        @option_value_ordered.push( option_value.value )
+      end
+      @option_value_ordered.sort_by! do |option_value|
+        OptionValue.where(:value => option_value)[0].option.order_number
+      end
+      @variant_branch = []
+      puts @option_value_ordered.length - 1
+      1.upto(@option_value_ordered.length - 1) do |i|
+        @variant_branch.push({ @option_value_ordered[i-1].to_sym => @option_value_ordered[i] })
+      end
+      @option_dependency |= @variant_branch
+    end
     #1.upto(@product_options.length - 1) do |i|
       #@product_options[i-1].option_values.each do |current_option_value|
         #@product_options[i].option_values.each do |next_option_value|   
