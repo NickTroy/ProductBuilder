@@ -47,21 +47,24 @@ class ProductInfoController < ApplicationController
     @product_options.sort_by! { |option| option[:order_number] }
     @first_image = ProductImage.where(product_id: params[:id]).first
     @option_dependency = []
-    @variants.each do |variant|
-      @option_value_ordered = []
-      variant.option_values.each do |option_value| 
-        @option_value_ordered.push( option_value.value )
-      end
-      @option_value_ordered.sort_by! do |option_value|
-        OptionValue.where(:value => option_value)[0].option.order_number
-      end
-      @variant_branch = []
-      puts @option_value_ordered.length - 1
-      1.upto(@option_value_ordered.length - 1) do |i|
-        @variant_branch.push({ @option_value_ordered[i-1].to_sym => @option_value_ordered[i] })
-      end
-      @option_dependency |= @variant_branch
-    end
+    @options_count = @product_options.count
+    @option_dependency = build_option_dependency_tree
+    
+    #@variants.each do |variant|
+      #@option_value_ordered = []
+      #variant.option_values.each do |option_value| 
+        #@option_value_ordered.push( option_value.value )
+      #end
+      #@option_value_ordered.sort_by! do |option_value|
+        #OptionValue.where(:value => option_value)[0].option.order_number
+      #end
+      #@variant_branch = []
+      #puts @option_value_ordered.length - 1
+      #1.upto(@option_value_ordered.length - 1) do |i|
+        #@variant_branch.push({ @option_value_ordered[i-1].to_sym => @option_value_ordered[i] })
+      #end
+      #@option_dependency |= @variant_branch
+    #end
     #1.upto(@product_options.length - 1) do |i|
       #@product_options[i-1].option_values.each do |current_option_value|
         #@product_options[i].option_values.each do |next_option_value|   
@@ -78,4 +81,49 @@ class ProductInfoController < ApplicationController
     end
     
   end  
+  private
+  def build_option_dependency_tree
+    @variants.each do |variant|
+      @variant_branch = []
+      @variant_option_values = []
+      variant.option_values.each do |option_value|
+        @variant_option_values.push option_value.value
+      end
+      @variant_option_values.sort_by! { |opt_val| OptionValue.where(:value => opt_val)[0].option.order_number }
+      @variant_option_values.reverse.each do |option_value|
+        @variant_branch = [option_value, @variant_branch]
+      end
+      p @variant_branch
+      if @option_dependency.empty?
+        @option_dependency = @variant_branch
+      else
+        update_option_dependency
+      end
+      p "result"
+      p @option_dependency
+    end
+    
+  end
+
+  def update_option_dependency(option_order_number = 1, option_dependency = @option_dependency, variant_branch = @variant_branch)
+    option_value = variant_branch[0]
+    p "dep" 
+    p option_dependency
+    p "variant"
+    p variant_branch
+    index_update = option_dependency.find_index(option_value)
+    unless index_update
+      option_dependency.push option_value
+      option_dependency.push variant_branch[1]
+      return
+    end
+    p (index_update + 1).to_s + " index"
+    option_dependency = option_dependency[index_update + 1]
+    variant_branch = variant_branch[1]
+    p "dep"
+    p option_dependency
+    p "variant"
+    p variant_branch
+    update_option_dependency(option_order_number + 1, option_dependency, variant_branch)
+  end
 end
