@@ -406,11 +406,18 @@ $(document).ready(function(){
 
 <div class="row">
   
-  <div class="col-md-12 form-group">
+  <div cilass="col-md-12 form-group">
     <%= label_tag 'product[title]', "Product title:" %>
     <%= text_field_tag :title, @product.title, class: "form-control" %>
   </div>
-
+</div>
+<div class="row">
+  <div class="col-md-6">
+    Product belongs to:
+    <% @product_collections.each do |collection| %>
+      <span><strong><%= collection.title %>,<strong></span>
+    <% end %>
+  </div>
 </div>  
 
 <div class="row">
@@ -464,19 +471,35 @@ $(document).ready(function(){
 
 <div class="row">
   
-  <div class="col-md-4 form-group">
+  <div class="col-md-3 form-group">
     <%= label_tag 'product[type]', "Product type:" %>
     <%= text_field_tag :product_type, @product.product_type, class: "form-control" %>
   </div>
   
-  <div class="col-md-4 form-group">
+  <div class="col-md-3 form-group">
     <%= label_tag 'product[published_scope]', "Product published scope:" %>
     <%= text_field_tag :published_scope, @product.published_scope, class: "form-control" %>
   </div>
   
-  <div class="col-md-4 form-group">
+  <div class="col-md-3 form-group">
     <%= label_tag 'product[vendor]', "Product vendor:" %>
     <%= text_field_tag :vendor, @product.vendor, class: "form-control" %>
+  </div>
+
+  <div class="col-md-3 form-group">
+    <%= label_tag 'product[collections]', "Assign collection" %>
+    <select id="collection_id" name="collection_id" class="form-control"> 
+      <option value="" selected="selected">
+        -Select collection to assign-
+      </option>
+      <% @collections.each do |collection| %>
+        <% unless @product_collections.include? collection %>
+          <option value=<%= collection.id %>>  
+            <%= collection.title %>
+          </option>
+        <% end %>
+      <% end %>
+    </select>
   </div>
 
 </div>  

@@ -10,16 +10,17 @@
 <div class="container">
   <h3>Products</h3>
     <div class="row">
-      <div class="col-md-2">Product Title</div>
+      <div class="col-md-1">Product Title</div>
       <div class="col-md-2">Product Image</div>
       <div class="col-md-2">Product Description</div>
-      <div class="col-md-2">Number of Product Variants</div>
-      <div class="col-md-2"></div>
+      <div class="col-md-1">Number of Product Variants</div>
+      <div class="col-md-1">Collections count</div>
+      <div class="col-md-1"></div>
     </div>
 
    <% @products.each do |product| %>
       <div class="row">
-        <div class="col-md-2">
+        <div class="col-md-1">
           <%= link_to product.title, edit_product_url(product.id, :protocol => 'https') %> <!--#{ :controller => "products", :action => "edit", :id => product.id , :protocol => 'https'} -->
         </div>
         <div class="col-md-2">
@@ -28,8 +29,11 @@
         <div class="col-md-2" style="height:150px; overflow:hidden;">
           <%= render html: product.body_html.html_safe unless product.body_html.nil? %>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-1">
           Product has <%= @variants.where(product_id: product.id).count %> variants
+        </div>
+        <div class="col-md-1">
+          Product belongs to <%= product.collections.count %> collections 
         </div>
         <div class="col-md-2">
           <%= link_to 'Delete', product_url(product.id, :protocol => 'https'), 

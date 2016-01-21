@@ -35,6 +35,8 @@ class ProductsController < AuthenticatedController
     @images = ProductImage.where(product_id: @product.id)
     @options = Option.all
     @product_options = []
+    @collections = ShopifyAPI::CustomCollection.all
+    @product_collections = @product.collections
     ProductsOption.where(:product_id => @product.id).each do |product_option|
       @product_options.push(Option.where(id: product_option.option_id)[0])
     end
@@ -82,7 +84,8 @@ class ProductsController < AuthenticatedController
     end
     
     @product = ShopifyAPI::Product.find(params[:id])
-    
+    @collect = ShopifyAPI::Collect.new(:product_id => @product.id, :collection_id => params[:collection_id])
+    @collect.save
     respond_to do |format|
       format.html do 
         if @product.update_attributes(product_params)
