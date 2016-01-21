@@ -121,7 +121,6 @@ class ProductsController < AuthenticatedController
     @last_column = @product_spreadsheet.last_column
     @number_of_variants = @product_spreadsheet.column(@last_column).compact.count - 3
     @product_row = @product_spreadsheet.row(6)
-    puts @product_row
     @product_title = @product_row[2]
     @product_details = @product_row[3]
     @product_vendor = @product_row[4]
@@ -180,7 +179,7 @@ class ProductsController < AuthenticatedController
         @variant.option_values << @color
         @pseudo_product_title += " #{@color.option.name} : #{@color.value}"
       end
-      
+      @variant.sku = @variant_row[40]     
       @variant.save
       @pseudo_product = ShopifyAPI::Product.create(title: "#{@pseudo_product_title}")
       @pseudo_product_variant = @pseudo_product.variants.first
