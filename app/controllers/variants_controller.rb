@@ -27,11 +27,11 @@ class VariantsController < AuthenticatedController
     
     @variant = Variant.find(params[:variant_id])
     unless params[:image_id].nil? 
-      @image_selected = ProductImage.find(params[:image_id])
-      @variant.product_image = @image_selected
+      @image_selected = VariantImage.find(params[:image_id])
+      @variant.main_image_id = params[:image_id]
+      @variant.save
     end
     @variant.update_attributes(variant_attributes)
-    
     @pseudo_product = ShopifyAPI::Product.find(@variant.pseudo_product_id)
     @pseudo_product_variant = @pseudo_product.variants.first
     @pseudo_product_variant.update_attributes(price: variant_attributes[:price], sku: variant_attributes[:sku] )

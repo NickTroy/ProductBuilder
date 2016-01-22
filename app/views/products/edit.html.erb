@@ -608,7 +608,7 @@ $(document).ready(function(){
     <% @variants.each do |variant| %>
       <div class="variant-info row">
         <div class="col-md-1">
-          <%= variant.product_image.nil? ? "" : image_tag(variant.product_image.image.url(:thumb), style: "height:30px;") %>
+          <%= variant.main_image_id.nil? ? "" : image_tag(VariantImage.find(variant.main_image_id).image.url(:thumb), style: "height:30px;") %>
         </div>
         <div class="col-md-8 options_and_values">
           <% variant.option_values.each do |opt_val| %>

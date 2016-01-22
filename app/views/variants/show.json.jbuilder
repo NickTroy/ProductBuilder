@@ -1,7 +1,7 @@
 json.array! @variants do |variant|
   json.variant_id variant.id
-  if !(variant.product_image.nil?)
-    json.image_source variant.product_image.image.url(:thumb) 
+  unless variant.main_image_id.nil?
+    json.image_source VariantImage.find(variant.main_image_id).image.url(:thumb) 
   end
   if !(variant.sku.nil?)
     json.sku variant.sku 

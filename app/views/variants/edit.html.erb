@@ -64,15 +64,15 @@ $(document).ready(function(){
 			}
       });
   })
-	
+
 });
   
 </script>
 <script type="text/javascript">
 
 $(document).ready(function(){
-  <% unless @variant.product_image.nil? %>
-    var selected_image = <%= @variant.product_image.id %>;
+  <% unless @variant.main_image_id.nil? %>
+    var selected_image = <%= @variant.main_image_id %>;
     $("select").find('option[value="'+ selected_image +'"]').prop('selected',true);
   <% end %>
   $("select").imagepicker();
@@ -103,8 +103,8 @@ $(document).ready(function(){
     
     <select class="image-picker show-html" id="selectImage" name="image_id">
       
-      <% @product_images.each_with_index do |img, i| %>
-        <option data-img-src="<%= img.image.url(:medium) %>" value="<%= img.id %>">Cute Kitten 1</option>
+      <% @variant_images.each_with_index do |img, i| %>
+        <option data-img-src="<%= img.image.url(:medium) %>" value="<%= img.id %>"></option>
       <% end %>
     </select>
 

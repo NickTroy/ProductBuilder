@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160122114330) do
+ActiveRecord::Schema.define(version: 20160122145948) do
 
   create_table "images_variants", force: :cascade do |t|
     t.integer  "image_id",   limit: 4
@@ -94,6 +94,7 @@ ActiveRecord::Schema.define(version: 20160122114330) do
     t.integer  "product_image_id",          limit: 4
     t.integer  "pseudo_product_id",         limit: 8
     t.integer  "pseudo_product_variant_id", limit: 8
+    t.integer  "main_image_id",             limit: 4
   end
 
   add_index "variants", ["product_image_id"], name: "index_variants_on_product_image_id", using: :btree

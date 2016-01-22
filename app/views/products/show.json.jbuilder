@@ -4,8 +4,8 @@ json.variants @variants do |variant|
     json.option_name option_value.option.name
     json.option_value option_value.value
   end
-  if !(variant.product_image.nil?)
-    json.image_source variant.product_image.image.url 
+  unless variant.main_image_id.nil?
+    json.image_source VariantImage.find(variant.main_image_id).image.url 
   else 
     json.image_source ''
   end
