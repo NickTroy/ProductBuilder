@@ -23,47 +23,47 @@ $(document).ready(function(){
       $('.dropzone-previews').addClass("dz-success");
 	    
       $('.dz-remove:last').click(function(){
-      var id = $(this).attr('id'); 
-      // make a DELETE ajax request to delete the file
+        var id = $(this).attr('id'); 
+        // make a DELETE ajax request to delete the file
         $.ajax({
           type: 'POST',
-				  data: { _method: 'DELETE' },
-				  url: '',
-				  success: function(data){
-					  console.log(data.message);
-			  	}
-			  });
-	    })		
-		},
-		//when the remove button is clicked
-		init: function(){
-		  var existingFiles = [];
-      <% @variant_images.each_with_index do |image, index| %>
-        existingFiles.push({ id: "<%= image.id %>"});
-        this.emit("addedfile", existingFiles[<%= index %>]);
-        this.emit("thumbnail", existingFiles[<%= index %>], "<%= image.image.url %>");
-        $('.dropzone-previews').find('.dz-remove:last').attr('id', <%= image.id %>);
-      <% end %>
+          data: { _method: 'DELETE' },
+          url: '<%= product_variant_variant_images_url(:variant_id => @variant.id, :protocol => 'https') %>/' + id,
+          success: function(data){
+            console.log(data.message);
+          }
+        });
+      })		
+    },
+    //when the remove button is clicked
+    init: function(){
+      var existingFiles = [];
+        <% @variant_images.each_with_index do |image, index| %>
+          existingFiles.push({ id: "<%= image.id %>"});
+          this.emit("addedfile", existingFiles[<%= index %>]);
+          this.emit("thumbnail", existingFiles[<%= index %>], "<%= image.image.url %>");
+          $('.dropzone-previews').find('.dz-remove:last').attr('id', <%= image.id %>);
+        <% end %>
       
-		  this.on("removedfile", function(file){
+      this.on("removedfile", function(file){
 		      
-		  })
-		}
+      })
+    }
 		
-	});	
+  });	
 	
-	$('.dz-remove').click(function(){
-	  var id = $(this).attr('id'); 
+  $('.dz-remove').click(function(){
+    var id = $(this).attr('id'); 
     // make a DELETE ajax request to delete the file
-		$.ajax({
-		  type: 'POST',
-		  data: { _method: 'DELETE' },
-		  url: '' + id,
-		  success: function(data){
-			  console.log(data.message);
+    $.ajax({
+      type: 'POST',
+      data: { _method: 'DELETE' },
+      url: '<%= product_variant_variant_images_url(:variant_id => @variant.id, :protocol => 'https') %>/' + id,
+      success: function(data){
+      console.log(data.message);
 			}
-		});
-	})
+      });
+  })
 	
 });
   
