@@ -495,7 +495,9 @@ $(document).ready(function(){
       <% @collections.each do |collection| %>
         <% unless @product_collections.include? collection %>
           <option value=<%= collection.id %>>  
-            <%= collection.title %>
+            <span>
+              <%= collection.title %>
+            </span>
           </option>
         <% end %>
       <% end %>
