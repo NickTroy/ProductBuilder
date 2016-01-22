@@ -11,7 +11,8 @@ class VariantsController < AuthenticatedController
   def edit
     @variant = Variant.find(params[:variant_id])
     @image = @variant.product_image
-    @images = ProductImage.where(product_id: @variant.product_id)
+    @product_images = ProductImage.where(product_id: @variant.product_id)
+    @variant_images = @variant.variant_images
   end
   
   def show
