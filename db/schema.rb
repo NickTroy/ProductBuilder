@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160122145948) do
+ActiveRecord::Schema.define(version: 20160126130901) do
 
   create_table "images_variants", force: :cascade do |t|
     t.integer  "image_id",   limit: 4
@@ -43,6 +43,18 @@ ActiveRecord::Schema.define(version: 20160122145948) do
     t.integer  "order_number", limit: 4
   end
 
+  create_table "plane_images", force: :cascade do |t|
+    t.integer  "three_sixty_image_id", limit: 4
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+    t.string   "image_file_name",      limit: 255
+    t.string   "image_content_type",   limit: 255
+    t.integer  "image_file_size",      limit: 4
+    t.datetime "image_updated_at"
+  end
+
+  add_index "plane_images", ["three_sixty_image_id"], name: "index_plane_images_on_three_sixty_image_id", using: :btree
+
   create_table "product_images", force: :cascade do |t|
     t.integer  "product_id",         limit: 8
     t.text     "image_source",       limit: 16777215
@@ -72,6 +84,14 @@ ActiveRecord::Schema.define(version: 20160122145948) do
   end
 
   add_index "shops", ["shopify_domain"], name: "index_shops_on_shopify_domain", unique: true, using: :btree
+
+  create_table "three_sixty_images", force: :cascade do |t|
+    t.integer  "variant_id", limit: 4
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
+
+  add_index "three_sixty_images", ["variant_id"], name: "index_three_sixty_images_on_variant_id", using: :btree
 
   create_table "variant_images", force: :cascade do |t|
     t.integer  "variant_id",         limit: 4
@@ -112,7 +132,9 @@ ActiveRecord::Schema.define(version: 20160122145948) do
   add_foreign_key "images_variants", "product_images", column: "image_id"
   add_foreign_key "images_variants", "variants"
   add_foreign_key "option_values", "options"
+  add_foreign_key "plane_images", "three_sixty_images"
   add_foreign_key "products_options", "options"
+  add_foreign_key "three_sixty_images", "variants"
   add_foreign_key "variant_images", "variants"
   add_foreign_key "variants", "product_images"
   add_foreign_key "variants_option_values", "option_values"

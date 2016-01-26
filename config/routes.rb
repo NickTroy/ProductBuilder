@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     get 'page/:page', :action => :index, :on => :collection
     resources :variants do
       resources :variant_images
+      resource :three_sixty_image
     end
     collection { post :import }
     resources :product_images

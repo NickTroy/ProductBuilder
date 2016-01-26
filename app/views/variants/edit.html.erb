@@ -64,6 +64,28 @@ $(document).ready(function(){
 			}
       });
   })
+  $("#three-sixty-form").dropzone({
+    url: "<%= product_variant_three_sixty_image_url(:protocol => 'https', :variant_id => @variant.id) %>",
+    maxFilesize: 1,
+    uploadMultiple: true,
+    paramName: "three_sixty_images",
+    previewsContainer: '.three_sixty_previews',
+    clickable: '.three_sixty_previews',
+    // show remove links on each image upload
+    addRemoveLinks: true,
+    success: function(file, response){
+      // find the remove button link of the uploaded file and give it an id
+      // based of the fileID response from the server
+    },
+    //when the remove button is clicked
+    init: function(){
+      
+      this.on("removedfile", function(file){
+                      
+      })
+    }
+                
+  }); 
 
 });
   
@@ -120,6 +142,19 @@ $(document).ready(function(){
       </div><br>
     </div>
 
+    <div class="three-sixty-images-container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>360 IMAGE BUILDER</h2>
+          <div class="three_sixty_previews dropzone">
+            <div class="dz-default dz-message"><span>Drop files here to upload</span>
+            </div>
+          </div>
+        </div>
+      </div><br>
+    </div>
+
+
     <div class="row">
       <div class="col-md-2">
         <%= f.submit "Save", :class => "btn btn-success" %>
@@ -128,12 +163,11 @@ $(document).ready(function(){
         <%= f.submit "Cancel", :class => 'btn btn-warning' %>
       </div>     
     </div>
-
-
-
-
-  <% end %>    
+<% end %>    
   <form id="product-variant-images" action="" method="post" name="product-images">
-  <input id="image" style="display:none;" name="image" type="file">
-</form> 
+    <input id="image" style="display:none;" name="image" type="file">
+  </form> 
+  <form id="three-sixty-form" action="" method="post" name="three-sixty-form">
+    <input id="three_sixty_pictures" style="display:none;" name="three_sixty_pictures" type="file">
+  </form>
 </div>
