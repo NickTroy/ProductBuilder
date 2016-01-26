@@ -66,13 +66,12 @@ $(document).ready(function(){
   })
   $("#three-sixty-form").dropzone({
     url: "<%= product_variant_three_sixty_image_url(:protocol => 'https', :variant_id => @variant.id) %>",
-    maxFilesize: 1,
     uploadMultiple: true,
     paramName: "three_sixty_images",
     previewsContainer: '.three_sixty_previews',
+    parallelUploads: 40,
     clickable: '.three_sixty_previews',
-    // show remove links on each image upload
-    addRemoveLinks: true,
+    autoProcessQueue: false,
     success: function(file, response){
       // find the remove button link of the uploaded file and give it an id
       // based of the fileID response from the server
@@ -80,6 +79,11 @@ $(document).ready(function(){
     //when the remove button is clicked
     init: function(){
       
+      var $dropzone = this;
+      $('#upload_images').click(function(){
+        alert('uploading');
+        $dropzone.processQueue();
+      });
       this.on("removedfile", function(file){
                       
       })
@@ -149,6 +153,15 @@ $(document).ready(function(){
           <div class="three_sixty_previews dropzone">
             <div class="dz-default dz-message"><span>Drop files here to upload</span>
             </div>
+          </div>
+          <input type="button" value="Build 3D image" id="upload_images" class="btn btn-info">
+          <div class="3d_image">
+            <img src="mini.jpg" width="200" height="200"
+                 class="reel"
+                 id="image"
+                 data-images="https://productbuilder.arborgentry.com/system/three_sixty_images/1/###.gif"
+                 data-frames="35"
+                 data-speed="0.3">
           </div>
         </div>
       </div><br>

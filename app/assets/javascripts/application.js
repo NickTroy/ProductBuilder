@@ -17,5 +17,6 @@
 //= require dropzone
 //= require image-picker
 //= require jquery.remotipart
+//= require jquery.reel-bundle
 //= require turbolinks
 //= require_tree .
