@@ -3,7 +3,7 @@ class ThreeSixtyImagesController < ApplicationController
 
   def create
     @variant = Variant.find(params[:variant_id])
-    @three_sixty = @variant.three_sixty_image || ThreeSixtyImage.new(:variant_id => params[:variant_id])
+    @three_sixty = @variant.three_sixty_image || ThreeSixtyImage.create(:variant_id => params[:variant_id])
     @images = []
     params[:three_sixty_images].each do |number, img|
       @images.push(img)
@@ -22,6 +22,28 @@ class ThreeSixtyImagesController < ApplicationController
       render json: { message: "failed" }, :status => 500
     end
   end
+  
+  def show
+    @variant = Variant.find(params[:variant_id])
+    p @variant
+    @three_sixty_image = @variant.three_sixty_image
+    p @three_sixty_image
+    p @three_sixty_image.plane_images
+    unless @three_sixty_image.plane_images.empty?
+      @first_plane_image = @three_sixty_image.plane_images.first.image.url
+      @first_plane_image = URI.join(request.url, @first_plane_image).to_s
+      @first_plane_image.insert(4,'s')
+      @images_path = @first_plane_image.split('/')
+      @images_path.delete_at(-1)
+      @images_path = @images_path.join('/')
+      @images_names = []
+      @three_sixty_image.plane_images.each do |plane_image|
+        @images_names.push(plane_image.image.original_filename)
+      end
+      #@images_names = @images_names.join(',')
+    end
+    
+  end 
 
   def destroy
     @variant = Variant.find(params[:variant_id])

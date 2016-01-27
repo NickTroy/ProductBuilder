@@ -83,8 +83,30 @@ $(document).ready(function(){
       $('#upload_images').click(function(){
         $dropzone.processQueue();
       });
-      this.on("removedfile", function(file){
-                      
+      function process3Dimage(three_sixty_image_info){
+        var first_image = three_sixty_image_info["first_plane_image"];
+        var images_path = three_sixty_image_info["images_path"] + '/';
+        var images_names = three_sixty_image_info["images_names"];
+        $('#three_sixty_image').attr('src', first_image);
+        $('.reel').reel({
+          frames: images_names.length,
+          speed: 0.3,
+          path: images_path,
+          images: images_names
+        });
+      }
+      this.on("queuecomplete", function(file){
+        $dropzone.removeAllFiles();
+        $('.three_sixty_previews').hide();
+        $('#upload_images').hide();
+        $('.delete_3D_image').show(); 
+        $('.reel').show();
+        $.ajax({
+          url: "<%= url_for(action: 'show', controller: 'three_sixty_images', :protocol => 'https', :variant_id => @variant.id ) %>.json",
+          success: function(three_sixty_image_info){
+            process3Dimage(three_sixty_image_info);
+          }
+        })              
       })
     }
                 
@@ -101,14 +123,24 @@ $(document).ready(function(){
     $("select").find('option[value="'+ selected_image +'"]').prop('selected',true);
   <% end %>
   $("select").imagepicker();
+  <% if @three_sixty_image.nil? %>
+    $('.delete_3D_image').hide(); 
+    $('.reel').hide()
+  <% elsif @three_sixty_image.plane_images.any? %>
+    $('.three_sixty_previews').hide();
+    $('#upload_images').hide();
+  <% end %>
+   
   var images_names = "<%= @images_names %>";
   images_names = images_names.split(',');
-  $('.reel').reel({
-    frames: 35,
-    speed: 0.3,
-    path: "<%= @images_path %>/",
-    images: images_names
-  });
+  <% unless @three_sixty_image.nil? %>
+      $('.reel').reel({
+        frames: <%= @three_sixty_image.plane_images.count %>,
+        speed: 0.3,
+        path: "<%= @images_path %>/",
+       images: images_names
+      });
+  <% end %>
     
    
 });
@@ -164,7 +196,7 @@ $(document).ready(function(){
           </div><br>
           <input type="button" value="Build 3D image" id="upload_images" class="btn btn-info">
           <%= link_to 'Delete 3D image', product_variant_three_sixty_image_url(:variant_id => @variant.id, :protocol => 'https'),
-                            { :method => :delete, class: "btn btn-danger",
+                            { :method => :delete, class: "btn btn-danger delete_3D_image",
                             data: { confirm: 'Are you sure, you want to delete 3D image of this product variant?' } } %>    
           <div class="3d_image">
             <img src="<%= @first_plane_image %>" width="200" height="200" class="reel" id="three_sixty_image">
