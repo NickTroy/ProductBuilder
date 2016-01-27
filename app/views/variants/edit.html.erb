@@ -81,7 +81,6 @@ $(document).ready(function(){
       
       var $dropzone = this;
       $('#upload_images').click(function(){
-        alert('uploading');
         $dropzone.processQueue();
       });
       this.on("removedfile", function(file){
@@ -102,7 +101,16 @@ $(document).ready(function(){
     $("select").find('option[value="'+ selected_image +'"]').prop('selected',true);
   <% end %>
   $("select").imagepicker();
-  
+  var images_names = "<%= @images_names %>";
+  images_names = images_names.split(',');
+  $('.reel').reel({
+    frames: 35,
+    speed: 0.3,
+    path: "<%= @images_path %>/",
+    images: images_names
+  });
+    
+   
 });
   
 </script>
@@ -156,13 +164,8 @@ $(document).ready(function(){
           </div>
           <input type="button" value="Build 3D image" id="upload_images" class="btn btn-info">
           <div class="3d_image">
-            <img src="mini.jpg" width="200" height="200"
-                 class="reel"
-                 id="image"
-                 data-images="https://productbuilder.arborgentry.com/system/three_sixty_images/1/###.gif"
-                 data-frames="35"
-                 data-speed="0.3">
-          </div>
+            <img src="<%= @first_plane_image %>" width="200" height="200" class="reel" id="three_sixty_image">
+            </div>
         </div>
       </div><br>
     </div>

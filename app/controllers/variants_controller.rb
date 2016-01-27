@@ -13,6 +13,32 @@ class VariantsController < AuthenticatedController
     @image = @variant.product_image
     @product_images = ProductImage.where(product_id: @variant.product_id)
     @variant_images = @variant.variant_images
+    @three_sixty_image_url = ""
+    @three_sixty_image = @variant.three_sixty_image
+    unless @three_sixty_image.nil?
+      unless @three_sixty_image.plane_images.empty?      
+        @first_plane_image = @three_sixty_image.plane_images.first.image.url
+        @three_sixty_image_url = URI.join(request.url, @first_plane_image).to_s
+        @three_sixty_image_url.insert(4,'s')
+        @three_sixty_image_url
+        @image_url_array = @three_sixty_image_url.split('/')
+        @image_name = @image_url_array.last
+        @image_name_array = @image_name.split('.')
+        @image_name_array[0] = "###"
+        @image_name = @image_name_array.join('.')
+        @image_url_array[-1] = @image_name
+        @three_sixty_image_url = @image_url_array.join('/')
+        @images_path = @three_sixty_image_url.split('/')
+        @images_path.delete_at(-1)
+        @images_path = @images_path.join('/') 
+        @images_names = []
+        @three_sixty_image.plane_images.each do |plane_image|
+          @images_names.push(plane_image.image.original_filename)
+        end
+        @images_names =@images_names.join(',')
+      end
+    end
+
   end
   
   def show
