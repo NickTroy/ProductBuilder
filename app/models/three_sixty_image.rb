@@ -1,4 +1,4 @@
 class ThreeSixtyImage < ActiveRecord::Base
   belongs_to :variant
-  has_many :plane_images
+  has_many :plane_images, dependent: :destroy
 end

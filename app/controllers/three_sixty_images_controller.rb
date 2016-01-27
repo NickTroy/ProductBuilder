@@ -22,4 +22,14 @@ class ThreeSixtyImagesController < ApplicationController
       render json: { message: "failed" }, :status => 500
     end
   end
+
+  def destroy
+    @variant = Variant.find(params[:variant_id])
+    @three_sixty = @variant.three_sixty_image
+    if @three_sixty.destroy
+      redirect_to :back
+    else
+      render json: { message: "failed" }, :status => 500
+    end
+  end
 end

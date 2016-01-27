@@ -18,5 +18,6 @@
 //= require image-picker
 //= require jquery.remotipart
 //= require jquery.reel
+//= require jquery.reel-bundle
 //= require turbolinks
 //= require_tree .
