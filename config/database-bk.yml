@@ -1,0 +1,30 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  # For details on connection pooling, see rails configuration guide
+  # http://guides.rubyonrails.org/configuring.html#database-pooling
+  pool: 5
+
+development:
+  adapter: mysql2
+  encoding: utf8
+  database: productbuilder_db
+  host: localhost
+  username: root
+  password: 
+  socket: /var/lib/mysql/mysql.sock
+
+test:
+  adapter: sqlite3
+  pool: 5
+  timeout: 5000
+  database: productbuilder_test
+
+production:
+  adapter: mysql2
+  encoding: utf8
+  database: productbuilder_db
+  host: localhost
+  username: root
+  password:
+  socket: /var/lib/mysql/mysql.sock
