@@ -138,6 +138,9 @@ class ProductsController < AuthenticatedController
             @options_count += 1
             @first_option_column ||= ind
           end
+          if cell.include? "Variant ITEM #"
+            @sku_column ||= ind
+          end
         end
       end
       
@@ -166,8 +169,8 @@ class ProductsController < AuthenticatedController
     
         end
         
-      
-        @variant.sku = @variant_row[32]     
+         
+        @variant.sku = @variant_row[@sku_column]     
         @variant.save
         @pseudo_product = ShopifyAPI::Product.create(title: "#{@pseudo_product_title}")
         @pseudo_product_variant = @pseudo_product.variants.first
