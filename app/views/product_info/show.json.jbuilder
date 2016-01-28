@@ -9,6 +9,7 @@ json.options @product_options do |option|
     json.option_value option_value
   end
 end
+json.main_variant_id @main_variant_id
 json.variants @variants do |variant|
   json.variant_id variant.id
   json.pseudo_product_variant_id variant.pseudo_product_variant_id

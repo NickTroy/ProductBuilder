@@ -27,6 +27,7 @@ class ProductInfoController < ApplicationController
 
   def show
     @variants = Variant.where(product_id: params[:id])
+    @main_variant_id = @variants.first.id
     @product_options = []
     #ProductsOption.where(:product_id => params[:id]).each do |product_option|
       #@product_options.push(Option.where(id: product_option.option_id)[0])
@@ -54,7 +55,9 @@ class ProductInfoController < ApplicationController
     end
     
   end  
+
   private
+
   def build_option_dependency_tree
     @variants.each do |variant|
       @variant_branch = []
