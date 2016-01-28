@@ -120,79 +120,66 @@ class ProductsController < AuthenticatedController
   
 
   def import
-    @product_spreadsheet = Roo::Excelx.new(params[:file].path).sheet(0)
-    @last_column = @product_spreadsheet.last_column
-    @number_of_variants = @product_spreadsheet.column(@last_column).compact.count - 3
-    @product_row = @product_spreadsheet.row(6)
-    @product_title = @product_row[2]
-    @product_details = @product_row[3]
-    @product_vendor = @product_row[4]
-    @product = ShopifyAPI::Product.new({
-      :title => @product_title,
-      :body_html => @product_details,
-      :vendor => @product_vendor
-    })
-    @product.attributes[:tags] = "product"
-    @product.save
-    @product.add_metafield(ShopifyAPI::Metafield.new(:namespace => "product", :key => "key", :value => "value", :value_type => "string"))
+    @import_file = Roo::Excel.new(params[:file].path)
+    @import_file.sheets.each_with_index do |sheet, index|
+      #@product_spreadsheet = Roo::Excelx.new(params[:file].path).sheet(0)
+      @last_column = @import_file.sheet(index).last_column
+      @number_of_variants = @import_file.sheet(index).column(@last_column).compact.count - 3
+      @product_row = @import_file.sheet(index).row(6)
+      @product_title = @product_row[2]
+      @product_details = @product_row[3]
+      @product_vendor = @product_row[4]
+      
+      @options_row = @import_file.sheet(index).row(2)
+      @options_count = 0
+      @import_file.sheet(index).row(1).each_with_index do |cell, ind|
+        unless cell.nil?
+          if cell.include? "Option"
+            @options_count += 1
+            @first_option_column ||= ind
+          end
+        end
+      end
+      
+      @product = ShopifyAPI::Product.new({
+        :title => @product_title,
+        :body_html => @product_details,
+        :vendor => @product_vendor
+      })
+      @product.attributes[:tags] = "product"
+      @product.save
+      @product.add_metafield(ShopifyAPI::Metafield.new(:namespace => "product", :key => "key", :value => "value", :value_type => "string"))
+     
+      1.upto(@number_of_variants) do |i|
+        @variant_row = @import_file.sheet(index).row(5 + i)
+        @variant = Variant.new(:product_id => @product.id)
+        @pseudo_product_title = ""
+        @first_option_column.upto(@first_option_column + @options_count - 1) do |j|
+          @option_name = @options_row[j]
+          @option = Option.where(name: @option_name)[0] || Option.new(name: @option_name)
+          if @option.products_options.where(:product_id => @product.id).empty?
+            @option.products_options.create(:product_id => @product.id)
+          end
+          @option_value = OptionValue.where(:value => @variant_row[j].capitalize)[0] || OptionValue.new(:option_id => @option.id, :value => @variant_row[j].capitalize)
+          @variant.option_values << @option_value
+          @pseudo_product_title += " #{@option.name} : #{@option_value.value}"
     
-    Option.all.each do |option|
-      option.products_options.create(:product_id => @product.id)
-    end
-    1.upto(@number_of_variants) do |i|
-      @variant_row = @product_spreadsheet.row(5 + i)
-      @variant = Variant.new(:product_id => @product.id)
-      @pseudo_product_title = ""
-      if @variant_row[9].nil?
-        @upholstery = OptionValue.where(:value => @variant_row[10].capitalize)[0] || OptionValue.new(:option_id => Option.where(:name => 'Upholstery')[0].id, :value => @variant_row[10].capitalize)
-        @variant.option_values << @upholstery
-        @pseudo_product_title += " #{@upholstery.option.name} : #{@upholstery.value}"
-      else 
-        @upholstery = OptionValue.where(:value => @variant_row[9].capitalize)[0] || OptionValue.new(:option_id => Option.where(:name => 'Upholstery')[0].id, :value => @variant_row[9].capitalize)
-        @variant.option_values << @upholstery
-        @pseudo_product_title += " #{@upholstery.option.name} : #{@upholstery.value}"
-      end
-      @room = OptionValue.where(:value => @variant_row[11].capitalize)[0] || OptionValue.new(:option_id => Option.where(:name => 'Room')[0].id, :value => @variant_row[11].capitalize)
-      @variant.option_values << @room
-      @pseudo_product_title += " #{@room.option.name} : #{@room.value}"
-      @height = OptionValue.where(:value => @variant_row[13].capitalize)[0] || OptionValue.new(:option_id => Option.where(:name => 'Height')[0].id, :value => @variant_row[13].capitalize)
-      @variant.option_values << @height
-      @pseudo_product_title += " #{@height.option.name} : #{@height.value}"
-      @depth = OptionValue.where(:value => @variant_row[15].capitalize)[0] || OptionValue.new(:option_id => Option.where(:name => 'Depth')[0].id, :value => @variant_row[15].capitalize)
-      @variant.option_values << @depth
-      @pseudo_product_title += " #{@depth.option.name} : #{@depth.value}"
-      @width = OptionValue.where(:value => @variant_row[17].capitalize)[0] || OptionValue.new(:option_id => Option.where(:name => 'Width')[0].id, :value => @variant_row[17].capitalize)
-      @variant.option_values << @width
-      @pseudo_product_title += " #{@width.option.name} : #{@width.value}"
-      if @variant_row[19].nil?
-        @type = OptionValue.where(:value => @variant_row[20].capitalize)[0] || OptionValue.new(:option_id => Option.where(:name => 'Type')[0].id, :value => @variant_row[20].capitalize)
-        @variant.option_values << @type
-        @pseudo_product_title += " #{@type.option.name} : #{@type.value}"
-      else 
-        @type = OptionValue.where(:value => @variant_row[19].capitalize)[0] || OptionValue.new(:option_id => Option.where(:name => 'Type')[0].id, :value => @variant_row[19].capitalize)
-        @variant.option_values << @type
-        @pseudo_product_title += " #{@type.option.name} : #{@type.value}"
-      end
-      if @variant_row[22].nil?
-        @color = OptionValue.where(:value => @variant_row[23].capitalize)[0] || OptionValue.new(:option_id => Option.where(:name => 'Color')[0].id, :value => @variant_row[23].capitalize)
-        @variant.option_values << @color
-        @pseudo_product_title += " #{@color.option.name} : #{@color.value}"
-      else 
-        @color = OptionValue.where(:value => @variant_row[22].capitalize)[0] || OptionValue.new(:option_id => Option.where(:name => 'Color')[0].id, :value => @variant_row[22].capitalize)
-        @variant.option_values << @color
-        @pseudo_product_title += " #{@color.option.name} : #{@color.value}"
-      end
-      @variant.sku = @variant_row[40]     
-      @variant.save
-      @pseudo_product = ShopifyAPI::Product.create(title: "#{@pseudo_product_title}")
-      @pseudo_product_variant = @pseudo_product.variants.first
-      @pseudo_product_variant.update_attributes(:option1 => @pseudo_product_title)
-      @variant.update_attributes(:pseudo_product_id => @pseudo_product.id, 
+        end
+        
+      
+        @variant.sku = @variant_row[32]     
+        @variant.save
+        @pseudo_product = ShopifyAPI::Product.create(title: "#{@pseudo_product_title}")
+        @pseudo_product_variant = @pseudo_product.variants.first
+        @pseudo_product_variant.update_attributes(:option1 => @pseudo_product_title)
+        @variant.update_attributes(:pseudo_product_id => @pseudo_product.id, 
                                  :pseudo_product_variant_id => @pseudo_product_variant.id)
-      @pseudo_product.add_metafield(ShopifyAPI::Metafield.new(:namespace => "variant", :key => "variant_id", :value => "#{@variant.id}", :value_type => "integer"))
+        @pseudo_product.add_metafield(ShopifyAPI::Metafield.new(:namespace => "variant", :key => "variant_id", :value => "#{@variant.id}", :value_type => "integer"))
+      end
     end
+    @import_file.close
     redirect_to root_url(:protocol => 'https'), notice: "Product imported."
-    @product_spreadsheet.close
+    
   end
 
 
