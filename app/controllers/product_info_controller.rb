@@ -33,7 +33,9 @@ class ProductInfoController < ApplicationController
       #@product_options.push(Option.where(id: product_option.option_id)[0])
     #end
     Option.all.each do |option|
-      @product_options.push({ :option_name => option.name, :order_number => option.order_number, :option_values => [] })
+      if option.products_options.where(:product_id => params[:id]).any?
+        @product_options.push({ :option_name => option.name, :order_number => option.order_number, :option_values => [] })
+      end
     end
     @variants.each do |variant|
       variant.option_values.each do |option_value|
