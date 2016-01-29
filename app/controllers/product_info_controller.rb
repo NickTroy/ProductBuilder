@@ -71,7 +71,6 @@ class ProductInfoController < ApplicationController
       @variant_option_values.reverse.each do |option_value|
         @variant_branch = [option_value, @variant_branch]
       end
-      p @variant_branch
       if @option_dependency.empty?
         @option_dependency = @variant_branch
       else
@@ -84,23 +83,14 @@ class ProductInfoController < ApplicationController
 
   def update_option_dependency(option_order_number = 1, option_dependency = @option_dependency, variant_branch = @variant_branch)
     option_value = variant_branch[0]
-    p "dep" 
-    p option_dependency
-    p "variant"
-    p variant_branch
     index_update = option_dependency.find_index(option_value)
     unless index_update
       option_dependency.push option_value
       option_dependency.push variant_branch[1]
       return
     end
-    p (index_update + 1).to_s + " index"
     option_dependency = option_dependency[index_update + 1]
     variant_branch = variant_branch[1]
-    p "dep"
-    p option_dependency
-    p "variant"
-    p variant_branch
     update_option_dependency(option_order_number + 1, option_dependency, variant_branch)
   end
 end

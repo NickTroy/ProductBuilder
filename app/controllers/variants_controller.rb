@@ -52,11 +52,21 @@ class VariantsController < AuthenticatedController
     @variant.update_attributes(variant_attributes)
     @pseudo_product = ShopifyAPI::Product.find(@variant.pseudo_product_id)
     @pseudo_product_variant = @pseudo_product.variants.first
-    @pseudo_product_variant.update_attributes(price: variant_attributes[:price], sku: variant_attributes[:sku] )
+    @pseudo_product_variant.update_attributes(:price => variant_attributes[:price], :sku => variant_attributes[:sku] )
     unless params[:image_id].nil? 
       @pseudo_product_image = @pseudo_product.images.first || ShopifyAPI::Image.new(:product_id => @pseudo_product.id)
+      unless @pseudo_product_image.nil?
+        @pseudo_product_image.destroy
+      end
+      @pseudo_product_image = ShopifyAPI::Image.new(:product_id => @pseudo_product.id)
+      p @pseudo_product_image
+      p "before"
       @pseudo_product_image.src = URI.join(request.url, @image_selected.image.url).to_s
+      p @pseudo_product_image
+      p "create"
       @pseudo_product_image.save
+      p @pseudo_product_image
+      p "save"
     end
     redirect_to edit_product_url(:protocol => 'https', :id => params[:product_id])
   end
