@@ -33,6 +33,8 @@ $(document).ready(function(){
             console.log(data.message);
           }
         });
+        $('#selectImage option[value="'+ id +'"]').remove();
+        $('select').imagePicker();
       })		
     },
     //when the remove button is clicked
@@ -60,16 +62,19 @@ $(document).ready(function(){
       data: { _method: 'DELETE' },
       url: '<%= product_variant_variant_images_url(:variant_id => @variant.id, :protocol => 'https') %>/' + id,
       success: function(data){
-      console.log(data.message);
-			}
-      });
+        console.log(data.message);
+      }
+    });
+    $('#selectImage option[value="'+ id +'"]').remove();
+    $('select').imagepicker();
+
   })
   $("#three-sixty-form").dropzone({
     url: "<%= product_variant_three_sixty_image_url(:protocol => 'https', :variant_id => @variant.id) %>",
     uploadMultiple: true,
     paramName: "three_sixty_images",
     previewsContainer: '.three_sixty_previews',
-    parallelUploads: 40,
+    parallelUploads: 100,
     clickable: '.three_sixty_previews',
     autoProcessQueue: false,
     success: function(file, response){

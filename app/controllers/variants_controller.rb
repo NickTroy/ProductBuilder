@@ -54,7 +54,7 @@ class VariantsController < AuthenticatedController
     @pseudo_product_variant = @pseudo_product.variants.first
     @pseudo_product_variant.update_attributes(:price => variant_attributes[:price], :sku => variant_attributes[:sku] )
     unless params[:image_id].nil? 
-      @pseudo_product_image = @pseudo_product.images.first || ShopifyAPI::Image.new(:product_id => @pseudo_product.id)
+      @pseudo_product_image = @pseudo_product.images.first
       unless @pseudo_product_image.nil?
         @pseudo_product_image.destroy
       end

@@ -161,7 +161,7 @@ class ProductsController < AuthenticatedController
           if @option.products_options.where(:product_id => @product.id).empty?
             @option.products_options.create(:product_id => @product.id)
           end
-          @option_value = OptionValue.where(:value => @variant_row[j].capitalize)[0] || OptionValue.new(:option_id => @option.id, :value => @variant_row[j].capitalize)
+          @option_value = OptionValue.where(:value => @variant_row[j].capitalize)[0] || OptionValue.create(:option_id => @option.id, :value => @variant_row[j].capitalize)
           @variant.option_values << @option_value
           @pseudo_product_title += " #{@option.name} : #{@option_value.value}"
     
