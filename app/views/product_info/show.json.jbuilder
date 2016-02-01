@@ -19,21 +19,19 @@ json.variants @variants do |variant|
     json.option_value option_value.value
   end
   if !(variant.three_sixty_image.nil?)
-    json.image_source ''
     json.three_sixty_image do
       unless variant.three_sixty_image.plane_images.empty?
-        json.first_image asset_url(variant.three_sixty_image.plane_images.first.image)
+        json.first_image asset_url(variant.three_sixty_image.plane_images.first.image.url)
         json.plane_images_urls variant.three_sixty_image.plane_images do |plane_image|
           json.plane_image_url asset_url(plane_image.image.url)
         end
       end
     end
-  elsif !(variant.main_image_id.nil?)
-    json.image_source asset_url(VariantImage.find(variant.main_image_id).image.url)
-    json.three_sixty_image ''
   else 
-    json.image_source ''
     json.three_sixty_image ''
   end
+  json.variant_images variant.variant_images do |variant_image|
+    json.image_source asset_url(variant_image.image.url)
+  end 
   json.price variant.price
 end  
