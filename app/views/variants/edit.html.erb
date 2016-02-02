@@ -1,6 +1,17 @@
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/image-picker/0.2.4/image-picker.min.js"></script>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/image-picker/0.2.4/image-picker.min.css' rel='stylesheet' type='text/css'>
+<style>
+  .reel img {
+    height: 200px !important;
+  }
+  .reel {
+    height: 200px !important;
+  }
+  .image_picker_image {
+    height: 200px;
+  }
+</style>
 <script type="text/javascript">
 $(document).ready(function(){
   Dropzone.autoDiscover = false;
@@ -92,10 +103,40 @@ $(document).ready(function(){
         var first_image = three_sixty_image_info["first_plane_image"];
         var images_path = three_sixty_image_info["images_path"] + '/';
         var images_names = three_sixty_image_info["images_names"];
+        $('#three_sixty_speed').val(5);
+        $('#three_sixty_rotations_count').val(5);
+        $('#update_three_sixty_parameters').on('click', function(){
+          var rotation_speed, rotations_count;
+          rotation_speed = $('#three_sixty_speed').val();
+          rotations_count = $('#three_sixty_rotations_count').val();
+          $.ajax({
+            url: "<%= product_variant_three_sixty_image_url(:variant_id => @variant.id, :protocol => 'https')%>",
+            method: "POST",
+            dataType: "json",
+            data: {
+              _method: "PATCH",
+              rotation_speed: rotation_speed,
+              rotations_count: rotations_count
+            },
+            success: function(){
+              $('.reel').unreel();
+              var duration = rotations_count / rotation_speed * 10;
+              $('.reel').reel({
+                frames: images_names.length,
+                speed: rotation_speed / 10.0,
+                duration: duration,
+                path: images_path,
+                images: images_names
+              });
+
+            }  
+          });
+        }); 
         $('#three_sixty_image').attr('src', first_image);
         $('.reel').reel({
           frames: images_names.length,
-          speed: 0.3,
+          speed: 0.5,
+          duration: 5,
           path: images_path,
           images: images_names
         });
@@ -103,6 +144,7 @@ $(document).ready(function(){
       this.on("queuecomplete", function(file){
         $dropzone.removeAllFiles();
         $('.three_sixty_previews').hide();
+        $('#three_sixty_parameters_form').show();
         $('#upload_images').hide();
         $('.delete_3D_image').show(); 
         $('.reel').show();
@@ -123,6 +165,7 @@ $(document).ready(function(){
 <script type="text/javascript">
 
 $(document).ready(function(){
+  $('#three_sixty_paramteters_form').show();
   <% unless @variant.main_image_id.nil? %>
     var selected_image = <%= @variant.main_image_id %>;
     $("select").find('option[value="'+ selected_image +'"]').prop('selected',true);
@@ -130,7 +173,8 @@ $(document).ready(function(){
   $("select").imagepicker();
   <% if @three_sixty_image.nil? %>
     $('.delete_3D_image').hide(); 
-    $('.reel').hide()
+    $('#three_sixty_parameters_form').hide();
+    $('.reel').hide();
   <% elsif @three_sixty_image.plane_images.any? %>
     $('.three_sixty_previews').hide();
     $('#upload_images').hide();
@@ -139,23 +183,50 @@ $(document).ready(function(){
   var images_names = "<%= @images_names %>";
   images_names = images_names.split(',');
   <% unless @three_sixty_image.nil? %>
-      $('.reel').reel({
-        frames: <%= @three_sixty_image.plane_images.count %>,
-        speed: 0.3,
-        path: "<%= @images_path %>/",
-       images: images_names
-      });
+    var rotation_speed = <%= @three_sixty_image.rotation_speed.to_f / 10 %>;
+    var duration = <%= @three_sixty_image.rotations_count.to_f / @three_sixty_image.rotation_speed.to_f * 10 %>;
+    $('#three_sixty_speed').val(rotation_speed * 10);
+    $('#three_sixty_rotations_count').val(rotation_speed * duration);
+    $('.reel').reel({
+      frames: <%= @three_sixty_image.plane_images.count %>,
+      speed: rotation_speed,
+      duration: duration,
+      path: "<%= @images_path %>/",
+      images: images_names
+    });
+  $('#update_three_sixty_parameters').on('click', function(){
+    var rotation_speed, rotations_count;
+    rotation_speed = $('#three_sixty_speed').val();
+    rotations_count = $('#three_sixty_rotations_count').val();
+    $.ajax({
+      url: "<%= product_variant_three_sixty_image_url(:variant_id => @variant.id, :protocol => 'https')%>",
+      method: "POST",
+      dataType: "json",
+      data: {
+        _method: "PATCH",
+        rotation_speed: rotation_speed,
+        rotations_count: rotations_count
+      },
+      success: function(){
+        $('.reel').unreel();
+        var images_names = "<%= @images_names %>";
+        images_names = images_names.split(',');
+        var duration = rotations_count / rotation_speed * 10;
+        $('.reel').reel({
+          frames: <%= @three_sixty_image.plane_images.count %>,
+          speed: rotation_speed / 10,
+          duration: duration,
+          path: "<%= @images_path %>/",
+          images: images_names
+        });
+
+      }
+    });
+  }); 
   <% end %>
-    
-   
 });
   
 </script>
-<style>
-  img {
-    width:200px;
-  }
-</style>
 <div class="container">
   <%= form_for @variant, url: product_variant_path(:product_id => params[:product_id], :variant_id => @variant.id ) do |f| %>
     <div class="row">
@@ -199,13 +270,32 @@ $(document).ready(function(){
             <div class="dz-default dz-message"><span>Drop files here to upload</span>
             </div>
           </div><br>
+        </div>
+        <div class="col-md-12">
           <input type="button" value="Build 3D image" id="upload_images" class="btn btn-info">
           <%= link_to 'Delete 3D image', product_variant_three_sixty_image_url(:variant_id => @variant.id, :protocol => 'https'),
                             { :method => :delete, class: "btn btn-danger delete_3D_image",
-                            data: { confirm: 'Are you sure, you want to delete 3D image of this product variant?' } } %>    
+                            data: { confirm: 'Are you sure, you want to delete 3D image of this product variant?' } } %>
+        </div>
+        <div id="three_sixty_parameters_form">
+          <div class="col-md-6 form-group">
+            <label for="three_sixty_speed">Rotation speed(number of complete rotations per 10 seconds)</label>
+            <input id="three_sixty_speed" class="form-control" type="number" value="" max="10" min="1">
+          </div>
+          <div class="col-md-6 form-group">
+            <label for="three_sixty_rotations_count">Rotations count</label>
+            <input id="three_sixty_rotations_count" class="form-control" type="text" value="">
+          </div>
+          <div class="col-md-4">
+            <input id="update_three_sixty_parameters" class="btn btn-info" type="button" value="Update 3D image parameters">
+          </div>
+
+        </div><br>
+      
+        <div class="col-md-12">
           <div class="3d_image">
             <img src="<%= @first_plane_image %>" width="200" height="200" class="reel" id="three_sixty_image">
-            </div>
+          </div>
         </div>
       </div><br>
     </div>

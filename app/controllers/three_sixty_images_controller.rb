@@ -16,9 +16,21 @@ class ThreeSixtyImagesController < ApplicationController
     @images.each do |img|
       PlaneImage.create(:three_sixty_image_id => @three_sixty.id, :image => img)
     end
+    @three_sixty.rotations_count = 5
+    @three_sixty.rotation_speed = 5
     if @three_sixty.save
       render json: { message: "created" }, :status => 200
     else
+      render json: { message: "failed" }, :status => 500
+    end
+  end
+
+  def update
+    @variant = Variant.find(params[:variant_id])
+    @three_sixty_image = @variant.three_sixty_image
+    if @three_sixty_image.update_attributes(:rotation_speed => params[:rotation_speed], :rotations_count => params[:rotations_count])
+      render json: { message: "updated" }, :status => 200
+    else 
       render json: { message: "failed" }, :status => 500
     end
   end
