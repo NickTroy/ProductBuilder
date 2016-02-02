@@ -59,14 +59,8 @@ class VariantsController < AuthenticatedController
         @pseudo_product_image.destroy
       end
       @pseudo_product_image = ShopifyAPI::Image.new(:product_id => @pseudo_product.id)
-      p @pseudo_product_image
-      p "before"
       @pseudo_product_image.src = URI.join(request.url, @image_selected.image.url).to_s
-      p @pseudo_product_image
-      p "create"
       @pseudo_product_image.save
-      p @pseudo_product_image
-      p "save"
     end
     redirect_to edit_product_url(:protocol => 'https', :id => params[:product_id])
   end
