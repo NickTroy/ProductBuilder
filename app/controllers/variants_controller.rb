@@ -10,6 +10,7 @@ class VariantsController < AuthenticatedController
   
   def edit
     @variant = Variant.find(params[:variant_id])
+    @shopify_variant = ShopifyAPI::Variant.find(@variant.pseudo_product_variant_id)
     @image = @variant.product_image
     @product_images = ProductImage.where(product_id: @variant.product_id)
     @variant_images = @variant.variant_images
@@ -52,7 +53,17 @@ class VariantsController < AuthenticatedController
     @variant.update_attributes(variant_attributes)
     @pseudo_product = ShopifyAPI::Product.find(@variant.pseudo_product_id)
     @pseudo_product_variant = @pseudo_product.variants.first
-    @pseudo_product_variant.update_attributes(:price => variant_attributes[:price], :sku => variant_attributes[:sku] )
+    @inventory_management = params[:inventory_management] == "shopify" ? "shopify" : nil
+    p "manage"
+    p @inventory_management
+    @pseudo_product_variant.update_attributes(:price => variant_attributes[:price], :sku => variant_attributes[:sku], :inventory_management => @inventory_management)
+    p "variant before quantity change"
+    p @pseudo_product_variant
+    unless params[:inventory_management].nil?
+      @pseudo_product_variant.update_attributes(:inventory_quantity => params[:inventory_quantity].to_i)
+    end
+    p "after quantitty change"
+    p @pseudo_product_variant
     unless params[:image_id].nil? 
       @pseudo_product_image = @pseudo_product.images.first
       unless @pseudo_product_image.nil?

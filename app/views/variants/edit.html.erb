@@ -45,7 +45,7 @@ $(document).ready(function(){
           }
         });
         $('#selectImage option[value="'+ id +'"]').remove();
-        $('select').imagePicker();
+        $('#selectImage').imagePicker();
       })		
     },
     //when the remove button is clicked
@@ -77,7 +77,7 @@ $(document).ready(function(){
       }
     });
     $('#selectImage option[value="'+ id +'"]').remove();
-    $('select').imagepicker();
+    $('#selectImage').imagepicker();
 
   })
   $("#three-sixty-form").dropzone({
@@ -165,12 +165,18 @@ $(document).ready(function(){
 <script type="text/javascript">
 
 $(document).ready(function(){
+  <% if @shopify_variant.inventory_management.nil? %>
+    $('.inventory_quantity').hide();
+  <% end %>
+  $('#inventory_management').on('change', function(){
+    $('.inventory_quantity').toggle();
+  })
   $('#three_sixty_paramteters_form').show();
   <% unless @variant.main_image_id.nil? %>
     var selected_image = <%= @variant.main_image_id %>;
-    $("select").find('option[value="'+ selected_image +'"]').prop('selected',true);
+    $("#selectImage").find('option[value="'+ selected_image +'"]').prop('selected',true);
   <% end %>
-  $("select").imagepicker();
+  $("#selectImage").imagepicker();
   <% if @three_sixty_image.nil? %>
     $('.delete_3D_image').hide(); 
     $('#three_sixty_parameters_form').hide();
@@ -234,15 +240,31 @@ $(document).ready(function(){
         <%= f.label 'variant[sku]', "SKU (Stock Keeping Unit)" %>
         <%= f.text_field :sku, class: "form-control" %>
       </div>
-    </div>  
 
-    <div class="row">
       <div class="col-md-6 form-group">
         <%= f.label 'variant[price]', "Price" %>
         <%= f.text_field :price, class: "form-control" %>
       </div>
+      <div class="col-md-6 form-group">
+        <label for="invenotry_managment">
+          Inventory Managment
+        </label>
+        <select id="inventory_management" class="form-control" name="inventory_management">
+          <option value="shopify" <%= @shopify_variant.inventory_management == 'shopify' ? "selected" : "" %>>Shopify</option>
+          <option value="blank" <%= @shopify_variant.inventory_management.nil? ? "selected" : "" %>>Blank</option>
+        </select>
+      </div>
+      <div class="col-md-6 form-group inventory_quantity">
+        <label for="invenotry_quantity">
+          Inventory Quantity
+        </label>
+        <input id="inventory_quantity" class="form-control" type="number" name="inventory_quantity" value=<%= @shopify_variant.inventory_quantity %>>
+      </div>
+
     </div>  
-    
+    <h2>
+      Select main variant image
+    </h2>
     <select class="image-picker show-html" id="selectImage" name="image_id">
       
       <% @variant_images.each_with_index do |img, i| %>
@@ -253,7 +275,7 @@ $(document).ready(function(){
     <div class="variant-images-container">
       <div class="row">
         <div class="col-md-12">
-          <h2>PRODUCT VARIANT IMAGES</h2>
+          <h2>Upload product variant images</h2>
           <div class="dropzone-previews dropzone">
             <div class="dz-default dz-message"><span>Drop files here to upload</span>
             </div>
