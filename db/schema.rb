@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160204121529) do
+ActiveRecord::Schema.define(version: 20160204130727) do
 
   create_table "images_variants", force: :cascade do |t|
     t.integer  "image_id",   limit: 4
@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(version: 20160204121529) do
     t.datetime "updated_at",                  null: false
     t.string   "rotation_speed",  limit: 255
     t.string   "rotations_count", limit: 255
-    t.integer  "clockwise",       limit: 4
+    t.boolean  "clockwise"
   end
 
   add_index "three_sixty_images", ["variant_id"], name: "index_three_sixty_images_on_variant_id", using: :btree

@@ -24,7 +24,7 @@ json.variants @variants do |variant|
         json.first_image asset_url(variant.three_sixty_image.plane_images.first.image.url)
         json.rotation_speed variant.three_sixty_image.rotation_speed
         json.rotations_count variant.three_sixty_image.rotations_count
-
+        json.clockwise variant.three_sixty_image.clockwise
         json.plane_images_urls variant.three_sixty_image.plane_images do |plane_image|
           json.plane_image_url asset_url(plane_image.image.url)
         end
