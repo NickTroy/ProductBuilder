@@ -108,9 +108,10 @@ $(document).ready(function(){
         $('#three_sixty_speed').val(5);
         $('#three_sixty_rotations_count').val(5);
         $('#update_three_sixty_parameters').on('click', function(){
-          var rotation_speed, rotations_count;
+          var rotation_speed, rotations_count, clockwise;
           rotation_speed = $('#three_sixty_speed').val();
           rotations_count = $('#three_sixty_rotations_count').val();
+          clockwise = $('#three_sixty_clockwise').prop('checked');
           $.ajax({
             url: "<%= product_variant_three_sixty_image_url(:variant_id => @variant.id, :protocol => 'https')%>",
             method: "POST",
@@ -118,7 +119,8 @@ $(document).ready(function(){
             data: {
               _method: "PATCH",
               rotation_speed: rotation_speed,
-              rotations_count: rotations_count
+              rotations_count: rotations_count,
+              clockwise: clockwise
             },
             success: function(){
               $('.reel').unreel();
@@ -128,7 +130,8 @@ $(document).ready(function(){
                 speed: rotation_speed / 10.0,
                 duration: duration,
                 path: images_path,
-                images: images_names
+                images: images_names,
+                cw: clockwise
               });
 
             }  
@@ -140,7 +143,8 @@ $(document).ready(function(){
           speed: 0.5,
           duration: 5,
           path: images_path,
-          images: images_names
+          images: images_names,
+          
         });
       }
       this.on("queuecomplete", function(file){
