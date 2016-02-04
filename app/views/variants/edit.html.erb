@@ -3,10 +3,12 @@
 <link href='https://cdnjs.cloudflare.com/ajax/libs/image-picker/0.2.4/image-picker.min.css' rel='stylesheet' type='text/css'>
 <style>
   .reel img {
-    height: 200px !important;
+    height: 300px;
+    width: auto !important;
   }
-  .reel {
-    height: 200px !important;
+  #three_sixty_image-reel {
+    height: 300px; 
+    width: auto;
   }
   .image_picker_image {
     height: 200px;
@@ -191,6 +193,7 @@ $(document).ready(function(){
   <% unless @three_sixty_image.nil? %>
     var rotation_speed = <%= @three_sixty_image.rotation_speed.to_f / 10 %>;
     var duration = <%= @three_sixty_image.rotations_count.to_f / @three_sixty_image.rotation_speed.to_f * 10 %>;
+    var clockwise = <%= @three_sixty_image.clockwise == 1 ? true : false %>;
     $('#three_sixty_speed').val(rotation_speed * 10);
     $('#three_sixty_rotations_count').val(rotation_speed * duration);
     $('.reel').reel({
@@ -198,12 +201,14 @@ $(document).ready(function(){
       speed: rotation_speed,
       duration: duration,
       path: "<%= @images_path %>/",
-      images: images_names
+      images: images_names,
+      cw: clockwise
     });
   $('#update_three_sixty_parameters').on('click', function(){
-    var rotation_speed, rotations_count;
+    var rotation_speed, rotations_count, clockwise;
     rotation_speed = $('#three_sixty_speed').val();
     rotations_count = $('#three_sixty_rotations_count').val();
+    clockwise = $('#three_sixty_clockwise').prop('checked');  
     $.ajax({
       url: "<%= product_variant_three_sixty_image_url(:variant_id => @variant.id, :protocol => 'https')%>",
       method: "POST",
@@ -211,7 +216,8 @@ $(document).ready(function(){
       data: {
         _method: "PATCH",
         rotation_speed: rotation_speed,
-        rotations_count: rotations_count
+        rotations_count: rotations_count,
+        clockwise: clockwise
       },
       success: function(){
         $('.reel').unreel();
@@ -221,6 +227,7 @@ $(document).ready(function(){
         $('.reel').reel({
           frames: <%= @three_sixty_image.plane_images.count %>,
           speed: rotation_speed / 10,
+          cw: clockwise,
           duration: duration,
           path: "<%= @images_path %>/",
           images: images_names
@@ -302,11 +309,15 @@ $(document).ready(function(){
         <div id="three_sixty_parameters_form">
           <div class="col-md-6 form-group">
             <label for="three_sixty_speed">Rotation speed(number of complete rotations per 10 seconds)</label>
-            <input id="three_sixty_speed" class="form-control" type="number" value="" max="10" min="1">
+            <input id="three_sixty_speed" class="form-control" type="number" max="10" min="1">
           </div>
           <div class="col-md-6 form-group">
             <label for="three_sixty_rotations_count">Rotations count</label>
-            <input id="three_sixty_rotations_count" class="form-control" type="number" value="" min="1">
+            <input id="three_sixty_rotations_count" class="form-control" type="number" min="1">
+          </div>
+          <div class="col-md-12 form-group">
+            <label for="three_sixty_clockwise">Reversed rotation direction</label>
+            <input id="three_sixty_clockwise" class="form" type="checkbox">
           </div>
           <div class="col-md-4">
             <input id="update_three_sixty_parameters" class="btn btn-info" type="button" value="Update 3D image parameters">
@@ -316,7 +327,7 @@ $(document).ready(function(){
       
         <div class="col-md-12">
           <div class="3d_image">
-            <img src="<%= @first_plane_image %>" width="200" height="200" class="reel" id="three_sixty_image">
+            <img src="<%= @first_plane_image %>" class="reel" id="three_sixty_image">
           </div>
         </div>
       </div><br>

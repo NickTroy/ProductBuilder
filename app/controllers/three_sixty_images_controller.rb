@@ -28,7 +28,7 @@ class ThreeSixtyImagesController < ApplicationController
   def update
     @variant = Variant.find(params[:variant_id])
     @three_sixty_image = @variant.three_sixty_image
-    if @three_sixty_image.update_attributes(:rotation_speed => params[:rotation_speed], :rotations_count => params[:rotations_count])
+    if @three_sixty_image.update_attributes(:rotation_speed => params[:rotation_speed], :rotations_count => params[:rotations_count], :clockwise => params[:clockwise])
       render json: { message: "updated" }, :status => 200
     else 
       render json: { message: "failed" }, :status => 500
