@@ -24,7 +24,7 @@
           <%= link_to product.title, edit_product_url(product.id, :protocol => 'https') %> <!--#{ :controller => "products", :action => "edit", :id => product.id , :protocol => 'https'} -->
         </div>
         <div class="col-md-2">
-          <%= image_tag(@images.where(product_id: product.id).first.image.url, style: "width:100px;") unless @images.where(product_id: product.id).empty? %>
+          <%= image_tag(product.images.first.src, style: "width:100px;") unless product.images.empty? %>
         </div>
         <div class="col-md-2" style="height:150px; overflow:hidden;">
           <%= render html: product.body_html.html_safe unless product.body_html.nil? %>

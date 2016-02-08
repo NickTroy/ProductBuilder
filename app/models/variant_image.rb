@@ -34,14 +34,16 @@ class VariantImage < ActiveRecord::Base
   
   def update_product_image main_image_id
     @product = ShopifyAPI::Product.find(self.variant.product_id)
-    @main_variant_image = VariantImage.find(main_image_id)
-    @shopify_product_image = @product.images.first
-    unless @shopify_product_image.nil?
-      @shopify_product_image.destroy
+    unless main_image_id.nil? or main_image_id == ""
+      @main_variant_image = VariantImage.find(main_image_id)
+      @shopify_product_image = @product.images.first
+      unless @shopify_product_image.nil?
+        @shopify_product_image.destroy
+      end
+      @shopify_product_image = ShopifyAPI::Image.new(:product_id => @product.id)
+      @shopify_product_image.src = 'https://productbuilder.arborgentry.com/' + @main_variant_image.image.url
+      @shopify_product_image.save
     end
-    @shopify_product_image = ShopifyAPI::Image.new(:product_id => @product.id)
-    @shopify_product_image.src = 'https://productbuilder.arborgentry.com/' + @main_variant_image.image.url
-    @shopify_product_image.save
   end
 end
 
