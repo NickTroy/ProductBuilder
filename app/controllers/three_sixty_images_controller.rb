@@ -1,4 +1,4 @@
-class ThreeSixtyImagesController < ApplicationController
+class ThreeSixtyImagesController < AuthenticatedController
   skip_before_action :verify_authenticity_token
 
   def create

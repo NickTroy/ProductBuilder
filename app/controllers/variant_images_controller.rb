@@ -1,4 +1,4 @@
-class VariantImagesController < ApplicationController
+class VariantImagesController < AuthenticatedController
   skip_before_action :verify_authenticity_token
     
   def create
