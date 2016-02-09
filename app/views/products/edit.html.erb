@@ -150,7 +150,7 @@ $(document).ready(function(){
   }
   
   function createProductVariants(){
-    var variants_json = { _method: 'PUT', product_id: <%= params[:id] %> }; 
+    var variants_json = { product_id: <%= params[:id] %> }; 
     var variants = JSON.parse($('#variants').val());
     variants_json["variants"] = variants
     $.ajax({

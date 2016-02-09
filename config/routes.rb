@@ -22,6 +22,7 @@ Rails.application.routes.draw do
       post '/unassign_image', to: 'option_values#unassign_image'
     end
   end
+  post '/generate_variants', to: 'variants#generate_product_variants'
   put '/generate_variants', to: 'variants#generate_product_variants'
 
   

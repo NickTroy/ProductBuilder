@@ -89,7 +89,7 @@ class VariantsController < AuthenticatedController
   def generate_product_variants
     respond_to do |format|
       format.json do
-        params[:variants].each do |variant|
+        params[:variants].each_with_index do |variant,index|
           
           @variant = Variant.new(product_id: params[:product_id])
           @pseudo_product_title = ""
@@ -105,6 +105,11 @@ class VariantsController < AuthenticatedController
           @variant.update_attributes(:pseudo_product_id => @pseudo_product.id, 
                                      :pseudo_product_variant_id => @pseudo_product_variant.id)
           @pseudo_product.add_metafield(ShopifyAPI::Metafield.new(:namespace => "variant", :key => "variant_id", :value => "#{@variant.id}", :value_type => "integer"))
+          if index > 40 and index.even?
+            sleep 1
+            p "sleeping"
+            p index
+          end
         end
         
         redirect_to edit_product_url(:protocol => 'https', :id => params[:product_id])
