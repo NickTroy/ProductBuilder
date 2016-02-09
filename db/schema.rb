@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160204130727) do
+ActiveRecord::Schema.define(version: 20160209140107) do
 
   create_table "images_variants", force: :cascade do |t|
     t.integer  "image_id",   limit: 4
@@ -22,6 +22,12 @@ ActiveRecord::Schema.define(version: 20160204130727) do
 
   add_index "images_variants", ["image_id"], name: "index_images_variants_on_image_id", using: :btree
   add_index "images_variants", ["variant_id"], name: "index_images_variants_on_variant_id", using: :btree
+
+  create_table "option_groups", force: :cascade do |t|
+    t.string   "name",       limit: 255
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
 
   create_table "option_values", force: :cascade do |t|
     t.integer  "option_id",          limit: 4
@@ -37,11 +43,14 @@ ActiveRecord::Schema.define(version: 20160204130727) do
   add_index "option_values", ["option_id"], name: "index_option_values_on_option_id", using: :btree
 
   create_table "options", force: :cascade do |t|
-    t.string   "name",         limit: 255
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
-    t.integer  "order_number", limit: 4
+    t.string   "name",            limit: 255
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.integer  "order_number",    limit: 4
+    t.integer  "option_group_id", limit: 4
   end
+
+  add_index "options", ["option_group_id"], name: "index_options_on_option_group_id", using: :btree
 
   create_table "plane_images", force: :cascade do |t|
     t.integer  "three_sixty_image_id", limit: 4
@@ -135,6 +144,7 @@ ActiveRecord::Schema.define(version: 20160204130727) do
   add_foreign_key "images_variants", "product_images", column: "image_id"
   add_foreign_key "images_variants", "variants"
   add_foreign_key "option_values", "options"
+  add_foreign_key "options", "option_groups"
   add_foreign_key "plane_images", "three_sixty_images"
   add_foreign_key "products_options", "options"
   add_foreign_key "three_sixty_images", "variants"

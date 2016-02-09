@@ -12,5 +12,6 @@
 !/log/.keep
 /tmp
 /public/system
+/public
 /config/initializers/shopify_app.rb
 /Gemfile.lock

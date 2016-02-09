@@ -394,7 +394,22 @@ $(document).ready(function(){
     });
     $('.number_of_variants').text(number_of_variants);
   });  
+  // adding option groups
+  $('#option_group_form').hide();
+  $('#add_option_group').on('click', function(){
+    $('#option_group_form').show();
+    $(this).hide();
+  })
+  $('#save_option_group').on('click', function(){
+    var option_group_name;
+    $('#add_option_group').show()
+    $('#option_group_form').hide();
+    option_group_name = $('#option_group_name').val();
+    alert(option_group_name);
+    $('#option_group_name').val('');
+  })
 });
+
   
 </script>
 <script>
@@ -645,6 +660,17 @@ $(document).ready(function(){
   </table>
   
   <input type="button" onclick="saveOptionsOrder()" class="btn btn-success" value="Save order">
+  
+  <h3>Option groups</h3>
+  <input type="button" id="add_option_group" class="btn btn-info" value="Add new option group">
+  <div id="option_group_form" class="row form-group">
+    <div class="col-md-4">
+      <label for="option_group_name">Option group name</label>
+      <input id="option_group_name" class="form-control" type="text"><br>
+      <input id="save_option_group" class="btn btn-success" type="button" value="Save option group">
+    </div>
+  </div>
+  
   <h3>All available options:</h3>
   
   <div class="row options">
