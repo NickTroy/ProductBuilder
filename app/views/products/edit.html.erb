@@ -405,7 +405,25 @@ $(document).ready(function(){
     $('#add_option_group').show()
     $('#option_group_form').hide();
     option_group_name = $('#option_group_name').val();
-    alert(option_group_name);
+    $.ajax({
+      method: "POST",
+      url: "<%= option_groups_url(:protocol => 'https') %>",
+      dataType: 'json',
+      data: {
+        option_group_name: option_group_name
+      },
+      success: function(response){
+        var id = response["id"];
+        $('<div class="col-md-2">' +
+            '<div class="col-md-1 text-center">' + option_group_name +
+          '</div>' +
+          '<div class="col-md-1">' +
+            '<a class="btn btn-danger" data-confirm="Are you sure, you want to delete this option group?" rel="nofollow" data-method="delete"' +  
+            'href="' + "<%= option_groups_url(:protocol => 'https') %>" +  '/' + id + '">X</a>' +
+          '</div>' +
+        '</div>').appendTo('.option_groups');  
+      }
+    })
     $('#option_group_name').val('');
   })
 });
@@ -661,7 +679,22 @@ $(document).ready(function(){
   
   <input type="button" onclick="saveOptionsOrder()" class="btn btn-success" value="Save order">
   
-  <h3>Option groups</h3>
+  <h3>Option groups:</h3>
+  <div class="row option_groups">
+    <% @option_groups.each do |option_group| %>
+      <div class="col-md-2 option_group">
+        <div class="col-md-1 text-center">
+          <%= option_group.name %>
+        </div>
+        <div class="col-md-1">
+          <%= link_to 'X', option_group_url(option_group, :protocol => 'https'), 
+                            { :method => :delete, class: "btn btn-danger", 
+                            data: { confirm: 'Are you sure, you want to delete this option group?' } } %>
+        </div>
+      </div>
+      
+    <% end %>
+  </div><br>
   <input type="button" id="add_option_group" class="btn btn-info" value="Add new option group">
   <div id="option_group_form" class="row form-group">
     <div class="col-md-4">

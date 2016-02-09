@@ -34,6 +34,7 @@ class ProductsController < AuthenticatedController
     @product = ShopifyAPI::Product.find(params[:id])
     @images = ProductImage.where(product_id: @product.id)
     @options = Option.all
+    @option_groups = OptionGroup.all
     @product_options = []
     @collections = ShopifyAPI::CustomCollection.all
     @product_collections = @product.collections
