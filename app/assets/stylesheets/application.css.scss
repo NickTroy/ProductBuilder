@@ -1,6 +1,10 @@
 @import "bootstrap-sprockets";
 @import "bootstrap";
 @import "dropzone/dropzone";
+@import "jquery-ui";
+@import "jquery-ui/core";
+@import "jquery-ui/theme";
+@import "jquery-ui/tabs";
 
 .dz-details {
   display: none;  
@@ -31,6 +35,12 @@
 }
 */
 /*
+ *= require jquery-ui
+ *= require jquery-ui/core
+ *= require jquery-ui/theme
+ *= require jquery-ui/tabs
+ */
+/*
  * This is a manifest file that'll be compiled into application.css, which will include all the files
  * listed below.
  *
@@ -45,7 +55,6 @@
  *= require dropzone/basic
  *= require dropzone/dropzone
  *= require image-picker
- *= require jquery-ui
  *= require_tree .
  *= require_self
  */

@@ -406,17 +406,19 @@ $(document).ready(function(){
 </script>
 
 <%= form_tag product_path, method: "patch", :html => { :controller => "products", :action => "update", :id => @product.id } do %>
+
+<div class="row">
+  <div class="col-md-2">
+    <%= submit_tag "Back to all products", :class => "btn btn-info" %>
+  </div>
+</div><br>
+
 <div id="tabs">
   <ul>
     <li><a href="#tabs-1">Edit product information</a></li>
     <li><a href="#tabs-2">Edit options information</a></li>
   </ul>
 <div id="tabs-1" class="product_information_container">
-<div class="row">
-  <div class="col-md-2">
-    <%= submit_tag "Back to all products", :class => "btn btn-info" %>
-  </div>
-</div><br>
 
 <div class="row">
   
@@ -614,7 +616,7 @@ $(document).ready(function(){
 
 <div class="row">
   <div class="col-md-2">
-    <%= submit_tag "Save", :class => "btn btn-success" %>
+    <%= submit_tag "Save product information", :class => "btn btn-success" %>
   </div>
 </div>
 </div>
