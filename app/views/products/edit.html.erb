@@ -397,9 +397,21 @@ $(document).ready(function(){
 });
   
 </script>
+<script>
+  $(document).ready(function(){
+    $( "#tabs" ).tabs({
+      collapsible: true
+    });
+  });
+</script>
 
 <%= form_tag product_path, method: "patch", :html => { :controller => "products", :action => "update", :id => @product.id } do %>
-
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Edit product information</a></li>
+    <li><a href="#tabs-2">Edit options information</a></li>
+  </ul>
+<div id="tabs-1" class="product_information_container">
 <div class="row">
   <div class="col-md-2">
     <%= submit_tag "Back to all products", :class => "btn btn-info" %>
@@ -520,8 +532,94 @@ $(document).ready(function(){
   </div><br>  
 </div> -->
 
+<div class="variants-container">
+  
+  <h2>VARIANTS</h2>
+  
+  <div class="current-variants">
+    <h3>Product variants list (currently has <span class="current_number_of_variants"><%= Variant.where(product_id: @product.id).count %></span> variants):</h3>  
+    <% @variants.each do |variant| %>
+      <div class="variant-info row">
+        <div class="col-md-1">
+          <%= variant.main_image_id.nil? ? "" : image_tag(VariantImage.find(variant.main_image_id).image.url(:thumb), style: "height:30px;") %>
+        </div>
+        <div class="col-md-8 options_and_values">
+          <% variant.option_values.each do |opt_val| %>
+            <div class="col-md-2">
+              <span class="option-name-and-value" >
+                <%= opt_val.option.name %> : <%= opt_val.value %> 
+              </span>  
+            </div>
+              
+          <% end %>
+          <div class="col-md-3" style="float:right;">
+            <%= "price: #{((variant.price.nil?) or (variant.price == '')) ? "not set" : variant.price} sku: #{((variant.sku.nil?) or (variant.sku == '')) ? "not set" : variant.sku}" %>  
+          </div>
+          
+        </div>
+        <div class="col-md-3 variant-actions">
+          <!--<%= link_to 'Edit variant', { :controller => "variants", :action => "edit", :product_id => @product.id, :variant_id => variant.id }, { class: "btn"}  %>-->
+          <%= link_to 'Edit variant', edit_product_variant_url(:id => variant.id, :variant_id => variant.id, :product_id => @product.id, :protocol => 'https'), class: "btn btn-info" %>
+          <%= link_to 'Delete variant', { :controller => "variants", :action => "destroy", :product_id => @product.id, :variant_id => variant.id }, 
+                                        { :method => :delete, class: "btn btn-danger", 
+                                        data: { confirm: 'Are you sure, you want to delete this product variant?' } } %>  
+        </div>
+        
+      </div>
+    <% end %>
+  </div>
+  <br>
+  <div class="variants_actions row">
+    <div class="variants_form_actions col-md-4">
+      <input type='button' value="Canel adding product variants" onclick="clearVariantsForm()" class="btn btn-warning cancel-adding-variants" style ="display:none;"/>
+      <input type='button' value="Add product variants" onclick="showVariantsForm()" class="btn btn-primary add-variants"/>  
+    </div>
+    <div class="col-md-2 delete_all_variants_button">
+      <input type='button' value="Delete all product variants" onclick="deleteAllVariants()" class="btn btn-danger delete_all_variants"/><br>      
+    </div>
+  </div>
+  
+  
+  <div class="variants_form" style="display:none;">
+    <% @product_options.each do |opt| %>
+     
+      <div class="option_values_row">
+        <h4 class="option-name">Select <%= opt.name.pluralize %></h4>
+        <input class="option-name" type="hidden" value="<%= opt.name %>"/>
+        <% opt.option_values.each do |value| %>
+          <span class="option_values">
+            <label for="<%= value.value %>"><%= value.value %></label>
+            <input type="checkbox" class="option_value" value=0 />
+          </span>
+        <% end %>
+        <span class="number_of_values_selected">0</span>
+        <span><%= opt.name.pluralize %> selected</span>
+        <input name="options_selected" class="options_selected" value="0" type="hidden">
+      </div> 
+    <% end %>
+    <p class="variants-number-notice">
+      <span class="number_of_variants">0</span>
+      <span> variants will be created </span>
+    </p>
+    <input type='button' value="Preview product variants" onclick="previewVariants()" class="btn btn-primary preview-variants"/><br>
+    <%= hidden_field_tag :variants, {} %>
+    <div class="preview_product_variants">
+    
+    </div>
+  </div>
+</div><br>
 
-<div class="options-container">
+
+
+
+<div class="row">
+  <div class="col-md-2">
+    <%= submit_tag "Save", :class => "btn btn-success" %>
+  </div>
+</div>
+</div>
+
+<div class="options-container" id="tabs-2">
   
   <h2>OPTIONS</h2>
   
@@ -600,92 +698,7 @@ $(document).ready(function(){
   
   
 </div>
-
-<div class="variants-container">
-  
-  <h2>VARIANTS</h2>
-  
-  <div class="current-variants">
-    <h3>Product variants list (currently has <span class="current_number_of_variants"><%= Variant.where(product_id: @product.id).count %></span> variants):</h3>  
-    <% @variants.each do |variant| %>
-      <div class="variant-info row">
-        <div class="col-md-1">
-          <%= variant.main_image_id.nil? ? "" : image_tag(VariantImage.find(variant.main_image_id).image.url(:thumb), style: "height:30px;") %>
-        </div>
-        <div class="col-md-8 options_and_values">
-          <% variant.option_values.each do |opt_val| %>
-            <div class="col-md-2">
-              <span class="option-name-and-value" >
-                <%= opt_val.option.name %> : <%= opt_val.value %> 
-              </span>  
-            </div>
-              
-          <% end %>
-          <div class="col-md-3" style="float:right;">
-            <%= "price: #{((variant.price.nil?) or (variant.price == '')) ? "not set" : variant.price} sku: #{((variant.sku.nil?) or (variant.sku == '')) ? "not set" : variant.sku}" %>  
-          </div>
-          
-        </div>
-        <div class="col-md-3 variant-actions">
-          <!--<%= link_to 'Edit variant', { :controller => "variants", :action => "edit", :product_id => @product.id, :variant_id => variant.id }, { class: "btn"}  %>-->
-          <%= link_to 'Edit variant', edit_product_variant_url(:id => variant.id, :variant_id => variant.id, :product_id => @product.id, :protocol => 'https'), class: "btn btn-info" %>
-          <%= link_to 'Delete variant', { :controller => "variants", :action => "destroy", :product_id => @product.id, :variant_id => variant.id }, 
-                                        { :method => :delete, class: "btn btn-danger", 
-                                        data: { confirm: 'Are you sure, you want to delete this product variant?' } } %>  
-        </div>
-        
-      </div>
-    <% end %>
-  </div>
-  <br>
-  <div class="variants_actions row">
-    <div class="variants_form_actions col-md-4">
-      <input type='button' value="Canel adding product variants" onclick="clearVariantsForm()" class="btn btn-warning cancel-adding-variants" style ="display:none;"/>
-      <input type='button' value="Add product variants" onclick="showVariantsForm()" class="btn btn-primary add-variants"/>  
-    </div>
-    <div class="col-md-2 delete_all_variants_button">
-      <input type='button' value="Delete all product variants" onclick="deleteAllVariants()" class="btn btn-danger delete_all_variants"/><br>      
-    </div>
-  </div>
-  
-  
-  <div class="variants_form" style="display:none;">
-    <% @product_options.each do |opt| %>
-     
-      <div class="option_values_row">
-        <h4 class="option-name">Select <%= opt.name.pluralize %></h4>
-        <input class="option-name" type="hidden" value="<%= opt.name %>"/>
-        <% opt.option_values.each do |value| %>
-          <span class="option_values">
-            <label for="<%= value.value %>"><%= value.value %></label>
-            <input type="checkbox" class="option_value" value=0 />
-          </span>
-        <% end %>
-        <span class="number_of_values_selected">0</span>
-        <span><%= opt.name.pluralize %> selected</span>
-        <input name="options_selected" class="options_selected" value="0" type="hidden">
-      </div> 
-    <% end %>
-    <p class="variants-number-notice">
-      <span class="number_of_variants">0</span>
-      <span> variants will be created </span>
-    </p>
-    <input type='button' value="Preview product variants" onclick="previewVariants()" class="btn btn-primary preview-variants"/><br>
-    <%= hidden_field_tag :variants, {} %>
-    <div class="preview_product_variants">
-    
-    </div>
-  </div>
-</div><br>
-  
-
-
-<div class="row">
-  <div class="col-md-2">
-    <%= submit_tag "Save", :class => "btn btn-success" %>
-  </div>
 </div>
-
 <% end %>
 
 <!--<form id="product-images" action="" method="post" name="product-images">
