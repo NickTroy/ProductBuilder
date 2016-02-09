@@ -69,7 +69,7 @@ class ProductsController < AuthenticatedController
     respond_to do |format|
       format.html do 
         if @product.save
-          @product.add_metafield(ShopifyAPI::Metafield.new(:namespace => "product", :key => "key", :value => "value", :value_type => "string"))
+          #@product.add_metafield(ShopifyAPI::Metafield.new(:namespace => "product", :key => "key", :value => "value", :value_type => "string"))
           redirect_to edit_product_url(:id => @product.id, :protocol => 'https')
         end
       end

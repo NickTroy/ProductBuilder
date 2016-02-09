@@ -54,16 +54,10 @@ class VariantsController < AuthenticatedController
     @pseudo_product = ShopifyAPI::Product.find(@variant.pseudo_product_id)
     @pseudo_product_variant = @pseudo_product.variants.first
     @inventory_management = params[:inventory_management] == "shopify" ? "shopify" : nil
-    p "manage"
-    p @inventory_management
     @pseudo_product_variant.update_attributes(:price => variant_attributes[:price], :sku => variant_attributes[:sku], :inventory_management => @inventory_management)
-    p "variant before quantity change"
-    p @pseudo_product_variant
     unless params[:inventory_management].nil?
       @pseudo_product_variant.update_attributes(:inventory_quantity => params[:inventory_quantity].to_i)
     end
-    p "after quantitty change"
-    p @pseudo_product_variant
     unless params[:image_id].nil? 
       @pseudo_product_image = @pseudo_product.images.first
       unless @pseudo_product_image.nil?
@@ -104,12 +98,7 @@ class VariantsController < AuthenticatedController
           @pseudo_product_variant.update_attributes(:option1 => @pseudo_product_title)
           @variant.update_attributes(:pseudo_product_id => @pseudo_product.id, 
                                      :pseudo_product_variant_id => @pseudo_product_variant.id)
-          @pseudo_product.add_metafield(ShopifyAPI::Metafield.new(:namespace => "variant", :key => "variant_id", :value => "#{@variant.id}", :value_type => "integer"))
-          if index > 40 and index.even?
-            sleep 1
-            p "sleeping"
-            p index
-          end
+          sleep 1 if index > 10
         end
         
         redirect_to edit_product_url(:protocol => 'https', :id => params[:product_id])
@@ -120,10 +109,11 @@ class VariantsController < AuthenticatedController
   def delete_all_variants
     @product = ShopifyAPI::Product.find(params[:product_id])
     @variants = Variant.where(product_id: @product.id)
-    @variants.each do |variant|
+    @variants.each_with_index do |variant, index|
       @pseudo_product = ShopifyAPI::Product.find(variant.pseudo_product_id)
       variant.destroy
       @pseudo_product.destroy
+      sleep 1 if index > 10
     end
     redirect_to edit_product_url(:protocol => 'https', :id => params[:product_id])
   end
