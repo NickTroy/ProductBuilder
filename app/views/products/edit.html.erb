@@ -368,6 +368,19 @@
     })
   }
   
+  function disableExtraGroups(starting_index){
+    for (var i = starting_index; i < $('.option_group_select').length - 1; i++){
+      var previous_select_value = $('.option_group_select').eq(i-1).val();
+      for (var j = i + 1; j < $('.option_group_select').length; j++){
+        $('.option_group_select').eq(j).find('option').each(function(){
+          if ($(this).attr('value') < previous_select_value) {
+            $(this).prop('disabled',true);
+          }
+        });
+      }
+    }
+  }
+  
 $(document).ready(function(){
   // tabs init
   $( "#tabs" ).tabs({
@@ -417,6 +430,11 @@ $(document).ready(function(){
     $('.number_of_variants').text(number_of_variants);
   });  
   
+  disableExtraGroups(1);
+  $('.option_group_select').change(function(){
+    var current_option_index = $(this).parents('tr').find('td:nth-child(2)').text();
+    disableExtraGroups(current_option_index);
+  })
   // adding option groups
   $('#option_group_form').hide();
   $('#add_option_group').on('click', function(){
@@ -697,7 +715,7 @@ $(document).ready(function(){
         <td><%= option.name %></td>
         <td>
           <select class="form-control option_group_select">
-            <option value="0">
+            <option value="0" disabled>
               -Select Option Group-
             </option>
             <% @option_groups.each do |option_group| %>
