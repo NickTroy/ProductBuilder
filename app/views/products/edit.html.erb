@@ -7,10 +7,10 @@
 <script type="text/javascript">
 
 
-
-$(document).ready(function(){
+//product image dropzone
+/*$(document).ready(function(){
   Dropzone.autoDiscover = false;
-  /*$("#product-images").dropzone({
+  $("#product-images").dropzone({
     // restrict image size to a maximum 1MB
     url: "<%= product_product_images_url(:product_id => @product.id, :protocol => 'https') %>",
     maxFilesize: 1,
@@ -81,6 +81,8 @@ $(document).ready(function(){
 
 <script>
 
+  // variants container
+  
   function showVariantsForm(){
     $('.variants_form').show();
     $('.cancel-adding-variants').show();
@@ -118,26 +120,7 @@ $(document).ready(function(){
     
     //alert(JSON.stringify(options));
     
-    function permute(options, optionIndex, results, current) {
-      var allKeys = Object.keys(options);
-      var optionKey = allKeys[optionIndex];
-
-      var vals = options[optionKey];
-
-      for (var i = 0; i < vals.length; i++) {
-        current[optionKey] = vals[i];
-
-        if (optionIndex + 1 < allKeys.length) {
-          permute(options, optionIndex + 1, results, current);
-        } else {
-          // clone an object.
-          var res = JSON.parse(JSON.stringify(current));
-          results.push(res);
-        }
-      }
-
-      return results;
-    }
+    
   var variants = permute(options,0,[],{});
   $('#variants').val(JSON.stringify(variants));
   //alert(JSON.stringify(variants));
@@ -152,6 +135,26 @@ $(document).ready(function(){
   };
   $('<input value="Save product variants" onclick="createProductVariants()" class="btn btn-primary" type="button">').appendTo('.preview_product_variants');
   
+  }
+  
+  // find permutations of all option_values
+  function permute(options, optionIndex, results, current) {
+    var allKeys = Object.keys(options);
+    var optionKey = allKeys[optionIndex];
+    var vals = options[optionKey];
+
+    for (var i = 0; i < vals.length; i++) {
+      current[optionKey] = vals[i];
+      if (optionIndex + 1 < allKeys.length) {
+        permute(options, optionIndex + 1, results, current);
+      } else {
+        // clone an object.
+        var res = JSON.parse(JSON.stringify(current));
+        results.push(res);
+      }
+    }
+
+    return results;
   }
   
   function createProductVariants(){
@@ -223,6 +226,8 @@ $(document).ready(function(){
     }
   }
   
+  // options container
+  
   function showNeccesaryOptionsActions(){
     $('.product_options .btn').show();
     $('.options .btn-warning').hide();
@@ -287,11 +292,7 @@ $(document).ready(function(){
     })
     }
   }
-  
-  
-  
-  
-  
+
   function unassignOptionFromProduct(option_id){
     $('#option' + option_id + ' > .btn-success').show();
     $.ajax({
@@ -334,26 +335,7 @@ $(document).ready(function(){
       $('.number_of_variants').text(number_of_variants);
     });  
   }
-  
-  function saveOptionsOrder(){
-    var options_data = { _method: 'put', options_order: {} };
-    $('.options_order tbody tr').each(function(){
-      var option_name, order_number;
-      order_number = $(this).find('td:nth-child(2)').text();
-      option_name = $(this).find('td:last').text();
-      options_data["options_order"][option_name] = order_number;
-    })
-    $.ajax({
-      url: "<%= update_order_url(:protocol => 'https', :product_id => @product.id) %>",
-      method: 'POST',
-      dataType: 'json',
-      data: options_data
-    })
-  }
-  
-$(document).ready(function(){
-  
-  
+  // options order and grouping
   
   function swapRows(row1,row2){
     row1_order_number = row1.find("td:nth-child(2)").text();
@@ -364,6 +346,41 @@ $(document).ready(function(){
     row2.find("td:nth-child(2)").insertBefore(row1.find("td:first"));
     row1.insertBefore(row2);
   }
+  
+  function saveOptionsOrderAndGroups(){
+    var options_data = { _method: 'put', options_order_and_groups: {} };
+    $('.options_order tbody tr').each(function(){
+      var option_name, order_number, option_group_id, order_tabe;
+      option_row = $(this);
+      order_number = option_row.find('td:nth-child(2)').text();
+      option_name = option_row.find('td:nth-child(3)').text();
+      option_group_id = option_row.find('.option_group_select').val();
+      options_data["options_order_and_groups"][option_name] = {
+        order_number: order_number,
+        option_group_id: option_group_id
+      };
+    })
+    $.ajax({
+      url: "<%= update_order_and_groups_url(:protocol => 'https', :product_id => @product.id) %>",
+      method: 'POST',
+      dataType: 'json',
+      data: options_data
+    })
+  }
+  
+$(document).ready(function(){
+  // tabs init
+  $( "#tabs" ).tabs({
+    collapsible: true
+  });  
+  // options
+  $("#saveOptionsOrderAndGroups").on('click', saveOptionsOrderAndGroups);
+  <% @options.order(:order_number).each_with_index do |option, index| %>
+    var option_row = $('.options_order > tbody > tr:nth-child(<%= index + 1 %>)')
+    var option_group_id = <%= option.option_group_id.nil? ? 0 : option.option_group_id %>;
+    alert(option_group_id);
+    option_row.find('.option_group_select option[value="' + option_group_id + '"]').prop('selected', true);
+  <% end %>
   $(".options_order").find('.up:first').hide();
   $(".options_order").find('.down:last').hide();
   $(".up,.down").click(function(e){
@@ -375,9 +392,10 @@ $(document).ready(function(){
       swapRows(row.next(), row);
     }
   });
+
+  showNeccesaryOptionsActions();
   
   clearVariantsForm();
-  showNeccesaryOptionsActions();
   $('.option_values').on('change', '.option_value', function(){
     var options_selected, number_of_variants;
     options_selected = parseInt($(this).parents('.option_values_row').children('.number_of_values_selected').text());
@@ -399,6 +417,7 @@ $(document).ready(function(){
     });
     $('.number_of_variants').text(number_of_variants);
   });  
+  
   // adding option groups
   $('#option_group_form').hide();
   $('#add_option_group').on('click', function(){
@@ -434,13 +453,6 @@ $(document).ready(function(){
 });
 
   
-</script>
-<script>
-  $(document).ready(function(){
-    $( "#tabs" ).tabs({
-      collapsible: true
-    });
-  });
 </script>
 
 <div class="container">
@@ -664,7 +676,7 @@ $(document).ready(function(){
   
   <h2>OPTIONS</h2>
   
-  <h3>Options order</h3>
+  <h3>Options order and grouping</h3>
   <table class="table table-bordered table-striped table-hover options_order" style="width:auto; text-align:center;">
     <thead>
       <th></th>
@@ -681,8 +693,8 @@ $(document).ready(function(){
         <td><%= option.order_number %></td>
         <td><%= option.name %></td>
         <td>
-          <select class="form-control">
-            <option value="">
+          <select class="form-control option_group_select">
+            <option value="0">
               -Select Option Group-
             </option>
             <% @option_groups.each do |option_group| %>
@@ -696,7 +708,7 @@ $(document).ready(function(){
     <% end %>
   </table>
   
-  <input type="button" onclick="saveOptionsOrder()" class="btn btn-success" value="Save order">
+  <input type="button" id="saveOptionsOrderAndGroups" class="btn btn-success" value="Save order and option groups">
   
   <h3>Option groups:</h3>
   <div class="row option_groups">

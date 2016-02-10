@@ -15,7 +15,7 @@ Rails.application.routes.draw do
   end
   
   resources :product_info, defaults: { format: 'json' }
-  put '/update_order', to: 'options#update_order_numbers'
+  put '/update_order_and_groups', to: 'options#update_order_numbers_and_groups'
   resources :option_groups
   resources :options do
     resources :option_values do

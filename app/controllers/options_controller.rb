@@ -82,11 +82,17 @@ class OptionsController < AuthenticatedController
 
   end
   
-  def update_order_numbers
-    @options_order = params["options_order"]
-    @options_order.each do |option_name, order_number|
+  def update_order_numbers_and_groups
+    @options_order_and_groups = params["options_order_and_groups"]
+    @options_order_and_groups.each do |option_name, order_number_and_group|
       @option = Option.where(:name => option_name)[0]
-      @option.update_attributes(:order_number => order_number)
+      @order_number = order_number_and_group["order_number"]
+      @option_group_id = order_number_and_group["option_group_id"]
+      if @option_group_id == 0 or @option_group_id == "0"
+        @option.update_attributes(:order_number => @order_number)
+      else
+        @option.update_attributes(:order_number => @order_number, :option_group_id => @option_group_id)
+      end
     end
     redirect_to edit_product_url(:protocol => 'https', :id => params[:product_id])
   end
