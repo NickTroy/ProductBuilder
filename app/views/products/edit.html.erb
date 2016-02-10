@@ -670,6 +670,7 @@ $(document).ready(function(){
       <th></th>
       <th>Option order number</th>
       <th>Option name</th>
+      <th>Option group</th>
     </thead>
     <% @options.order(:order_number).each do |option| %>
       <tr>
@@ -679,6 +680,18 @@ $(document).ready(function(){
         </td>
         <td><%= option.order_number %></td>
         <td><%= option.name %></td>
+        <td>
+          <select class="form-control">
+            <option value="">
+              -Select Option Group-
+            </option>
+            <% @option_groups.each do |option_group| %>
+              <option value=<%= option_group.id %>>
+                <%= option_group.name %>
+              </option>
+            <% end %>
+          </select>
+        </td>
       </tr>
     <% end %>
   </table>
