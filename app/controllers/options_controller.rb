@@ -69,16 +69,20 @@ class OptionsController < AuthenticatedController
   
   def assign_option_to_product
     @option = Option.find(params[:option_id])
-    @option.products_options.create(:product_id => params[:product_id])
-    
-    redirect_to edit_product_url(:protocol => 'https', :id => params[:product_id])
+    if @option.products_options.create(:product_id => params[:product_id])
+      render json: { message: "created" }, :status => 200
+    else
+      render json: { message: "failed" }, :status => 500
+    end
   end
   
   def unassign_option_from_product
     @product_option = ProductsOption.where(:product_id => params[:product_id], :option_id => params[:option_id])[0]
-    @product_option.destroy
-    
-    redirect_to edit_product_url(:protocol => 'https', :id => params[:product_id])
+    if @product_option.destroy
+      render json: { message: "created" }, :status => 200
+    else
+      render json: { message: "failed" }, :status => 500
+    end
 
   end
   
@@ -94,7 +98,7 @@ class OptionsController < AuthenticatedController
         @option.update_attributes(:order_number => @order_number, :option_group_id => @option_group_id)
       end
     end
-    redirect_to edit_product_url(:protocol => 'https', :id => params[:product_id])
+    render json: { message: "created" }, :status => 200
   end
   
   private
