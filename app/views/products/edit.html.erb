@@ -368,9 +368,13 @@
     })
   }
   
-  function disableExtraGroups(starting_index){
-    for (var i = starting_index; i < $('.option_group_select').length - 1; i++){
-      var previous_select_value = $('.option_group_select').eq(i-1).val();
+  function disableExtraGroups(){
+    //alert(starting_index);
+    $('.option_group_select option').prop('disabled',false);
+    $('.option_group_select option:first').prop('disabled',true);
+    for (var i = 0; i < $('.option_group_select').length - 1; i++){
+      var previous_select_value = $('.option_group_select').eq(i).val();
+      
       for (var j = i + 1; j < $('.option_group_select').length; j++){
         $('.option_group_select').eq(j).find('option').each(function(){
           if ($(this).attr('value') < previous_select_value) {
@@ -378,6 +382,22 @@
           }
         });
       }
+    }
+  }
+  
+  function selectEnabledGroups(current_option_index){
+    for (var i = current_option_index - 1; i < $('.option_group_select').length; i++) {
+      var group_select = $('.option_group_select').eq(i)
+      group_select.find('option:selected').each(function(){
+        if ($(this).prop('disabled') == true) {
+          group_select.find('option').each(function(){
+            var option = $(this);
+            if (option.prop('disabled') == false){
+              option.prop('selected',true);
+            }
+          })
+        }
+      });
     }
   }
   
@@ -430,10 +450,11 @@ $(document).ready(function(){
     $('.number_of_variants').text(number_of_variants);
   });  
   
-  disableExtraGroups(1);
+  disableExtraGroups();
   $('.option_group_select').change(function(){
     var current_option_index = $(this).parents('tr').find('td:nth-child(2)').text();
-    disableExtraGroups(current_option_index);
+    disableExtraGroups();
+    selectEnabledGroups(current_option_index);
   })
   // adding option groups
   $('#option_group_form').hide();
