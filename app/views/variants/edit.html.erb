@@ -199,7 +199,7 @@ $(document).ready(function(){
     var duration = <%= @three_sixty_image.rotations_count.to_f / @three_sixty_image.rotation_speed.to_f * 10 %>;
     var clockwise = <%= @three_sixty_image.clockwise.nil? ? false : @three_sixty_image.clockwise %>;
     $('#three_sixty_speed').val(rotation_speed * 10);
-    $('#three_sixty_rotations_count').val(rotation_speed * duration);
+    $('#three_sixty_rotations_count').val(Math.round(rotation_speed * duration));
     $('#three_sixty_clockwise').prop('checked', clockwise);
     $('.reel').reel({
       frames: <%= @three_sixty_image.plane_images.count %>,

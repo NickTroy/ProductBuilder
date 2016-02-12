@@ -14,6 +14,9 @@ json.options @product_options do |option|
   json.option_order_number option[:order_number]
   json.option_values option[:option_values] do |option_value|
     json.option_value option_value
+    unless OptionValue.where(:value => option_value)[0].image.url.include? "missing"
+      json.image_source asset_url(OptionValue.where(:value => option_value)[0].image.url(:thumb))
+    end
   end
 end
 json.main_variant_id @main_variant_id
