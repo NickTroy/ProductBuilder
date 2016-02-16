@@ -37,7 +37,6 @@ class ProductInfoController < ApplicationController
         @product_options.push({ :option_name => option.name, :order_number => option.order_number, :option_values => [] })
       end
     end
-    p @product_options
     @product_option_groups = []
     @option_groups = OptionGroup.all
     @option_groups.each do |option_group|
@@ -49,8 +48,6 @@ class ProductInfoController < ApplicationController
       end
       @product_option_groups.push(option_group) if @include_option_group
     end
-    p @option_groups
-    p @product_option_groups
     @variants.each do |variant|
       variant.option_values.each do |option_value|
         @product_options.each do |option|

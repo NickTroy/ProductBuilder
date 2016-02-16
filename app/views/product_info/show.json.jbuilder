@@ -1,6 +1,7 @@
 unless @first_image.nil?
   json.product_first_image_source asset_url(@first_image.image.url)
 end
+json.product_details @variants.last.product_details
 json.option_dependency @option_dependency
 json.option_groups @product_option_groups do |option_group|
   json.option_group_name option_group.name
@@ -47,4 +48,5 @@ json.variants @variants do |variant|
     json.image_source asset_url(variant_image.image.url)
   end 
   json.price variant.price
+  json.sku variant.sku
 end  

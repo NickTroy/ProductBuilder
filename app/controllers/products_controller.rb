@@ -90,6 +90,12 @@ class ProductsController < AuthenticatedController
     respond_to do |format|
       format.html do 
         if @product.update_attributes(product_params)
+          @product_details = @product.body_html
+          unless @product_details.nil?
+            Variant.where(:product_id => @product.id).each do |variant|
+              variant.update_attributes(:product_details => @product_details)
+            end
+          end
           redirect_to products_url(:protocol => 'https')
         end
       end

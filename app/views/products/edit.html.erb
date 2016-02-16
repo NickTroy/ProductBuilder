@@ -220,7 +220,7 @@
       var price_and_sku = '<div class="col-md-2" style="float:right;" >price: '+ price + ' sku: ' + sku   +'</div>';
       $(price_and_sku.replace(/['"]+/g, '')).appendTo(".options_and_values:last");
       $('<div class="col-md-3 variant-actions"></div>').appendTo('.variant-info:last');
-      $('<a class="btn" href="/products/<%= @product.id %>/variants/<%= @product.id %>/edit?variant_id=' + variant_id + '">Edit variant</a>').appendTo(".variant-actions:last");
+      $('<a class="btn btn-info" href="/products/<%= @product.id %>/variants/<%= @product.id %>/edit?variant_id=' + variant_id + '">Edit variant</a>').appendTo(".variant-actions:last");
       $('<a class="btn btn-danger" data-confirm="Are you sure, you want to delete this product variant?" rel="nofollow" data-method="delete"' +
       'href="/products/<%= @product.id %>/variants/<%= @product.id %>?variant_id=' + variant_id + '">Delete variant</a>').appendTo(".variant-actions:last");
     }
