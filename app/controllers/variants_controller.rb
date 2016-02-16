@@ -83,6 +83,8 @@ class VariantsController < AuthenticatedController
   def generate_product_variants
     respond_to do |format|
       format.json do
+        @product = ShopifyAPI::Product.find(params[:product_id])
+        @product_details = @product.details
         params[:variants].each_with_index do |variant,index|
           
           @variant = Variant.new(product_id: params[:product_id])
