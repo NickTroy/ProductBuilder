@@ -6,8 +6,10 @@ json.option_dependency @option_dependency
 json.option_groups @product_option_groups do |option_group|
   json.option_group_name option_group.name
   json.options option_group.options do |option|
-    json.option_name option.name
-    json.option_order_number option.order_number
+    unless @product_options.find { |product_option| product_option[:option_name] == option.name }.nil? 
+      json.option_name option.name
+      json.option_order_number option.order_number
+    end
   end
 end
 json.options @product_options do |option|
