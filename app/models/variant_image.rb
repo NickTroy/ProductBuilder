@@ -2,6 +2,7 @@ class VariantImage < ActiveRecord::Base
   belongs_to :variant
   before_destroy :update_main_image
   after_destroy :update_main_product_image
+  after_save :update_main_product_image
   has_attached_file :image, :styles => { :medium => "300x300>",:thumb => "100x100>" }
                   	
   validates_attachment 	:image, 
@@ -28,7 +29,10 @@ class VariantImage < ActiveRecord::Base
 
   def update_main_product_image
     if self.variant.three_sixty_image.nil?
-      update_product_image(self.variant.main_image_id)
+      @product_variants = Variant.where(:product_id => self.variant.product_id)
+      if self.variant.id == @product_variants.first.id
+        update_product_image(self.variant.main_image_id)
+      end
     end
   end
   
@@ -43,6 +47,11 @@ class VariantImage < ActiveRecord::Base
       @shopify_product_image = ShopifyAPI::Image.new(:product_id => @product.id)
       @shopify_product_image.src = 'https://productbuilder.arborgentry.com/' + @main_variant_image.image.url
       @shopify_product_image.save
+    end
+    if main_image_id.nil? or main_image_id == ""
+      unless @product.images.first.nil?
+        @product.images.first.destroy
+      end
     end
   end
 end

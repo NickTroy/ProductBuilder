@@ -25,7 +25,7 @@ class ThreeSixtyImage < ActiveRecord::Base
   
   def update_product_image_with_variant_image
     @product = ShopifyAPI::Product.find(self.variant.product_id)
-    @main_variant_image = VariantImage.find(self.variant.main_image_id)
+    @main_variant_image = VariantImage.find(self.variant.main_image_id) unless self.variant.main_image_id.nil?
     unless @main_variant_image.nil?
       @product_variants = Variant.where(:product_id => @product.id)
       if self.variant.id == @product_variants.first.id
@@ -38,6 +38,11 @@ class ThreeSixtyImage < ActiveRecord::Base
         @shopify_product_image.save
       end
     end
-
+    
+    if @main_variant_image.nil?  
+      unless @product.images.first.nil?
+        @product.images.first.destroy
+      end
+    end
   end
 end

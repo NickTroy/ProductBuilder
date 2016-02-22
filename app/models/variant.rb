@@ -5,12 +5,15 @@ class Variant < ActiveRecord::Base
   belongs_to :product_image
   has_many :variant_images, dependent: :nullify
   has_one :three_sixty_image, dependent: :destroy
-  after_update :update_product_image_with_variant_image
+  after_save :update_product_image_with_variant_image
   private
   
   def update_product_image_with_variant_image
     if self.three_sixty_image.nil?
-      update_product_image(self.main_image_id)
+      @product_variants = Variant.where(:product_id => self.product_id)
+      if self.id == @product_variants.first.id
+        update_product_image(self.main_image_id)
+      end
     end
   end
 
