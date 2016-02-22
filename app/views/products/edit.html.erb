@@ -3,12 +3,17 @@
     overflow: hidden;
     white-space: nowrap;
   }
+  .images-container .dropzone .dz-preview .dz-image {
+    height: auto !important;
+    width: auto !important;
+  }
+
 </style>
 <script type="text/javascript">
 
 
 //product image dropzone
-/*$(document).ready(function(){
+$(document).ready(function(){
   Dropzone.autoDiscover = false;
   $("#product-images").dropzone({
     // restrict image size to a maximum 1MB
@@ -27,8 +32,11 @@
       // based of the fileID response from the server
       $('.dropzone-previews').find('.dz-remove:last').attr('id', response.imageID);
       // add the dz-success class (the green tick sign)
-      $('.dropzone-previews').addClass("dz-success");
-	    
+      //$('.dropzone-previews').addClass("dz-success");
+	    if ( $('.dropzone-previews').find('.dz-preview').length === 2) {
+	      $('.dropzone-previews').find('.dz-remove:first').trigger('click');
+	      $('.dropzone-previews').find('.dz-preview:first').remove();
+			}
       $('.dz-remove:last').click(function(){
         var id = $(this).attr('id'); 
         // make a DELETE ajax request to delete the file
@@ -51,11 +59,7 @@
         this.emit("thumbnail", existingFiles[<%= index %>], "<%= image.image.url %>");
         $('.dropzone-previews').find('.dz-remove:last').attr('id', <%= image.id %>);
       <% end %>
-      
-      this.on("removedfile", function(file){
-		      
-      })
-  }
+    }
 		
 });	
 	
@@ -72,7 +76,7 @@
 		});
 	})
 	
-});*/
+});
 
   
 
@@ -615,17 +619,17 @@ $(document).ready(function(){
 
 </div>  
 
-<!--<div class="images-container">
+<div class="images-container">
   <div class="row">
     <div class="col-md-12">
-      <h2>PRODUCT IMAGES</h2>
+      <h2>PRODUCT IMAGE FOR SKETCHES</h2>
       <div class="dropzone-previews dropzone"> 
         <div class="dz-default dz-message"><span>Drop files here to upload</span>
         </div>
       </div>  
     </div>
   </div><br>  
-</div> -->
+</div>
 
 <div class="variants-container">
   
@@ -846,8 +850,8 @@ $(document).ready(function(){
 </div>
 <% end %>
 
-<!--<form id="product-images" action="" method="post" name="product-images">
+<form id="product-images" action="" method="post" name="product-images">
   <input id="image" style="display:none;" name="image" type="file">
-</form> -->
+</form>
 </div>
 
