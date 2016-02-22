@@ -34,13 +34,22 @@ class Variant < ActiveRecord::Base
   end
   
   def update_product_image_with_next_variant_image
-    if self.three_sixty_image.nil?
-      @product_variants = Variant.where(:product_id => self.product_id)
-      if self.id == @product_variants.first.id
-        p @product_variants[1]
-        update_product_image(@product_variants[1].main_image_id) unless @product_variants[1].nil? or @product_variants[1].main_image_id.nil?
+    @product_variants = Variant.where(:product_id => self.product_id)
+    if self.id == @product_variants.first.id
+      @next_variant = @product_variants[1]
+      if @next_variant.three_sixty_image.nil?
+        update_product_image(@next_variant.main_image_id) unless @next_variant.nil? or @next_variant.main_image_id.nil?
+      else
+        @first_plane_image = @next_variant.three_sixty_image.plane_images.first
+        @product = ShopifyAPI::Product.find(self.product_id)
+        @shopify_product_image = @product.images.first
+        unless @shopify_product_image.nil?
+          @shopify_product_image.destroy
+        end
+        @shopify_product_image = ShopifyAPI::Image.new(:product_id => @product.id)
+        @shopify_product_image.src = 'https://productbuilder.arborgentry.com/' + @first_plane_image.image.url
+        @shopify_product_image.save
       end
     end
-
   end
 end
