@@ -123,7 +123,7 @@ class VariantsController < AuthenticatedController
   private
   
     def variant_attributes
-      params.require(:variant).permit(:price, :sku)
+      params.require(:variant).permit(:price, :sku, :length, :height, :depth)
     end
 
 end

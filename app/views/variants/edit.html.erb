@@ -257,6 +257,7 @@ $(document).ready(function(){
         <%= f.label 'variant[price]', "Price" %>
         <%= f.text_field :price, class: "form-control" %>
       </div>
+      
       <div class="col-md-6 form-group">
         <label for="invenotry_managment">
           Inventory Managment
@@ -266,13 +267,29 @@ $(document).ready(function(){
           <option value="blank" <%= @shopify_variant.inventory_management.nil? ? "selected" : "" %>>Blank</option>
         </select>
       </div>
+      
       <div class="col-md-6 form-group inventory_quantity">
         <label for="invenotry_quantity">
           Inventory Quantity
         </label>
         <input id="inventory_quantity" class="form-control" type="number" name="inventory_quantity" value=<%= @shopify_variant.inventory_quantity %>>
       </div>
-
+      
+      <div class="col-md-6 form-group">
+        <%= f.label 'variant[length]', "Length" %>
+        <%= f.text_field :length, class: "form-control" %>
+      </div>
+      
+      <div class="col-md-6 form-group">
+        <%= f.label 'variant[height]', "Height" %>
+        <%= f.text_field :height, class: "form-control" %>
+      </div>
+      
+      <div class="col-md-6 form-group">
+        <%= f.label 'variant[depth]', "Depth" %>
+        <%= f.text_field :depth, class: "form-control" %>
+      </div>
+      
     </div>  
     <h2>
       Select main variant image
