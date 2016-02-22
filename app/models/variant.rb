@@ -3,9 +3,11 @@ class Variant < ActiveRecord::Base
   has_many :option_values, through: :variants_option_values, dependent: :destroy
   #has_and_belongs_to_many :option_values
   belongs_to :product_image
-  has_many :variant_images, dependent: :nullify
+  has_many :variant_images, dependent: :destroy
   has_one :three_sixty_image, dependent: :destroy
   after_save :update_product_image_with_variant_image
+  before_destroy :update_product_image_with_next_variant_image
+
   private
   
   def update_product_image_with_variant_image
@@ -29,5 +31,16 @@ class Variant < ActiveRecord::Base
       @shopify_product_image.src = 'https://productbuilder.arborgentry.com/' + @main_variant_image.image.url
       @shopify_product_image.save
     end
+  end
+  
+  def update_product_image_with_next_variant_image
+    if self.three_sixty_image.nil?
+      @product_variants = Variant.where(:product_id => self.product_id)
+      if self.id == @product_variants.first.id
+        p @product_variants[1]
+        update_product_image(@product_variants[1].main_image_id) unless @product_variants[1].nil? or @product_variants[1].main_image_id.nil?
+      end
+    end
+
   end
 end

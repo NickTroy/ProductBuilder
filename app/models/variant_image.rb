@@ -1,8 +1,7 @@
 class VariantImage < ActiveRecord::Base
   belongs_to :variant
-  before_destroy :update_main_image
+  before_destroy :update_main_image_id
   after_destroy :update_main_product_image
-  after_save :update_main_product_image
   has_attached_file :image, :styles => { :medium => "300x300>",:thumb => "100x100>" }
                   	
   validates_attachment 	:image, 
@@ -12,7 +11,7 @@ class VariantImage < ActiveRecord::Base
 
   private
   
-  def update_main_image
+  def update_main_image_id
     if self.id == self.variant.main_image_id
       if self.variant.variant_images.count == 1
         self.variant.update_attributes(main_image_id: nil)
