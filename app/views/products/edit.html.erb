@@ -19,7 +19,7 @@ $(document).ready(function(){
     // restrict image size to a maximum 1MB
     url: "<%= product_product_images_url(:product_id => @product.id, :protocol => 'https') %>",
     maxFilesize: 1,
-    method: "POST",
+    //method: "POST",
     // changed the passed param to one accepted by
     // our rails app
     paramName: "image",
@@ -33,10 +33,10 @@ $(document).ready(function(){
       $('.dropzone-previews').find('.dz-remove:last').attr('id', response.imageID);
       // add the dz-success class (the green tick sign)
       //$('.dropzone-previews').addClass("dz-success");
-	    if ( $('.dropzone-previews').find('.dz-preview').length === 2) {
-	      $('.dropzone-previews').find('.dz-remove:first').trigger('click');
-	      $('.dropzone-previews').find('.dz-preview:first').remove();
-			}
+      if ( $('.dropzone-previews').find('.dz-preview').length === 2) {
+        $('.dropzone-previews').find('.dz-remove:first').trigger('click');
+        $('.dropzone-previews').find('.dz-preview:first').remove();
+      }  
       $('.dz-remove:last').click(function(){
         var id = $(this).attr('id'); 
         // make a DELETE ajax request to delete the file
@@ -49,7 +49,7 @@ $(document).ready(function(){
           }
         });
       })		
-     },
+    },
     //when the remove button is clicked
     init: function(){
       var existingFiles = [];
@@ -61,20 +61,20 @@ $(document).ready(function(){
       <% end %>
     }
 		
-});	
+  });	
 	
-	$('.dz-remove').click(function(){
-	  var id = $(this).attr('id'); 
+  $('.dz-remove').click(function(){
+    var id = $(this).attr('id'); 
     // make a DELETE ajax request to delete the file
-		$.ajax({
-		  type: 'POST',
-		  data: { _method: 'DELETE' },
-		  url: '<%= product_product_images_path(@product.id) %>/' + id,
-		  success: function(data){
-			  console.log(data.message);
-			}
-		});
-	})
+    $.ajax({
+      type: 'POST',
+      data: { _method: 'DELETE' },
+      url: '<%= product_product_images_path(@product.id) %>/' + id,
+      success: function(data){
+        console.log(data.message);
+      }
+    });
+  })
 	
 });
 
@@ -850,7 +850,7 @@ $(document).ready(function(){
 </div>
 <% end %>
 
-<form id="product-images" action="" method="post" name="product-images">
+<form id="product-images" action="" method="post" name="product-images-dropzone">
   <input id="image" style="display:none;" name="image" type="file">
 </form>
 </div>
