@@ -188,7 +188,6 @@ class ProductsController < AuthenticatedController
         @variant.length = @variant_row[@length_column].to_s unless @variant_row[@length_column].nil?
         @variant.height = @variant_row[@height_column].to_s unless @variant_row[@height_column].nil? 
         @variant.depth = @variant_row[@depth_column].to_s unless @variant_row[@depth_column].nil?
-        binding.pry
         @variant.save
         @pseudo_product = ShopifyAPI::Product.create(title: "#{@pseudo_product_title}")
         @pseudo_product_variant = @pseudo_product.variants.first
