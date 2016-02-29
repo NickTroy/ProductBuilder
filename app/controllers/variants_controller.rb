@@ -10,28 +10,62 @@ class VariantsController < AuthenticatedController
   
   def edit
     @variant = Variant.find(params[:variant_id])
-    @shopify_variant = ShopifyAPI::Variant.find(@variant.pseudo_product_variant_id)
-    @image = @variant.product_image
-    @product_images = ProductImage.where(product_id: @variant.product_id)
-    @variant_images = @variant.variant_images
-    @three_sixty_image_url = ""
-    @three_sixty_image = @variant.three_sixty_image
-    unless @three_sixty_image.nil?
-      unless @three_sixty_image.plane_images.empty?      
-        @first_plane_image = @three_sixty_image.plane_images.first.image.url
-        @three_sixty_image_url = URI.join(request.url, @first_plane_image).to_s
-        @three_sixty_image_url.insert(4,'s')
-        @images_path = @three_sixty_image_url.split('/')
-        @images_path.delete_at(-1)
-        @images_path = @images_path.join('/') 
-        @images_names = []
-        @three_sixty_image.plane_images.each do |plane_image|
-          @images_names.push(plane_image.image.original_filename)
+    begin
+      @shopify_variant = ShopifyAPI::Variant.find(@variant.pseudo_product_variant_id)
+      @image = @variant.product_image
+      @product_images = ProductImage.where(product_id: @variant.product_id)
+      @variant_images = @variant.variant_images
+      @three_sixty_image_url = ""
+      @three_sixty_image = @variant.three_sixty_image
+      unless @three_sixty_image.nil?
+        unless @three_sixty_image.plane_images.empty?      
+          @first_plane_image = @three_sixty_image.plane_images.first.image.url
+          @three_sixty_image_url = URI.join(request.url, @first_plane_image).to_s
+          @three_sixty_image_url.insert(4,'s')
+          @images_path = @three_sixty_image_url.split('/')
+          @images_path.delete_at(-1)
+          @images_path = @images_path.join('/') 
+          @images_names = []
+          @three_sixty_image.plane_images.each do |plane_image|
+            @images_names.push(plane_image.image.original_filename)
+          end
+          @images_names = @images_names.join(',')
         end
-        @images_names = @images_names.join(',')
+      end
+    rescue
+      #render json: { message: "no connected product found" }, :status => 500
+      @pseudo_product_title = ""
+      @variant.option_values.each do |option_value|
+        @pseudo_product_title += " #{option_value.option.name} : #{option_value.value}"
+      end
+      @pseudo_product = ShopifyAPI::Product.create(title: "#{@pseudo_product_title}")
+      @pseudo_product_variant = @pseudo_product.variants.first
+      @pseudo_product_variant.update_attributes(:option1 => @pseudo_product_title)
+      @variant.update_attributes(:pseudo_product_id => @pseudo_product.id, 
+                                 :pseudo_product_variant_id => @pseudo_product_variant.id)
+      # !!!update_shopify product parameters!!!
+      @shopify_variant = ShopifyAPI::Variant.find(@variant.pseudo_product_variant_id)
+      @image = @variant.product_image
+      @product_images = ProductImage.where(product_id: @variant.product_id)
+      @variant_images = @variant.variant_images
+      @three_sixty_image_url = ""
+      @three_sixty_image = @variant.three_sixty_image
+      unless @three_sixty_image.nil?
+        unless @three_sixty_image.plane_images.empty?      
+          @first_plane_image = @three_sixty_image.plane_images.first.image.url
+          @three_sixty_image_url = URI.join(request.url, @first_plane_image).to_s
+          @three_sixty_image_url.insert(4,'s')
+          @images_path = @three_sixty_image_url.split('/')
+          @images_path.delete_at(-1)
+          @images_path = @images_path.join('/') 
+          @images_names = []
+          @three_sixty_image.plane_images.each do |plane_image|
+            @images_names.push(plane_image.image.original_filename)
+          end
+          @images_names = @images_names.join(',')
+        end
       end
     end
-
   end
   
   def show
