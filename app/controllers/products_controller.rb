@@ -129,7 +129,7 @@ class ProductsController < AuthenticatedController
     @import_file.sheets.each_with_index do |sheet, index|
       #@product_spreadsheet = Roo::Excelx.new(params[:file].path).sheet(0)
       @last_column = @import_file.sheet(index).last_column
-      @number_of_variants = @import_file.sheet(index).column(@last_column).compact.count - 3
+      @number_of_variants = @import_file.sheet(index).column(@last_column).compact.count - 2
       @product_row = @import_file.sheet(index).row(6)
       @product_title = @product_row[2]
       @product_details = @product_row[3]
@@ -144,16 +144,16 @@ class ProductsController < AuthenticatedController
             @first_option_column ||= ind
           end
           if cell.include? "Variant ITEM #"
-            @sku_column ||= ind
+            @sku_column = ind
           end
           if cell.include? "Variant length"
-            @length_column ||= ind
+            @length_column = ind
           end
           if cell.include? "Variant height"
-            @height_column ||= ind
+            @height_column = ind
           end
           if cell.include? "Variant depth"
-            @depth_column ||= ind
+            @depth_column = ind
           end
         end
       end
@@ -183,11 +183,12 @@ class ProductsController < AuthenticatedController
     
         end
         
-         
+
         @variant.sku = @variant_row[@sku_column]     
-        @variant.length = @variant_row[@length_column]
-        @variant.height = @variant_row[@height_column]
-        @variant.depth = @variant_row[@depth_column]
+        @variant.length = @variant_row[@length_column].to_s unless @variant_row[@length_column].nil?
+        @variant.height = @variant_row[@height_column].to_s unless @variant_row[@height_column].nil? 
+        @variant.depth = @variant_row[@depth_column].to_s unless @variant_row[@depth_column].nil?
+        binding.pry
         @variant.save
         @pseudo_product = ShopifyAPI::Product.create(title: "#{@pseudo_product_title}")
         @pseudo_product_variant = @pseudo_product.variants.first
