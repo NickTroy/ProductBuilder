@@ -14,16 +14,8 @@ class ProductsController < AuthenticatedController
         end  
       end
     end
-    #ShopifyAPI::Product.all(:limit => 250).each_with_index do |p, i|
-      #sleep 3 if i % 10 == 0
-     # if p.tags == "product" #p.metafields[0].namespace == "product"  
-      #  @all_products.push(p)    
-      #end  
-    #end
-    #@products = ShopifyAPI::Product.find(:all)
     @products = Kaminari.paginate_array(@all_products, total_count: @all_products.count).page(params[:page]).per(10)
     @variants = Variant.all
-    @images = ProductImage.all
   end
 
   def new
@@ -32,7 +24,6 @@ class ProductsController < AuthenticatedController
   
   def edit
     @product = ShopifyAPI::Product.find(params[:id])
-    @images = ProductImage.where(product_id: @product.id)
     @options = Option.all
     @option_groups = OptionGroup.all
     @product_options = []
@@ -51,11 +42,7 @@ class ProductsController < AuthenticatedController
     ProductsOption.where(:product_id => @product.id).each do |product_option|
       @product_options.push(Option.where(id: product_option.option_id)[0])
     end
-    #@product_options = Option.joins("inner join products_options on products_options.product_id = #{params[:id]}").uniq
     @variants = Variant.where(product_id: @product.id)
-    #respond_to do |format|
-     # format.json { render 'show.json.jbuilder' }
-    #end
   end
   
   def create
@@ -70,7 +57,6 @@ class ProductsController < AuthenticatedController
     respond_to do |format|
       format.html do 
         if @product.save
-          #@product.add_metafield(ShopifyAPI::Metafield.new(:namespace => "product", :key => "key", :value => "value", :value_type => "string"))
           redirect_to edit_product_url(:id => @product.id, :protocol => 'https')
         end
       end
@@ -111,9 +97,14 @@ class ProductsController < AuthenticatedController
     
     @images.each { |img| img.destroy }
     @variants.each do |var|  
-      @pseudo_product = ShopifyAPI::Product.find(var.pseudo_product_id)
-      @pseudo_product.destroy
-      var.destroy
+      begin
+        @pseudo_product = ShopifyAPI::Product.find(var.pseudo_product_id)
+      rescue
+        var.destroy
+      else
+        @pseudo_product.destroy
+        var.destroy
+      end
     end
     @product.destroy
     respond_to do |format|
@@ -127,7 +118,6 @@ class ProductsController < AuthenticatedController
   def import
     @import_file = Roo::Excel.new(params[:file].path)
     @import_file.sheets.each_with_index do |sheet, index|
-      #@product_spreadsheet = Roo::Excelx.new(params[:file].path).sheet(0)
       @last_column = @import_file.sheet(index).last_column
       @number_of_variants = @import_file.sheet(index).column(@last_column).compact.count - 2
       @product_row = @import_file.sheet(index).row(6)
