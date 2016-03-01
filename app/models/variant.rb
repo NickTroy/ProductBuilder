@@ -21,15 +21,21 @@ class Variant < ActiveRecord::Base
 
   def update_product_image main_image_id
     unless main_image_id.nil? or main_image_id == ""
-      @product = ShopifyAPI::Product.find(self.product_id)
-      @main_variant_image = VariantImage.find(main_image_id)
-      @shopify_product_image = @product.images.first
-      unless @shopify_product_image.nil?
-        @shopify_product_image.destroy
+      begin
+        @product = ShopifyAPI::Product.find(self.product_id)
+      rescue
+        recreate_pseudo_product
+      ensure
+        @product = ShopifyAPI::Product.find(self.product_id) if @product.nil?
+        @main_variant_image = VariantImage.find(main_image_id)
+        @shopify_product_image = @product.images.first
+        unless @shopify_product_image.nil?
+          @shopify_product_image.destroy
+        end
+        @shopify_product_image = ShopifyAPI::Image.new(:product_id => @product.id)
+        @shopify_product_image.src = 'https://productbuilder.arborgentry.com/' + @main_variant_image.image.url
+        @shopify_product_image.save
       end
-      @shopify_product_image = ShopifyAPI::Image.new(:product_id => @product.id)
-      @shopify_product_image.src = 'https://productbuilder.arborgentry.com/' + @main_variant_image.image.url
-      @shopify_product_image.save
     end
   end
   
@@ -42,16 +48,36 @@ class Variant < ActiveRecord::Base
           update_product_image(@next_variant.main_image_id) unless @next_variant.nil? or @next_variant.main_image_id.nil?
         else
           @first_plane_image = @next_variant.three_sixty_image.plane_images.first
-          @product = ShopifyAPI::Product.find(self.product_id)
-          @shopify_product_image = @product.images.first
-          unless @shopify_product_image.nil?
-            @shopify_product_image.destroy
+          begin
+            @product = ShopifyAPI::Product.find(self.product_id)
+          rescue
+            recreate_pseudo_product
+          ensure  
+            @product = ShopifyAPI::Product.find(self.product_id) if @product.nil?
+            @shopify_product_image = @product.images.first
+            unless @shopify_product_image.nil?
+              @shopify_product_image.destroy
+            end
+            @shopify_product_image = ShopifyAPI::Image.new(:product_id => @product.id)
+            @shopify_product_image.src = 'https://productbuilder.arborgentry.com/' + @first_plane_image.image.url
+            @shopify_product_image.save
           end
-          @shopify_product_image = ShopifyAPI::Image.new(:product_id => @product.id)
-          @shopify_product_image.src = 'https://productbuilder.arborgentry.com/' + @first_plane_image.image.url
-          @shopify_product_image.save
         end
       end
     end
+  end
+  
+  private
+  
+  def recreate_pseudo_product
+    @pseudo_product_title = ""
+    @variant.option_values.each do |option_value|
+      @pseudo_product_title += " #{option_value.option.name} : #{option_value.value}"
+    end
+    @pseudo_product = ShopifyAPI::Product.create(title: "#{@pseudo_product_title}")
+    @pseudo_product_variant = @pseudo_product.variants.first
+    @pseudo_product_variant.update_attributes(:option1 => @pseudo_product_title)
+    @variant.update_attributes(:pseudo_product_id => @pseudo_product.id, 
+                               :pseudo_product_variant_id => @pseudo_product_variant.id)
   end
 end
