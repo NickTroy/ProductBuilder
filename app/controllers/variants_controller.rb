@@ -55,18 +55,32 @@ class VariantsController < AuthenticatedController
       @variant.save
     end
     @variant.update_attributes(variant_attributes)
+    
     begin
       @pseudo_product = ShopifyAPI::Product.find(@variant.pseudo_product_id)
     rescue
       recreate_pseudo_product
     ensure
+      @product = ShopifyAPI::Product.find(@variant.product_id)
       @pseudo_product = ShopifyAPI::Product.find(@variant.pseudo_product_id) if @pseudo_product.nil?
+      
+      @pseudo_product_title = "#{@product.title} "
+      @color_option_value = @variant.option_values.find { |opt_val| opt_val.option.name == "Colors"}
+      @pseudo_product_title += @color_option_value.nil? ? "(" : "(#{@color_option_value.value} " 
+      @upholstery_option_value = @variant.option_values.find { |opt_val| opt_val.option.name == "Upholstery"}
+      @pseudo_product_title += @upholstery_option_value.nil? ? ")" : "#{@upholstery_option_value.value})"
+      @pseudo_product_title = "#{@variant.length} #{@variant.depth} #{@pseudo_product_title}"
+      @pseudo_product.update_attributes(:title => @pseudo_product_title)
+      
       @pseudo_product_variant = @pseudo_product.variants.first
+      @pseudo_product_variant.update_attributes(:option1 => @pseudo_product_title)
+      
       @inventory_management = params[:inventory_management] == "shopify" ? "shopify" : nil
-      @pseudo_product_variant.update_attributes(:price => variant_attributes[:price], :sku => variant_attributes[:sku], :inventory_management => @inventory_management)
+      @pseudo_product_variant.update_attributes(:price => variant_attributes[:price], :sku => variant_attributes[:sku], :inventory_management => @inventory_management, :option1 => @pseudo_product_title)
       unless params[:inventory_management].nil?
         @pseudo_product_variant.update_attributes(:inventory_quantity => params[:inventory_quantity].to_i)
       end
+      
       unless params[:image_id].nil? 
         @pseudo_product_image = @pseudo_product.images.first
         unless @pseudo_product_image.nil?
@@ -105,12 +119,17 @@ class VariantsController < AuthenticatedController
         params[:variants].each_with_index do |variant,index|
           
           @variant = Variant.new(product_id: params[:product_id], product_details: @product_details)
-          @pseudo_product_title = ""
+          @pseudo_product_title = "#{@product.title} "
           variant[1].each do |option_value|
             @option_value = OptionValue.find_by(value: option_value)
             @variant.option_values << @option_value
-            @pseudo_product_title += " #{@option_value.option.name} : #{@option_value.value}"
+            #@pseudo_product_title += " #{@option_value.option.name} : #{@option_value.value}"
           end
+          @color_option_value = @variant.option_values.find { |opt_val| opt_val.option.name == "Colors"}
+          @pseudo_product_title += @color_option_value.nil? ? "(" : "(#{@color_option_value.value} " 
+          @upholstery_option_value = @variant.option_values.find { |opt_val| opt_val.option.name == "Upholstery"}
+          @pseudo_product_title += @upholstery_option_value.nil? ? ")" : "#{@upholstery_option_value.value})"
+          
           @variant.save
           @pseudo_product = ShopifyAPI::Product.create(title: "#{@pseudo_product_title}")
           @pseudo_product_variant = @pseudo_product.variants.first
