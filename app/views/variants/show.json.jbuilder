@@ -1,4 +1,7 @@
 json.array! @variants do |variant|
+  if variant.main_variant
+    json.main_variant_id variant.id
+  end
   json.variant_id variant.id
   unless variant.main_image_id.nil?
     json.image_source VariantImage.find(variant.main_image_id).image.url(:thumb) 
