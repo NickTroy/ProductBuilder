@@ -198,7 +198,6 @@ $(document).ready(function(){
     $('.current_number_of_variants').text(variants_json.length);
     var main_variant_id = parseInt($('.main_variant_label').parents('.variant-actions').find('.make_main_variant').data('variant-id'));
     console.log($('.main_variant_label').parents('.variant-actions').find('.make_main_variant'));
-    alert('main ' + parseInt(main_variant_id));
     $('.variant-info').remove();
     
     //alert(JSON.stringify(variants_json));
@@ -239,7 +238,6 @@ $(document).ready(function(){
       'href="/products/<%= @product.id %>/variants/<%= @product.id %>?variant_id=' + variant_id + '">Delete variant</a>').appendTo(".variant-actions:last");
       $('<input class="make_main_variant btn btn-primary" type="button" value="Make main variant" data-variant-id="' + variant_id + '">').appendTo(".variant-actions:last");
       if (parseInt(main_variant_id) === parseInt(variant_id)){
-        alert('main ' + parseInt(main_variant_id));
         $('<span class="main_variant_label"><strong> Main produt variant</strong></span>').appendTo(".variant-actions:last");        
       }
       add_make_main_variant_button_click();
@@ -436,7 +434,9 @@ function add_make_main_variant_button_click(){
         success: function(){
           $('.make_main_variant').show();
           this_make_main_variant.hide();
-          $('.main_variant_label').insertAfter(this_make_main_variant);
+          $('.main_variant_label').remove();
+          $(this_make_main_variant).after('<span class="main_variant_label"><strong> Main produt variant</strong></span>');
+          //$('.main_variant_label').insertAfter(this_make_main_variant);
         }
       }
     })
