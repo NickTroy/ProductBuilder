@@ -47,13 +47,19 @@ class VariantsController < AuthenticatedController
       redirect_to edit_product_url(:protocol => 'https', :id => params[:product_id])
       return true
     end
-    
     @variant = Variant.find(params[:variant_id])
     unless params[:image_id].nil? 
       @image_selected = VariantImage.find(params[:image_id])
       @variant.main_image_id = params[:image_id]
       @variant.save
     end
+    
+    if variant_attributes[:main_variant]
+      Variant.where(:main_variant => true, :product_id => @variant.product_id).each do |v|
+        v.update_attributes(:main_variant => false) 
+      end
+    end
+    
     @variant.update_attributes(variant_attributes)
     
     begin
@@ -164,7 +170,7 @@ class VariantsController < AuthenticatedController
   private
   
     def variant_attributes
-      params.require(:variant).permit(:price, :sku, :length, :height, :depth)
+      params.require(:variant).permit(:price, :sku, :length, :height, :depth, :main_variant)
     end
     
     def recreate_pseudo_product
