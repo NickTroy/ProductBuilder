@@ -9,8 +9,7 @@ class ThreeSixtyImage < ActiveRecord::Base
   def update_product_image
     @product = ShopifyAPI::Product.find(self.variant.product_id)
     unless self.plane_images.empty? 
-      @product_variants = Variant.where(:product_id => @product.id)
-      if self.variant.id == @product_variants.first.id     
+      if self.variant.main_variant   
         @first_plane_image = self.plane_images.first
         @shopify_product_image = @product.images.first
         unless @shopify_product_image.nil?
@@ -26,22 +25,15 @@ class ThreeSixtyImage < ActiveRecord::Base
   def update_product_image_with_variant_image
     @product = ShopifyAPI::Product.find(self.variant.product_id)
     @main_variant_image = VariantImage.find(self.variant.main_image_id) unless self.variant.main_image_id.nil?
+    @shopify_product_image = @product.images.first
+    unless @shopify_product_image.nil?
+      @shopify_product_image.destroy
+    end
     unless @main_variant_image.nil?
-      @product_variants = Variant.where(:product_id => @product.id)
-      if self.variant.id == @product_variants.first.id
-        @shopify_product_image = @product.images.first
-        unless @shopify_product_image.nil?
-          @shopify_product_image.destroy
-        end
+      if self.variant.main_variant 
         @shopify_product_image = ShopifyAPI::Image.new(:product_id => @product.id)
         @shopify_product_image.src = 'https://productbuilder.arborgentry.com/' + @main_variant_image.image.url
         @shopify_product_image.save
-      end
-    end
-    
-    if @main_variant_image.nil?  
-      unless @product.images.first.nil?
-        @product.images.first.destroy
       end
     end
   end
