@@ -27,7 +27,7 @@ class ProductInfoController < ApplicationController
 
   def show
     @variants = Variant.where(product_id: params[:id])
-    @main_variant_id = @variants.first.id
+    @main_variant_id = Variant.where(product_id: params[:id], main_variant: true)[0].id
     @product_options = []
     #ProductsOption.where(:product_id => params[:id]).each do |product_option|
       #@product_options.push(Option.where(id: product_option.option_id)[0])
