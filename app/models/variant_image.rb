@@ -28,8 +28,8 @@ class VariantImage < ActiveRecord::Base
 
   def update_main_product_image
     if self.variant.three_sixty_image.nil?
-      @product_variants = Variant.where(:product_id => self.variant.product_id)
-      if self.variant.id == @product_variants.first.id
+      #@product_variants = Variant.where(:product_id => self.variant.product_id)
+      if self.variant.main_variant
         update_product_image(self.variant.main_image_id)
       end
     end
