@@ -25,9 +25,7 @@ Rails.application.routes.draw do
   end
   post '/generate_variants', to: 'variants#generate_product_variants'
   put '/generate_variants', to: 'variants#generate_product_variants'
-
-  
-  
+  put '/update_three_sixty_parameters', to: 'three_sixty_images#update_all_three_sixty_images_parameters'
 
   root :to => 'products#index'
 
