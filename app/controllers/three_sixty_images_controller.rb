@@ -71,7 +71,6 @@ class ThreeSixtyImagesController < AuthenticatedController
     @three_sixty_clockwise = params[:three_sixty_clockwise] == "false" ? false : true
     ThreeSixtyImage.all.each do |image|
       image.update_attributes(:rotation_speed => @three_sixty_speed, :rotations_count => @three_sixty_rotations_count, :clockwise => @three_sixty_clockwise)
-      binding.pry
     end
     render json: { message: "updated" }, :status => 200
   end
