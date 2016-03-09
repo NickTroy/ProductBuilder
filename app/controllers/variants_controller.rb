@@ -164,7 +164,8 @@ class VariantsController < AuthenticatedController
         sleep 1 if index > 10
       end
     end
-    redirect_to edit_product_url(:protocol => 'https', :id => params[:product_id])
+    render json: { message: "success"}, :status => 200 
+    #redirect_to edit_product_url(:protocol => 'https', :id => params[:product_id])
   end
   
   private

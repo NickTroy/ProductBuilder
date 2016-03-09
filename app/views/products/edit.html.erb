@@ -169,7 +169,8 @@ $(document).ready(function(){
   function createProductVariants(){
     var variants_json = { product_id: <%= params[:id] %> }; 
     var variants = JSON.parse($('#variants').val());
-    variants_json["variants"] = variants
+    variants_json["variants"] = variants;
+    $('.loader_image_wrapper').show();
     $.ajax({
       url: "<%= generate_variants_path %>",
       method: "POST",
@@ -190,6 +191,7 @@ $(document).ready(function(){
       dataType: 'json',
       success: function(variants_json){
         handleVariantsJSON(variants_json);
+        $('.loader_image_wrapper').hide();
       }
     })
   }
@@ -292,19 +294,22 @@ $(document).ready(function(){
   
   function deleteAllVariants(){
     if (confirm('Are you sure, you want to delete all product variants?')) {
+    $('.loader_image_wrapper').insertAfter('.variant-info:last');
+    $('.loader_image_wrapper').show();
     $.ajax({
       url: "<%= product_delete_all_variants_path(product_id: @product.id) %>",
       method: 'POST',
       dataType: 'json',
       data: {
         _method: "delete",
-        product_id: <%= @product.id %>,
-        success: function(){
-          $('.variant-info').each(function (){
-            $(this).remove();
-          });
-          $('.current_number_of_variants').text('0');
-        }
+        product_id: <%= @product.id %>
+      },
+      success: function(){
+        $('.variant-info').each(function (){
+          $(this).remove();
+        });
+        $('.current_number_of_variants').text('0');
+        $('.loader_image_wrapper').hide();
       }
     })
     }
@@ -712,6 +717,9 @@ $(document).ready(function(){
         
       </div>
     <% end %>
+    <div class="loader_image_wrapper text-center" style="display:none;">
+      <%= image_tag("loader.gif") %>
+    </div>
   </div>
   <br>
   <div class="variants_actions row">
