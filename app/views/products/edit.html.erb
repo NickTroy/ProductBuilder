@@ -170,6 +170,7 @@ $(document).ready(function(){
     var variants_json = { product_id: <%= params[:id] %> }; 
     var variants = JSON.parse($('#variants').val());
     variants_json["variants"] = variants;
+    $('.loader_image_wrapper').insertAfter('.variant-info:last');
     $('.loader_image_wrapper').show();
     $.ajax({
       url: "<%= generate_variants_path %>",
