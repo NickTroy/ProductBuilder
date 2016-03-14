@@ -53,6 +53,27 @@ $(document).ready(function(){
   	});	
   });  
   
+
+$(document).on('click', '#save_edit', function(e){
+        e.preventDefault();
+        var option_height = $(this).parents(".options_height_weight").find(".option_height").val();
+        var option_weight = $(this).parents(".options_height_weight").find(".option_weight").val();
+        var option_value_id_js = $(this).attr('data-option-value-id');
+        $.ajax({
+            type: 'POST',
+            dataType: 'JSON',
+            url:'/options/' + '<%= @option.id %>' + '/option_values/' + option_value_id_js + '/edit_height_weight',
+            data: { 
+              _method: 'PATCH',
+              weight: option_weight, 
+              height: option_height
+            },
+            success: function(){
+              alert('Option value image parameters were updated.')
+            }
+        });
+    });
+  
 })
   
 </script>
@@ -79,6 +100,21 @@ $(document).ready(function(){
         <input readonly class="form-control" name="option_value<%= i + 1 %>" id="option_value<%= i + 1 %>" type="text" value="<%= option_value.value %>"/>    
         <div class="option_value_image<%= i + 1 %> dropzone" id="<%= option_value.id %>">
     
+        </div>
+        <div class='options_height_weight'>
+          <%= form_for option_value, :url => option_option_value_edit_height_weight_path(:option_id => @option.id, :option_value_id => option_value.id), :id => 'edit_form' do |ov| %>
+             <div class='col-md-6 form-group'>
+               <%= ov.label :weight %>
+               <%= ov.text_field :weight, class: "form-control option_weight" %>
+             </div>
+             <div class='col-md-6 form-group'>
+               <%= ov.label :height %>
+               <%= ov.text_field :height, class: "form-control option_height" %>
+             </div>
+             <div class='col-md-6'>
+               <%= link_to "Update image dimensions", '#', :'data-option-value-id' => option_value.id, class: 'btn btn-info', :id => 'save_edit' %>
+             </div>
+            <% end %>
         </div>
       </div>
       
@@ -108,6 +144,7 @@ $(document).ready(function(){
     <form id="option_value_image<%= i + 1 %>" method="post" name="option_value_image<%= i + 1 %>">
       <input id="image<%= i + 1 %>" style="display:none;" name="image<%= i + 1 %>" type="file">
       <input id="image<%= option_value.id %>_url" type="hidden" value="<%= option_value.image.nil? ? "" : option_value.image.url %>">
-    </form> 
+    </form>
+
   <% end %>
 </div>

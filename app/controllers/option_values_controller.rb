@@ -16,6 +16,15 @@ class OptionValuesController < ApplicationController
     render json: { message: "success" }, :status => 200
   end
   
+  def edit_height_weight
+    @option = Option.find(params[:option_id])
+    @option_value = OptionValue.find(params[:option_value_id])
+    @option_value.update_attributes(:height => params[:height], :weight => params[:weight])
+    @option_value.save
+    @option.save
+    render json: { message: "success" }, :status => 200
+  end
+  
   def destroy
     @option_value = OptionValue.find(params[:id])
     if @option_value.destroy

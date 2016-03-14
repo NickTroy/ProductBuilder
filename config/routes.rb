@@ -21,6 +21,7 @@ Rails.application.routes.draw do
     resources :option_values do
       post '/assign_image', to: 'option_values#assign_image'
       post '/unassign_image', to: 'option_values#unassign_image'
+      patch '/edit_height_weight', to: 'option_values#edit_height_weight'
     end
   end
   post '/generate_variants', to: 'variants#generate_product_variants'
