@@ -7,6 +7,7 @@ class OptionsController < AuthenticatedController
   def edit
     @product = ShopifyAPI::Product.find(params[:product_id])
     @option = Option.find(params[:option_id])
+    # @option_value = OptionValue.find(params[:option_value_id])
   end
   
   def create
