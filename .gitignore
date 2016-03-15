@@ -13,5 +13,6 @@
 /tmp
 /public/system
 /public
+/public/assets
 /config/initializers/shopify_app.rb
 /Gemfile.lock
