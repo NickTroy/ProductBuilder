@@ -58,7 +58,7 @@
         method: 'GET',
         data: { product_ids },
         success: function(){
-          document.location.href = '<%= asset_url('assets/export.xls') %>';
+          document.location.href = '<%= asset_url('assets/export.xls')[4] == 's' ? asset_url('assets/export.xls') : asset_url('assets/export.xls').insert(4, 's') %>';  
         }
         
       })
