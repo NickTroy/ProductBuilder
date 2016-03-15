@@ -199,13 +199,15 @@ class ProductsController < AuthenticatedController
     book = Spreadsheet::Workbook.new
 
     @product_ids = params[:product_ids].split(',').map!(&:to_i)
-    #inding.pry
     @product_ids.each_with_index do |product_id, index|
       @product = ShopifyAPI::Product.find(product_id)
       sheet = book.create_worksheet(:name => "product ##{index + 1}")
       title_row = sheet.row(0)
       description_row = sheet.row(1)
       product_row = sheet.row(5)
+      title_row[0] = "Product Title"
+      product_row[0] = @product.title
+      title_row[1] = "URL - Handle"
       title_row[2] = "Product Title"
       product_row[2] = @product.title
       title_row[3] = "Product Details - Body (HTML)"
@@ -231,12 +233,16 @@ class ProductsController < AuthenticatedController
       
       sku_column = @product_options.count + options_index_offset
       title_row[sku_column] = "Variant ITEM #"
+      
       length_column = @product_options.count + options_index_offset + 1
       title_row[length_column] = "Variant length"
+      description_row[length_column] = "length"
       height_column = @product_options.count + options_index_offset + 2
       title_row[height_column] = "Variant height"
+      description_row[height_column] = "height"
       depth_column = @product_options.count + options_index_offset + 3
       title_row[depth_column] = "Variant depth"
+      description_row[depth_column] = "depth"
       
       @product_variants = Variant.where(:product_id => product_id)
       @product_variants.each_with_index do |variant, variant_index|
