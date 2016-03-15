@@ -23,7 +23,7 @@ class ProductImagesController < AuthenticatedController
   private
 
     def image_params
-      params.permit(:image_source, :title, :product_id, :image)
+      params.permit(:image_source, :title, :product_id, :image, :big_image)
     end
     
 end
