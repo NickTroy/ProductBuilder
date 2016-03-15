@@ -14,6 +14,8 @@ Rails.application.routes.draw do
     delete '/delete_all_variants', to: 'variants#delete_all_variants'
   end
   
+  get '/export_products', to: 'products#export'
+  
   resources :product_info, defaults: { format: 'json' }
   put '/update_order_and_groups', to: 'options#update_order_numbers_and_groups'
   resources :option_groups

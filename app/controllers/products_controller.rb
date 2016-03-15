@@ -1,6 +1,7 @@
 class ProductsController < AuthenticatedController
   require 'roo'
   require 'csv'
+  require 'spreadsheet'
   
   def index
     @all_products = []
@@ -191,6 +192,69 @@ class ProductsController < AuthenticatedController
     @import_file.close
     redirect_to root_url(:protocol => 'https'), notice: "Product imported."
     
+  end
+  
+  def export
+    
+    book = Spreadsheet::Workbook.new
+
+    @product_ids = params[:product_ids].split(',').map!(&:to_i)
+    #inding.pry
+    @product_ids.each_with_index do |product_id, index|
+      @product = ShopifyAPI::Product.find(product_id)
+      sheet = book.create_worksheet(:name => "product ##{index + 1}")
+      title_row = sheet.row(0)
+      description_row = sheet.row(1)
+      product_row = sheet.row(5)
+      title_row[2] = "Product Title"
+      product_row[2] = @product.title
+      title_row[3] = "Product Details - Body (HTML)"
+      product_row[3] = @product.body_html
+      title_row[4] = "Brand - Vendor"
+      product_row[4] = @product.vendor
+      title_row[5] = "Type"
+      title_row[6] = "Detail - Tags"
+      title_row[7] = "Make Visible"
+
+      
+      @product_options = []
+      ProductsOption.where(:product_id => product_id).each do |pr_opt|
+        @product_options.push(Option.find(pr_opt.option_id))
+      end
+      options_index_offset = 8
+      @product_options.sort! { |option1, option2| option1.order_number <=> option2.order_number }
+      @product_options.each_with_index do |option, option_index|
+        
+        title_row[options_index_offset + option_index] = "Option #{option_index + 1}"
+        description_row[options_index_offset + option_index] = option.name 
+      end
+      
+      sku_column = @product_options.count + options_index_offset
+      title_row[sku_column] = "Variant ITEM #"
+      length_column = @product_options.count + options_index_offset + 1
+      title_row[length_column] = "Variant length"
+      height_column = @product_options.count + options_index_offset + 2
+      title_row[height_column] = "Variant height"
+      depth_column = @product_options.count + options_index_offset + 3
+      title_row[depth_column] = "Variant depth"
+      
+      @product_variants = Variant.where(:product_id => product_id)
+      @product_variants.each_with_index do |variant, variant_index|
+        variant_row_offset = 5
+        variant_row = sheet.row(5 + variant_index)
+        options_index_offset = 8
+        variant.option_values.sort { |opt_val1, opt_val2| opt_val1.option.order_number <=> opt_val2.option.order_number }.each_with_index do |option_value, option_value_index|
+          variant_row[options_index_offset + option_value_index] = option_value.value
+          variant_row[sku_column] = variant.sku
+          variant_row[length_column] = variant.length
+          variant_row[height_column] = variant.height
+          variant_row[depth_column] = variant.depth
+        end
+        
+      end
+    end
+    book.write './public/assets/export.xls'
+    render json: { message: "success" }, :status => 200 
   end
 
 

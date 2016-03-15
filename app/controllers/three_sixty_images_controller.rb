@@ -41,7 +41,8 @@ class ThreeSixtyImagesController < AuthenticatedController
     unless @three_sixty_image.plane_images.empty?
       @first_plane_image = @three_sixty_image.plane_images.first.image.url
       @first_plane_image = URI.join(request.url, @first_plane_image).to_s
-      @first_plane_image.insert(4,'s')
+      
+      #@first_plane_image.insert(4,'s')
       @images_path = @first_plane_image.split('/')
       @images_path.delete_at(-1)
       @images_path = @images_path.join('/')

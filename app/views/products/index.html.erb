@@ -33,6 +33,37 @@
         }
       })
     });
+    
+    //export products form
+    
+    $('.select_for_action').change(function(){
+      $('.selected_for_export').val('');
+      var product_ids = [];
+      $('.select_for_action').each(function(){
+        this_checkbox = $(this);
+        if (this_checkbox.is(':checked')) {
+          var product_id = this_checkbox.data('product-id');
+          product_ids.push(product_id);
+          var product_title = this_checkbox.parent().find('.product_title').text();
+          var selected_for_export = $('.selected_for_export').val();
+          $('.selected_for_export').val(selected_for_export + product_title + ', ');  
+        }
+      }) 
+      $('.selected_for_export_ids').val(product_ids);
+    });
+    $('#export_products').on('click', function(){
+      var product_ids = $('.selected_for_export_ids').val();
+      $.ajax({
+        url: "<%= export_products_url(:protocol => 'https') %>",
+        method: 'GET',
+        data: { product_ids },
+        success: function(){
+          document.location.href = '<%= asset_url('assets/export.xls') %>';
+        }
+        
+      })
+      
+    })
 
   })
 </script>
@@ -51,12 +82,14 @@
           <div class="col-md-1">Number of Product Variants</div>
           <div class="col-md-1">Collections count</div>
           <div class="col-md-1"></div>
+          
         </div>
 
        <% @products.each do |product| %>
           <div class="row">
             <div class="col-md-1">
-              <%= link_to product.title, edit_product_url(product.id, :protocol => 'https') %> <!--#{ :controller => "products", :action => "edit", :id => product.id , :protocol => 'https'} -->
+              <input type="checkbox" class="select_for_action" data-product-id="<%= product.id %>">
+              <%= link_to product.title, edit_product_url(product.id, :protocol => 'https'), :class => "product_title" %> <!--#{ :controller => "products", :action => "edit", :id => product.id , :protocol => 'https'} -->
             </div>
             <div class="col-md-2">
               <%= image_tag(product.images.first.src, style: "width:100px;") unless product.images.empty? %>
@@ -75,6 +108,7 @@
                                     { :method => :delete, 
                                     class: "btn btn-danger", style: "width: 80%;",
                                     data: { confirm: 'Are you sure, you want to delete this product?' } } %>      
+              
             </div>
           </div>
         <% end %>
@@ -88,8 +122,14 @@
         </span>
     
         <%= submit_tag "Import product", class: "btn-info btn" %>
-      <% end %> 
-
+      <% end %><br>
+      <div id="export form" class="row">
+        <!--<%= link_to "Export products", export_products_url(:protocol => 'https'), class: "btn btn-info" %>-->
+        <button id="export_products" class="btn btn-info col-md-12">Export products</button><br>
+        <span class="invitation_to_select"> Select products to be exported</span><br>
+        <input type="text" placeholder="Selected products" class="form-control col-md-6 selected_for_export" disabled>
+        <input type="hidden" class="form-control col-md-6 selected_for_export_ids">
+      </div>
       <div class="paginator" style="text-align:center;">
         <%= paginate @products %>
       </div>  
