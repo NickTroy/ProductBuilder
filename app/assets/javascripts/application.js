@@ -20,5 +20,6 @@
 //= require jquery.remotipart
 //= require jquery.reel
 //= require jquery.reel-bundle
+//= require jquery.elevatezoom
 //= require turbolinks
 //= require_tree .
