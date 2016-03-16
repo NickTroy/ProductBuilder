@@ -147,6 +147,9 @@ class ProductsController < AuthenticatedController
           if cell.include? "Variant depth"
             @depth_column = ind
           end
+          if cell.include? "Variant price"
+            @price_column = ind
+          end
         end
       end
       
@@ -180,10 +183,11 @@ class ProductsController < AuthenticatedController
         @variant.length = @variant_row[@length_column].to_s unless @variant_row[@length_column].nil?
         @variant.height = @variant_row[@height_column].to_s unless @variant_row[@height_column].nil? 
         @variant.depth = @variant_row[@depth_column].to_s unless @variant_row[@depth_column].nil?
+        @variant.price = @variant_row[@price_column].to_s unless @variant_row[@price_column].nil?
         @variant.save
         @pseudo_product = ShopifyAPI::Product.create(title: "#{@pseudo_product_title}")
         @pseudo_product_variant = @pseudo_product.variants.first
-        @pseudo_product_variant.update_attributes(:option1 => @pseudo_product_title)
+        @pseudo_product_variant.update_attributes(:option1 => @pseudo_product_title, :price => @variant.price, :sku => @variant.sku)
         @variant.update_attributes(:pseudo_product_id => @pseudo_product.id, 
                                  :pseudo_product_variant_id => @pseudo_product_variant.id)
         @pseudo_product.add_metafield(ShopifyAPI::Metafield.new(:namespace => "variant", :key => "variant_id", :value => "#{@variant.id}", :value_type => "integer"))
@@ -234,15 +238,19 @@ class ProductsController < AuthenticatedController
       sku_column = @product_options.count + options_index_offset
       title_row[sku_column] = "Variant ITEM #"
       
-      length_column = @product_options.count + options_index_offset + 1
+      price_column = @product_options.count + options_index_offset + 1
+      title_row[price_column] = "Variant price"
+      description_row[price_column] = "price"
+      length_column = @product_options.count + options_index_offset + 2
       title_row[length_column] = "Variant length"
       description_row[length_column] = "length"
-      height_column = @product_options.count + options_index_offset + 2
+      height_column = @product_options.count + options_index_offset + 3
       title_row[height_column] = "Variant height"
       description_row[height_column] = "height"
-      depth_column = @product_options.count + options_index_offset + 3
+      depth_column = @product_options.count + options_index_offset + 4
       title_row[depth_column] = "Variant depth"
       description_row[depth_column] = "depth"
+      
       
       @product_variants = Variant.where(:product_id => product_id)
       @product_variants.each_with_index do |variant, variant_index|
@@ -255,6 +263,7 @@ class ProductsController < AuthenticatedController
           variant_row[length_column] = variant.length
           variant_row[height_column] = variant.height
           variant_row[depth_column] = variant.depth
+          variant_row[price_column] = variant.price
         end
         
       end
