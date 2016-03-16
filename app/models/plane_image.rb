@@ -9,7 +9,7 @@ class PlaneImage < ActiveRecord::Base
   has_attached_file :big_image,
       path: ":rails_root/public/system/three_sixty_images/:three_sixty_image_id/big_images/:filename",
       url: "/system/three_sixty_images/:three_sixty_image_id/big_images/:filename",
-      :styles => { :big => "3500x3500" }, :whiny => true
+      :styles => { :big => "1500x1500" }, :whiny => true
 
    Paperclip.interpolates :three_sixty_image_id do |attachment, style|
       attachment.instance.three_sixty_image_id
