@@ -278,15 +278,14 @@ $(document).ready(function(){
   function updateProductVariantsForm(option_id){
     var option_name = $('#option'+ option_id).find('.option_name').text();
     var option_values = $('#option'+ option_id).find('.option_values').text().split(',');
-    alert(JSON.stringify(option_values));
     $('<div class="option_values_row"></div>').insertBefore('.variants-number-notice');
     $('<h4 class="option-name">Select ' + option_name + 's</h4>').appendTo('.option_values_row:last');
     $('<input class="option-name" type="hidden" value="'+ option_name+'"></input>').appendTo('.option_values_row:last');
     for(var i = 0; i < option_values.length - 1; i++) {
       option_values[i] = option_values[i].replace(/[\n\r\s]+/g, '');
       $('<span class="option_values"></span>').appendTo('.option_values_row:last');
-      $('<label for="' + option_values[i] + '">'+ option_values[i] + '</label>').appendTo('.option_values:last');
-      $('<input class="option_value" type="checkbox" value="0"></input>').appendTo('.option_values:last');
+      $('<label for="' + option_values[i] + '">'+ option_values[i] + '</label>').appendTo('.variants_form .option_values:last');
+      $('<input class="option_value" type="checkbox" value="0"></input>').appendTo('.variants_form .option_values:last');
     }
     $('<span class="number_of_values_selected">0</span>').appendTo('.option_values_row:last');
     $('<span> ' + option_name + 's selected</span>').appendTo('.option_values_row:last');
@@ -845,7 +844,9 @@ $(document).ready(function(){
         <p>Option <span class="option_name"><%= opt.name %></span> has <%= opt.option_values.count %> values:</p>
         <p class="option_values">
           <% opt.option_values.each do |value| %>
-            <% unless value.image.nil? or value.image.url == "" or value.image.url.include?("missing") %><img style="width:20px" src="<%= value.image.url.include?("missing") ? "" : value.image.url(:thumb) %>"><% end %>
+            <% unless value.image.nil? or value.image.url == "" or value.image.url.include?("missing") %>
+              <img style="width:20px" src="<%= value.image.url.include?("missing") ? "" : value.image.url(:thumb) %>">
+            <% end %>
             <%=value.value %>,
           <% end %>
         </p>
