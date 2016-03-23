@@ -277,7 +277,8 @@ $(document).ready(function(){
   
   function updateProductVariantsForm(option_id){
     var option_name = $('#option'+ option_id).find('.option_name').text();
-    var option_values = $('#option'+ option_id).find('.option-values').text().split(',');
+    var option_values = $('#option'+ option_id).find('.option_values').text().split(',');
+    alert(JSON.stringify(option_values));
     $('<div class="option_values_row"></div>').insertBefore('.variants-number-notice');
     $('<h4 class="option-name">Select ' + option_name + 's</h4>').appendTo('.option_values_row:last');
     $('<input class="option-name" type="hidden" value="'+ option_name+'"></input>').appendTo('.option_values_row:last');
@@ -844,12 +845,8 @@ $(document).ready(function(){
         <p>Option <span class="option_name"><%= opt.name %></span> has <%= opt.option_values.count %> values:</p>
         <p class="option_values">
           <% opt.option_values.each do |value| %>
-            <% unless value.image.nil? or value.image.url == "" or value.image.url.include?("missing") %>
-              <img style="width:20px" src="<%= value.image.url.include?("missing") ? "" : value.image.url(:thumb) %>">
-            <% end %>
-            <span>
-              <%=value.value %>,
-            </span>
+            <% unless value.image.nil? or value.image.url == "" or value.image.url.include?("missing") %><img style="width:20px" src="<%= value.image.url.include?("missing") ? "" : value.image.url(:thumb) %>"><% end %>
+            <%=value.value %>,
           <% end %>
         </p>
         <%= link_to 'Delete option', option_url(:option_id => opt.id, :protocol => 'https',  :product_id => @product.id), 
