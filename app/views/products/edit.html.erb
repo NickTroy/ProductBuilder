@@ -284,8 +284,8 @@ $(document).ready(function(){
     for(var i = 0; i < option_values.length - 1; i++) {
       option_values[i] = option_values[i].replace(/[\n\r\s]+/g, '');
       $('<span class="option_values"></span>').appendTo('.option_values_row:last');
-      $('<label for="' + option_values[i] + '">'+ option_values[i] + '</label>').appendTo('.variants_form .option_values:last');
-      $('<input class="option_value" type="checkbox" value="0"></input>').appendTo('.variants_form .option_values:last');
+      $('<label for="' + option_values[i] + '">'+ option_values[i] + '</label>').appendTo('.variants_form .option_values_row:last');
+      $('<input class="option_value" type="checkbox" value="0"></input>').appendTo('.variants_form .option_values_row:last');
     }
     $('<span class="number_of_values_selected">0</span>').appendTo('.option_values_row:last');
     $('<span> ' + option_name + 's selected</span>').appendTo('.option_values_row:last');
