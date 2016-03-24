@@ -257,13 +257,16 @@ class ProductsController < AuthenticatedController
       price_column = @product_options.count + options_index_offset + 1
       title_row[price_column] = "Variant price"
       description_row[price_column] = "price"
-      length_column = @product_options.count + options_index_offset + 2
+      variant_images_column = @product_options.count + options_index_offset + 2
+      title_row[variant_images_column] = "Variant Images"
+      
+      length_column = @product_options.count + options_index_offset + 3
       title_row[length_column] = "Variant length"
       description_row[length_column] = "length"
-      height_column = @product_options.count + options_index_offset + 3
+      height_column = @product_options.count + options_index_offset + 4
       title_row[height_column] = "Variant height"
       description_row[height_column] = "height"
-      depth_column = @product_options.count + options_index_offset + 4
+      depth_column = @product_options.count + options_index_offset + 5
       title_row[depth_column] = "Variant depth"
       description_row[depth_column] = "depth"
       
@@ -281,7 +284,11 @@ class ProductsController < AuthenticatedController
           variant_row[depth_column] = variant.depth
           variant_row[price_column] = variant.price
         end
-        
+        images_links = []
+        variant.variant_images.each do |variant_image|
+          images_links.push URI.join(request.url, variant_image.image.url).to_s
+        end
+        variant_row[variant_images_column] = images_links.join(',')
       end
     end
     book.write './public/assets/export.xls'
