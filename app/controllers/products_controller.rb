@@ -195,7 +195,6 @@ class ProductsController < AuthenticatedController
               @variant_image = VariantImage.new(:variant_id => @variant.id)
               @variant_image.image_from_url(image_link)
               @variant_image.save
-              binding.pry
             end
           end
         end
