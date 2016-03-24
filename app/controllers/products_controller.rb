@@ -150,6 +150,9 @@ class ProductsController < AuthenticatedController
           if cell.include? "Variant price"
             @price_column = ind
           end
+          if cell.include? "Variant Images"
+            @variant_images_column = ind
+          end
         end
       end
       
@@ -184,6 +187,19 @@ class ProductsController < AuthenticatedController
         @variant.height = @variant_row[@height_column].to_s unless @variant_row[@height_column].nil? 
         @variant.depth = @variant_row[@depth_column].to_s unless @variant_row[@depth_column].nil?
         @variant.price = @variant_row[@price_column].to_s unless @variant_row[@price_column].nil?
+        @variant.save
+        unless @variant_images_column.nil? 
+          variant_images_links = @variant_row[@variant_images_column].split(',') unless @variant_row[@variant_images_column].nil?
+          unless variant_images_links.nil?
+            variant_images_links.each do |image_link|
+              @variant_image = VariantImage.new(:variant_id => @variant.id)
+              @variant_image.image_from_url(image_link)
+              @variant_image.save
+              binding.pry
+            end
+          end
+        end
+
         @variant.save
         @pseudo_product = ShopifyAPI::Product.create(title: "#{@pseudo_product_title}")
         @pseudo_product_variant = @pseudo_product.variants.first

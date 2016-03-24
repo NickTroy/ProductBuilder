@@ -1,4 +1,6 @@
 class VariantImage < ActiveRecord::Base
+  require 'open-uri'
+  
   belongs_to :variant
   before_destroy :update_main_image_id
   after_destroy :update_main_product_image
@@ -9,6 +11,11 @@ class VariantImage < ActiveRecord::Base
                         :content_type => { :content_type => /\Aimage\/.*\Z/ },
                         :size => { :less_than => 1.megabyte }
 
+  def image_from_url url
+    url.gsub!(' ','');
+    self.image = URI.parse(url)
+  end
+  
   private
   
   def update_main_image_id
