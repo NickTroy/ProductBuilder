@@ -91,7 +91,16 @@ $(document).ready(function(){
 <script>
 
   // variants container
-
+  function select_for_action_click (){
+    $('.select_for_action').on('click', function(){
+      if ($('.select_for_action:checked').length === 0) {
+        $('.delete_selected_variants').prop('disabled',true);
+      } else {
+        $('.delete_selected_variants').prop('disabled',false);
+      }
+    });  
+  }
+  
   function showVariantsForm(){
     $('.variants_form').show();
     $('.cancel-adding-variants').show();
@@ -248,6 +257,7 @@ $(document).ready(function(){
         $('<span class="main_variant_label"><strong> Main produt variant</strong></span>').appendTo(".variant-actions:last");        
       }
       add_make_main_variant_button_click();
+      select_for_action_click();
     }
   }
   
@@ -456,13 +466,7 @@ function add_make_main_variant_button_click(){
 $(document).ready(function(){
   
   //delete selected variants
-  $('.select_for_action').on('click', function(){
-    if ($('.select_for_action:checked').length === 0) {
-      $('.delete_selected_variants').prop('disabled',true);
-    } else {
-      $('.delete_selected_variants').prop('disabled',false);
-    }
-  });
+  select_for_action_click();
   $('.delete_selected_variants').on('click', function(){
     $('.loader_image_wrapper').insertAfter('.variant-info:last');
     $('.loader_image_wrapper').show();
