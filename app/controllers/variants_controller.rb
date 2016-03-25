@@ -150,6 +150,14 @@ class VariantsController < AuthenticatedController
     end
   end
   
+  def delete_selected_variants
+    variant_ids = params[:variant_ids]
+    variant_ids.each do |variant_id|
+      Variant.find(variant_id.to_i).destroy
+    end
+    render json: { message: "success"}, :status => 200 
+  end
+  
   def delete_all_variants
     @product = ShopifyAPI::Product.find(params[:product_id])
     @variants = Variant.where(product_id: @product.id)

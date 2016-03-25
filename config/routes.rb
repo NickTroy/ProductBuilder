@@ -12,6 +12,7 @@ Rails.application.routes.draw do
     post '/assign_option', to: 'options#assign_option_to_product'
     delete '/unassign_option', to: 'options#unassign_option_from_product'
     delete '/delete_all_variants', to: 'variants#delete_all_variants'
+    delete '/delete_selected_variants', to: 'variants#delete_selected_variants'
   end
   
   get '/export_products', to: 'products#export'

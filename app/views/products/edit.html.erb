@@ -91,7 +91,7 @@ $(document).ready(function(){
 <script>
 
   // variants container
-  
+
   function showVariantsForm(){
     $('.variants_form').show();
     $('.cancel-adding-variants').show();
@@ -213,7 +213,11 @@ $(document).ready(function(){
       if (image_source === undefined) {
         image_source = '';
       }
-      $('<div class="col-md-1"><img src="' + image_source + '" style="height:30px;"></img></div>').appendTo('.variant-info:last');
+      $('')
+      $('<div class="col-md-1">' + 
+          '<input type="checkbox" class="select_for_action" data-variant-id="' + variant_id + '">' + 
+          '<img src="' + image_source + '" style="height:30px;"></img>' +
+        '</div>').appendTo('.variant-info:last');
       $('<div class="col-md-8 options_and_values"></div>').appendTo('.variant-info:last');
       for(var j = 0; j< options.length; j++){
         var option_name = JSON.stringify(options[j].option_name);
@@ -450,7 +454,40 @@ function add_make_main_variant_button_click(){
 }
 
 $(document).ready(function(){
-
+  
+  //delete selected variants
+  $('.select_for_action').on('click', function(){
+    if ($('.select_for_action:checked').length === 0) {
+      $('.delete_selected_variants').prop('disabled',true);
+    } else {
+      $('.delete_selected_variants').prop('disabled',false);
+    }
+  });
+  $('.delete_selected_variants').on('click', function(){
+    $('.loader_image_wrapper').insertAfter('.variant-info:last');
+    $('.loader_image_wrapper').show();
+    var variant_ids = [];
+    $('.select_for_action:checked').each(function(){
+      variant_ids.push($(this).data('variant-id'))
+    })
+    $.ajax({
+      url: "<%= product_delete_selected_variants_url(:product_id => @product.id, :protocol => 'https') %>",
+      method: 'POST',
+      data: {
+        _method: 'delete',
+        variant_ids: variant_ids
+      },
+      success: function(){
+        var variants_count = $('.select_for_action:not(:checked)').length;
+        $('.current_number_of_variants').text(variants_count);
+        $('.select_for_action:checked').each(function(){
+          $(this).parents('.variant-info').remove();
+        })
+        $('.loader_image_wrapper').hide();
+      }
+    })
+  });
+  
   //main product variant
   //$('<span> <strong>Main product variant</strong></span>').appendTo('.variant-actions:first');
   add_make_main_variant_button_click();
@@ -688,6 +725,7 @@ $(document).ready(function(){
     <% @variants.each do |variant| %>
       <div class="variant-info row">
         <div class="col-md-1">
+          <input type="checkbox" class="select_for_action" data-variant-id="<%= variant.id %>">
           <%= variant.main_image_id.nil? ? "" : image_tag(VariantImage.find(variant.main_image_id).image.url(:thumb), style: "height:30px;") %>
         </div>
         <div class="col-md-8 options_and_values">
@@ -724,9 +762,12 @@ $(document).ready(function(){
   </div>
   <br>
   <div class="variants_actions row">
-    <div class="variants_form_actions col-md-4">
+    <div class="variants_form_actions col-md-2">
       <input type='button' value="Canel adding product variants" onclick="clearVariantsForm()" class="btn btn-warning cancel-adding-variants" style ="display:none;"/>
       <input type='button' value="Add product variants" onclick="showVariantsForm()" class="btn btn-primary add-variants"/>  
+    </div>
+    <div class="col-md-2">
+      <input type='button' value="Delete selected product variants" class="btn btn-warning delete_selected_variants" disabled/><br>      
     </div>
     <div class="col-md-2 delete_all_variants_button">
       <input type='button' value="Delete all product variants" onclick="deleteAllVariants()" class="btn btn-danger delete_all_variants"/><br>      
