@@ -100,6 +100,7 @@ class ProductsController < AuthenticatedController
     @images.each { |img| img.destroy }
     @variants.each do |var|  
       begin
+        sleep 1
         @pseudo_product = ShopifyAPI::Product.find(var.pseudo_product_id)
       rescue
         var.destroy
@@ -163,7 +164,7 @@ class ProductsController < AuthenticatedController
       })
       @product.attributes[:tags] = "product"
       @product.save
-      @product.add_metafield(ShopifyAPI::Metafield.new(:namespace => "product", :key => "key", :value => "value", :value_type => "string"))
+      #@product.add_metafield(ShopifyAPI::Metafield.new(:namespace => "product", :key => "key", :value => "value", :value_type => "string"))
      
       1.upto(@number_of_variants) do |i|
         @variant_row = @import_file.sheet(index).row(5 + i)
@@ -205,7 +206,7 @@ class ProductsController < AuthenticatedController
         @pseudo_product_variant.update_attributes(:option1 => @pseudo_product_title, :price => @variant.price, :sku => @variant.sku)
         @variant.update_attributes(:pseudo_product_id => @pseudo_product.id, 
                                  :pseudo_product_variant_id => @pseudo_product_variant.id)
-        @pseudo_product.add_metafield(ShopifyAPI::Metafield.new(:namespace => "variant", :key => "variant_id", :value => "#{@variant.id}", :value_type => "integer"))
+        #@pseudo_product.add_metafield(ShopifyAPI::Metafield.new(:namespace => "variant", :key => "variant_id", :value => "#{@variant.id}", :value_type => "integer"))
       end
     end
     @import_file.close
