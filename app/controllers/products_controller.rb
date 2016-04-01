@@ -157,11 +157,16 @@ class ProductsController < AuthenticatedController
         end
       end
       
-      @product = ShopifyAPI::Product.new({
-        :title => @product_title,
-        :body_html => @product_details,
-        :vendor => @product_vendor
-      })
+      products = ShopifyAPI::Product.where(:title => @product_title) 
+      if products.length == 0
+        @product = ShopifyAPI::Product.new({
+          :title => @product_title,
+          :body_html => @product_details,
+          :vendor => @product_vendor
+        })
+      else
+        @product = products.first
+      end
       @product.attributes[:tags] = "product"
       @product.save
       #@product.add_metafield(ShopifyAPI::Metafield.new(:namespace => "product", :key => "key", :value => "value", :value_type => "string"))
@@ -201,6 +206,7 @@ class ProductsController < AuthenticatedController
         end
 
         @variant.save
+        sleep 0.5
         @pseudo_product = ShopifyAPI::Product.create(title: "#{@pseudo_product_title}")
         @pseudo_product_variant = @pseudo_product.variants.first
         @pseudo_product_variant.update_attributes(:option1 => @pseudo_product_title, :price => @variant.price, :sku => @variant.sku)
