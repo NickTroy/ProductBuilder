@@ -183,10 +183,20 @@ class ProductsController < AuthenticatedController
           end
           @option_value = @option.option_values.where(:value => @variant_row[j].capitalize)[0] || OptionValue.create(:option_id => @option.id, :value => @variant_row[j].capitalize)
           @variant.option_values << @option_value
-          @pseudo_product_title += " #{@option.name} : #{@option_value.value}"
+          #@pseudo_product_title += " #{@option.name} : #{@option_value.value}"
     
         end
         
+        @pseudo_product_title = "#{@product.title} "
+        @color_option_value = @variant.option_values.find { |opt_val| opt_val.option.name == "Colors"}
+        @pseudo_product_title += @color_option_value.nil? ? "(" : "(#{@color_option_value.value} " 
+        @upholstery_option_value = @variant.option_values.find { |opt_val| opt_val.option.name == "Upholstery"}
+        @pseudo_product_title += @upholstery_option_value.nil? ? ")" : "#{@upholstery_option_value.value})"
+        @variant_length = @variant.option_values.find { |opt_val| opt_val.option.name == "Length" }
+        @variant_length = @variant_length.value unless @variant_length.nil?
+        @variant_depth = @variant.option_values.find { |opt_val| opt_val.option.name == "Depth" }
+        @variant_depth = @variant_depth.value unless @variant_depth.nil?
+        @pseudo_product_title = "#{@variant_length} #{@variant_depth} #{@pseudo_product_title}"
 
         @variant.sku = @variant_row[@sku_column]     
         @variant.length = @variant_row[@length_column].to_s unless @variant_row[@length_column].nil?
