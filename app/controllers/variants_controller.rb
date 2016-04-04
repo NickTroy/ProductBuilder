@@ -71,11 +71,11 @@ class VariantsController < AuthenticatedController
       @pseudo_product = ShopifyAPI::Product.find(@variant.pseudo_product_id) if @pseudo_product.nil?
       
       @pseudo_product_title = "#{@product.title} "
-      @color_option_value = @variant.option_values.find { |opt_val| opt_val.option.name == "Colors"}
+      @color_option_value = @variant.option_values.find { |opt_val| opt_val.option.name == "Color"}
       @pseudo_product_title += @color_option_value.nil? ? "(" : "(#{@color_option_value.value} " 
       @upholstery_option_value = @variant.option_values.find { |opt_val| opt_val.option.name == "Upholstery"}
       @pseudo_product_title += @upholstery_option_value.nil? ? ")" : "#{@upholstery_option_value.value})"
-      @variant_length = @variant.option_values.find { |opt_val| opt_val.option.name == "Length" }
+      @variant_length = @variant.option_values.find { |opt_val| opt_val.option.name == "Lengths" }
       @variant_length = @variant_length.value unless @variant_length.nil?
       @variant_depth = @variant.option_values.find { |opt_val| opt_val.option.name == "Depth" }
       @variant_depth = @variant_depth.value unless @variant_depth.nil?
