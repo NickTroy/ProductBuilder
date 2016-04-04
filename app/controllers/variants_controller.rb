@@ -75,7 +75,11 @@ class VariantsController < AuthenticatedController
       @pseudo_product_title += @color_option_value.nil? ? "(" : "(#{@color_option_value.value} " 
       @upholstery_option_value = @variant.option_values.find { |opt_val| opt_val.option.name == "Upholstery"}
       @pseudo_product_title += @upholstery_option_value.nil? ? ")" : "#{@upholstery_option_value.value})"
-      @pseudo_product_title = "#{@variant.length} #{@variant.depth} #{@pseudo_product_title}"
+      @variant_length = @variant.option_values.find { |opt_val| opt_val.option.name == "Length" }
+      @variant_length = @variant_length.value unless @variant_length.nil?
+      @variant_depth = @variant.option_values.find { |opt_val| opt_val.option.name == "Depth" }
+      @variant_depth = @variant_depth.value unless @variant_depth.nil?
+      @pseudo_product_title = "#{@variant_length} #{@variant_depth} #{@pseudo_product_title}"
       @pseudo_product.update_attributes(:title => @pseudo_product_title)
       
       @pseudo_product_variant = @pseudo_product.variants.first
