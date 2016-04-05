@@ -26,7 +26,11 @@ json.main_variant_id @main_variant_id
 json.variants @variants do |variant|
   json.variant_id variant.id
   json.pseudo_product_variant_id variant.pseudo_product_variant_id
-  
+
+  json.length variant.length  
+  json.depth variant.depth
+  json.height variant.height
+
   json.options variant.option_values do |option_value|
     json.option_name option_value.option.name
     json.option_value option_value.value
