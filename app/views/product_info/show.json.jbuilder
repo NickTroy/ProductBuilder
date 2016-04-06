@@ -23,6 +23,8 @@ json.options @product_options do |option|
   end
 end
 json.main_variant_id @main_variant_id
+json.sketch_front_image @sketch_front_image.nil? ? "" : asset_url(@sketch_front_image.image.url)
+json.sketch_back_image @sketch_back_image.nil? ? "" : asset_url(@sketch_back_image.image.url)
 json.variants @variants do |variant|
   json.variant_id variant.id
   json.pseudo_product_variant_id variant.pseudo_product_variant_id
@@ -30,6 +32,7 @@ json.variants @variants do |variant|
   json.length variant.length  
   json.depth variant.depth
   json.height variant.height
+  
 
   json.options variant.option_values do |option_value|
     json.option_name option_value.option.name

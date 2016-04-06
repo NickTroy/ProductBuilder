@@ -38,6 +38,8 @@ class ProductInfoController < ApplicationController
         @product_options.push({ :option_name => option.name, :order_number => option.order_number, :option_values => [] })
       end
     end
+    @sketch_front_image = ProductImage.where(:product_id => params[:id])[0]
+    @sketch_back_image = ProductImage.where(:product_id => params[:id])[1]
     @product_option_groups = []
     @option_groups = OptionGroup.all
     @option_groups.each do |option_group|
@@ -94,7 +96,7 @@ class ProductInfoController < ApplicationController
   end
 
   def update_option_dependency(option_order_number = 1, option_dependency = @option_dependency, variant_branch = @variant_branch)
-    option_value = variant_branch[0]
+    option_value = variant_branch[0] 
     index_update = option_dependency.find_index(option_value)
     unless index_update
       option_dependency.push option_value
