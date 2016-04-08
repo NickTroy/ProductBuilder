@@ -157,16 +157,16 @@ class ProductsController < AuthenticatedController
         end
       end
       
-      products = ShopifyAPI::Product.where(:title => @product_title, :tags => ["product"]) 
-      if products.length == 0
+      #products = ShopifyAPI::Product.where(:title => @product_title, :tags => ["product"]) 
+      #if products.length == 0
         @product = ShopifyAPI::Product.new({
           :title => @product_title,
           :body_html => @product_details,
           :vendor => @product_vendor
         })
-      else
-        @product = products.first
-      end
+      #else
+       # @product = products.first
+      #end
       @product.attributes[:tags] = "product" unless @product.attributes[:tags] == "product"
       @product.save
       #@product.add_metafield(ShopifyAPI::Metafield.new(:namespace => "product", :key => "key", :value => "value", :value_type => "string"))

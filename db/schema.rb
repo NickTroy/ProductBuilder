@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160314151842) do
+ActiveRecord::Schema.define(version: 20160408104323) do
 
   create_table "images_variants", force: :cascade do |t|
     t.integer  "image_id",   limit: 4
@@ -43,6 +43,7 @@ ActiveRecord::Schema.define(version: 20160314151842) do
   end
 
   add_index "option_values", ["option_id"], name: "index_option_values_on_option_id", using: :btree
+  add_index "option_values", ["value"], name: "index_option_values_on_value", using: :btree
 
   create_table "options", force: :cascade do |t|
     t.string   "name",            limit: 255
@@ -52,6 +53,7 @@ ActiveRecord::Schema.define(version: 20160314151842) do
     t.integer  "option_group_id", limit: 4
   end
 
+  add_index "options", ["name"], name: "index_options_on_name", using: :btree
   add_index "options", ["option_group_id"], name: "index_options_on_option_group_id", using: :btree
 
   create_table "plane_images", force: :cascade do |t|
@@ -90,6 +92,7 @@ ActiveRecord::Schema.define(version: 20160314151842) do
   end
 
   add_index "products_options", ["option_id"], name: "index_products_options_on_option_id", using: :btree
+  add_index "products_options", ["product_id"], name: "index_products_options_on_product_id", using: :btree
 
   create_table "shops", force: :cascade do |t|
     t.string   "shopify_domain", limit: 255, null: false
