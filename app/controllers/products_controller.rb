@@ -4,17 +4,8 @@ class ProductsController < AuthenticatedController
   require 'spreadsheet'
   
   def index
-    @all_products = []
-    @product_count = ShopifyAPI::Product.count
-    @num_of_pages = (@product_count / 250.0).ceil
-    1.upto(@num_of_pages) do |page|
-      products = ShopifyAPI::Product.find( :all, :params => { :limit => 250, :page => page } )
-      products.each do |product|
-        if product.tags == "product" #p.metafields[0].namespace == "product"  
-          @all_products.push(product)    
-        end  
-      end
-    end
+    @product_builder_collection = ShopifyAPI::SmartCollection.where(:title => "Product_builder_products")[0]
+    @all_products = @product_builder_collection.products
     @products = Kaminari.paginate_array(@all_products, total_count: @all_products.count).page(params[:page]).per(10)
     @variants = Variant.all
   end
