@@ -35,7 +35,7 @@ class ProductInfoController < ApplicationController
     #end
     Option.all.each do |option|
       if option.products_options.where(:product_id => params[:id]).any?
-        @product_options.push({ :option_name => option.name, :order_number => option.order_number, :option_values => [] })
+        @product_options.push({ :option_name => option.name, :order_number => option.order_number, :option_values => [], :option_id => option.id })
       end
     end
     @sketch_front_image = ProductImage.where(:product_id => params[:id])[0]
@@ -65,6 +65,15 @@ class ProductInfoController < ApplicationController
     @first_image = ProductImage.where(product_id: params[:id]).first
     @option_dependency = []
     @options_count = @product_options.count
+    
+    query_for_variant_branches = "select " 
+    @product_options.each_with_index do |option, index|
+      option_query_row = "(select ov#{index}.value as v#{index} from option_values ov#{index}, variants_option_values vov#{index} where vov#{index}.variant_id = v.id and vov#{index}.option_value_id = ov#{index}.id and ov#{index}.option_id = #{option[:option_id]}), "
+      query_for_variant_branches += option_query_row
+    end
+    query_for_variant_branches.chop!.chop!
+    query_for_variant_branches += "from variants v where v.product_id = #{params[:id]}"
+    @variants_option_values = ActiveRecord::Base.connection.execute(query_for_variant_branches)
     build_option_dependency_tree
     respond_to do |format|
       format.json { render status: :ok, :callback => params[:callback] }
@@ -75,14 +84,14 @@ class ProductInfoController < ApplicationController
   private
 
   def build_option_dependency_tree
-    @variants.each do |variant|
+    @variants_option_values.each do |variant_option_values|#@variants.each do |variant|
       @variant_branch = []
-      @variant_option_values = []
-      variant.option_values.each do |option_value|
-        @variant_option_values.push option_value.value
-      end
-      @variant_option_values.sort_by! { |opt_val| OptionValue.where(:value => opt_val)[0].option.order_number }
-      @variant_option_values.reverse.each do |option_value|
+      #@variant_option_values = []
+      #variant.option_values.each do |option_value|
+        #@variant_option_values.push option_value.value
+      #end
+      #@variant_option_values.sort_by! { |opt_val| OptionValue.where(:value => opt_val)[0].option.order_number }
+      variant_option_values.reverse.each do |option_value|
         @variant_branch = [option_value, @variant_branch]
       end
       if @option_dependency.empty?
