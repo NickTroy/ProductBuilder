@@ -37,6 +37,7 @@ class ProductInfoController < ApplicationController
     end
     @sketch_front_image = ProductImage.where(:product_id => params[:id])[0]
     @sketch_back_image = ProductImage.where(:product_id => params[:id])[1]
+    @slider_images_params = SliderImagesParam.all
     @product_option_groups = []
     @option_groups = OptionGroup.all
     @option_groups.each do |option_group|

@@ -12,6 +12,10 @@ json.option_groups @product_option_groups do |option_group|
     end
   end
 end
+json.slider_images_params @slider_images_params do |slider_images_param|
+  json.product_type slider_images_param.product_type
+  json.base_size_ratio slider_images_param.base_size_ratio
+end
 json.options @product_options do |option|
   json.option_name option[:option_name]
   json.option_order_number option[:order_number]
