@@ -7,8 +7,14 @@
     
     $( "#tabs" ).tabs({
       collapsible: true
-    });  
-    
+    }); 
+ 
+    // quick edit product
+    $('.quick_edit_product').change(function(){
+      var product_id = parseInt($(this).find(':selected').val());
+      var link_to_edit_product = "<%= products_url(:protocol => 'https')  %>/" + product_id + '/edit';
+      window.location.href = link_to_edit_product;
+    });
     //initiate 360 image parametrs
     $('#three_sixty_speed').val(5);
     $('#three_sixty_rotations_count').val(5);  
@@ -80,8 +86,21 @@
       <li><a href="#tabs-1">Products listing</a></li>
       <li><a href="#tabs-2">Change 360 viewer parameters</a></li>
     </ul>
-    <div id="tabs-1" class="products_listing">
+    <div id="tabs-1" class="products_listing">      
       <h3>Products</h3>
+        <div class="row">
+          <div class="col-md-4">
+            <label>Quick product edit selection</label>
+            <select class="form-control quick_edit_product">
+              <option val=0>-Select product to edit-</option>
+              <% @all_products.each_with_index do |product, index| %>
+                <option value=<%= product.id %>>
+                  <%= product.title %>
+                </option>
+              <% end %>
+            </select>
+          </div>
+        </div><br>
         <div class="row products_table">
           <div class="col-md-1">Product Title</div>
           <div class="col-md-2">Product Image</div>
