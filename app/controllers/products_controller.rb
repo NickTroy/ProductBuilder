@@ -5,7 +5,7 @@ class ProductsController < AuthenticatedController
   
   def index
     @product_builder_collection = ShopifyAPI::SmartCollection.where(:title => "Product_builder_products")[0]
-    @all_products = @product_builder_collection.products
+    @all_products = ShopifyAPI::Product.find(:all, :params => { :limit => 250, :collection_id => @product_builder_collection.id})
     @products = Kaminari.paginate_array(@all_products, total_count: @all_products.count).page(params[:page]).per(10)
     @variants = Variant.all
   end
