@@ -30,9 +30,6 @@ class ProductInfoController < ApplicationController
     @main_variant_id = Variant.where(product_id: params[:id], main_variant: true)[0].id unless Variant.where(product_id: params[:id], main_variant: true)[0].nil?
     @main_variant_id ||= Variant.where(product_id: params[:id]).first.id    
     @product_options = []
-    #ProductsOption.where(:product_id => params[:id]).each do |product_option|
-      #@product_options.push(Option.where(id: product_option.option_id)[0])
-    #end
     Option.all.each do |option|
       if option.products_options.where(:product_id => params[:id]).any?
         @product_options.push({ :option_name => option.name, :order_number => option.order_number, :option_values => [], :option_id => option.id })
@@ -51,16 +48,12 @@ class ProductInfoController < ApplicationController
       end
       @product_option_groups.push(option_group) if @include_option_group
     end
-    @variants.each do |variant|
-      variant.option_values.each do |option_value|
-        @product_options.each do |option|
-          if option[:option_name].downcase == option_value.option.name.downcase
-            option[:option_values].push(option_value.value).uniq!
-          end
-        end
-      end
+
+    product_option_values = OptionValue.joins("left join variants_option_values on option_values.id=variants_option_values.option_value_id inner join variants on variants.id=variants_option_values.variant_id and variants.product_id=#{params[:id]}").distinct
+    product_option_values.each do |option_value|
+      product_option = @product_options.find { |option| option[:option_name] == option_value.option.name }
+      product_option[:option_values].push(option_value.value).uniq!
     end
-    #@product_options = Option.joins("inner join products_options on products_options.option_id = options.id").uniq
     @product_options.sort_by! { |option| option[:order_number] }
     @first_image = ProductImage.where(product_id: params[:id]).first
     @option_dependency = []
@@ -76,9 +69,8 @@ class ProductInfoController < ApplicationController
     @variants_option_values = ActiveRecord::Base.connection.execute(query_for_variant_branches)
     build_option_dependency_tree
     respond_to do |format|
-      format.json { render status: :ok, :callback => params[:callback] }
+      format.json #{ render status: :ok, :callback => params[:callback] }
     end
-    
   end  
 
   private
@@ -86,11 +78,6 @@ class ProductInfoController < ApplicationController
   def build_option_dependency_tree
     @variants_option_values.each do |variant_option_values|#@variants.each do |variant|
       @variant_branch = []
-      #@variant_option_values = []
-      #variant.option_values.each do |option_value|
-        #@variant_option_values.push option_value.value
-      #end
-      #@variant_option_values.sort_by! { |opt_val| OptionValue.where(:value => opt_val)[0].option.order_number }
       variant_option_values.reverse.each do |option_value|
         @variant_branch = [option_value, @variant_branch]
       end
@@ -99,9 +86,7 @@ class ProductInfoController < ApplicationController
       else
         update_option_dependency
       end
-
     end
-    
   end
 
   def update_option_dependency(option_order_number = 1, option_dependency = @option_dependency, variant_branch = @variant_branch)
