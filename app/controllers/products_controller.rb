@@ -8,6 +8,7 @@ class ProductsController < AuthenticatedController
     @all_products = ShopifyAPI::Product.find(:all, :params => { :limit => 250, :collection_id => @product_builder_collection.id})
     @products = Kaminari.paginate_array(@all_products, total_count: @all_products.count).page(params[:page]).per(10)
     @variants = Variant.all
+    @slider_images_params = SliderImagesParam.all
   end
 
   def new

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160408104323) do
+ActiveRecord::Schema.define(version: 20160413115820) do
 
   create_table "images_variants", force: :cascade do |t|
     t.integer  "image_id",   limit: 4
@@ -102,6 +102,13 @@ ActiveRecord::Schema.define(version: 20160408104323) do
   end
 
   add_index "shops", ["shopify_domain"], name: "index_shops_on_shopify_domain", unique: true, using: :btree
+
+  create_table "slider_images_params", force: :cascade do |t|
+    t.string   "product_type",    limit: 255
+    t.text     "base_size_ratio", limit: 65535
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+  end
 
   create_table "three_sixty_images", force: :cascade do |t|
     t.integer  "variant_id",      limit: 4

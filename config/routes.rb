@@ -15,6 +15,8 @@ Rails.application.routes.draw do
     delete '/delete_selected_variants', to: 'variants#delete_selected_variants'
   end
   
+  resources :slider_images_params
+  
   get '/export_products', to: 'products#export'
   
   resources :product_info, defaults: { format: 'json' }

@@ -8,7 +8,79 @@
     $( "#tabs" ).tabs({
       collapsible: true
     }); 
- 
+    
+    // slider images params
+    
+    $('#save_product_type').hide();
+    
+    $('#add_new_product_type').on('click', function(){
+      $('<div class="form-group col-md-4">' +
+        '<label for="product_type">Product type</label>' +
+        '<input id="product_type" type="text" class="form-control">' +
+      '</div>' + 
+      '<div class="form-group col-md-4">' +
+        '<label for="base_size_ratio">Base size ratio</label>' +
+        '<input id="base_size_ratio" type="number" class="form-control">' +
+      '</div>').appendTo('.add_new_product_type_form');
+      $(this).hide();
+      $('#save_product_type').show();
+    });
+    $('#save_product_type').on('click', function(){
+      var product_type = $('#product_type').val();
+      var base_size_ratio = $('#base_size_ratio').val();
+      $.ajax({
+        url: '<%= slider_images_params_url(:protocol => 'https') %>',
+        method: 'POST',
+        data: {
+          product_type: product_type,
+          base_size_ratio: base_size_ratio
+        },
+        success: function(response){
+          $('#save_product_type').hide();
+          $('#add_new_product_type').show();
+          $('.add_new_product_type_form').empty(); 
+          $('<div class="row slider_images_param_row">' +
+              '<div class="col-md-4">' + product_type + '</div>' + 
+              '<div class="col-md-4">' + base_size_ratio + '</div>' +
+              '<div class="col-md-2">' + 
+                '<input class="btn btn-danger delete_slider_images_param" data-slider_images_param_id="' + response["slider_images_param_id"] + '" value="Delete">' +
+              '</div>' +  
+            '</div>').appendTo('.product_types_table');
+            $('.delete_slider_images_param:last').click(function(){
+              var this_slider_images_param = $(this);
+              var slider_images_param_id = this_slider_images_param.attr('data-slider_images_param_id');
+              $.ajax({
+                url: '<%= slider_images_params_url(:protocol => 'https') %>/' + slider_images_param_id,
+                method: 'POST',
+                data: {
+                  _method: 'DELETE',
+                  slider_images_param_id: slider_images_param_id
+                },
+                success: function(){
+                  this_slider_images_param.parents('.slider_images_param_row').remove();
+                }
+              })
+            });
+        }
+      });
+    });
+    $('.delete_slider_images_param').click(function(){
+      var this_slider_images_param = $(this);
+      var slider_images_param_id = this_slider_images_param.attr('data-slider_images_param_id');
+      $.ajax({
+        url: '<%= slider_images_params_url(:protocol => 'https') %>/' + slider_images_param_id,
+        method: 'POST',
+        data: {
+          _method: 'DELETE',
+          slider_images_param_id: slider_images_param_id
+        },
+        success: function(){
+          this_slider_images_param.parents('.slider_images_param_row').remove();
+        }
+      })
+    });
+      
+    
     // quick edit product
     $('.quick_edit_product').change(function(){
       var product_id = parseInt($(this).find(':selected').val());
@@ -85,6 +157,7 @@
     <ul>
       <li><a href="#tabs-1">Products listing</a></li>
       <li><a href="#tabs-2">Change 360 viewer parameters</a></li>
+      <li><a href="#tabs-3">Slider images scale managment</a></li>
     </ul>
     <div id="tabs-1" class="products_listing">      
       <h3>Products</h3>
@@ -184,6 +257,46 @@
         </div>
       </div>
     </div>
+    
+    <div id="tabs-3" class="products_listing">      
+      <div class="product_types_table">
+        <div class="row">
+          <div class="col-md-4">
+            Product type
+          </div>
+          <div class="col-md-4">
+            Base size ratio
+          </div>
+        </div>
+        <% @slider_images_params.each do |param| %>
+          <div class="slider_images_param_row row">
+            <div class="col-md-4">
+              <%= param.product_type %>
+            </div>
+            <div class="col-md-4">
+              <%= param.base_size_ratio %>
+            </div>
+            <div class="col-md-2">
+              <input class="delete_slider_images_param btn btn-danger" value="Delete" data-slider_images_param_id=<%= param.id %>>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <div class="add_new_product_type_form row">
+        
+      </div>
+      <div class="row">
+        <div class="col-md-2">
+          <input id="add_new_product_type" class="btn btn-info" value="Add new product type">  
+        </div>
+        
+        <div class="col-md-2">
+          <input id="save_product_type" class="btn btn-primary" value="Save product type">  
+        </div>
+      </div>
+      
+    </div>
+
   </div>
   
 </div>
