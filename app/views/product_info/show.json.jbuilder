@@ -37,6 +37,9 @@ json.variants @variants_info do |variant_info|
   json.depth variant_info[:depth]
   json.height variant_info[:height]
   
+  json.price variant_info[:price]
+  json.sku variant_info[:sku]
+  
   json.options variant_info[:options] do |option_and_value|
     json.option_name option_and_value[0]
     json.option_value option_and_value[1]
