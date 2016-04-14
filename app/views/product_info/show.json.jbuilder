@@ -29,37 +29,32 @@ end
 json.main_variant_id @main_variant_id
 json.sketch_front_image @sketch_front_image.nil? ? "" : asset_url(@sketch_front_image.image.url)
 json.sketch_back_image @sketch_back_image.nil? ? "" : asset_url(@sketch_back_image.image.url)
-json.variants @variants do |variant|
-  json.variant_id variant.id
-  json.pseudo_product_variant_id variant.pseudo_product_variant_id
+json.variants @variants_info do |variant_info|
+  json.variant_id variant_info[:variant_id]
+  json.pseudo_product_variant_id variant_info[:pseudo_product_variant_id]
 
-  json.length variant.length  
-  json.depth variant.depth
-  json.height variant.height
+  json.length variant_info[:length]
+  json.depth variant_info[:depth]
+  json.height variant_info[:height]
   
-
-  json.options variant.option_values do |option_value|
-    json.option_name option_value.option.name
-    json.option_value option_value.value
+  json.options variant_info[:options] do |option_and_value|
+    json.option_name option_and_value[0]
+    json.option_value option_and_value[1]
   end
-  if !(variant.three_sixty_image.nil?)
+  if variant_info[:three_sixty_image] == {}
+    json.three_sixty_image ''
+  else
     json.three_sixty_image do
-      unless variant.three_sixty_image.plane_images.empty?
-        json.first_image asset_url(variant.three_sixty_image.plane_images.first.image.url)
-        json.rotation_speed variant.three_sixty_image.rotation_speed
-        json.rotations_count variant.three_sixty_image.rotations_count
-        json.clockwise variant.three_sixty_image.clockwise
-        json.plane_images_urls variant.three_sixty_image.plane_images do |plane_image|
-          json.plane_image_url asset_url(plane_image.image.url)
-        end
+      json.first_image variant_info[:three_sixty_image][:first_image]
+      json.rotation_speed variant_info[:three_sixty_image][:rotation_speed]
+      json.rotations_count variant_info[:three_sixty_image][:rotations_count]
+      json.clockwise variant_info[:three_sixty_image][:clockwise]
+      json.plane_images_urls variant_info[:three_sixty_image][:plane_images_urls] do |plane_image_url|
+        json.plane_image plane_image_url
       end
     end
-  else 
-    json.three_sixty_image ''
   end
-  json.variant_images variant.variant_images do |variant_image|
-    json.image_source asset_url(variant_image.image.url)
-  end 
-  json.price variant.price
-  json.sku variant.sku
-end  
+  json.variant_images variant_info[:variant_images] do |variant_image_url|
+    json.image_source variant_image_url
+  end
+end

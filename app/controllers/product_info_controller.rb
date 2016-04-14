@@ -66,9 +66,57 @@ class ProductInfoController < ApplicationController
       query_for_variant_branches += option_query_row
     end
     query_for_variant_branches.chop!.chop!
+    query_for_variant_branches_with_variant_ids = query_for_variant_branches + ", v.id from variants v where v.product_id = #{params[:id]}"
     query_for_variant_branches += "from variants v where v.product_id = #{params[:id]}"
     @variants_option_values = ActiveRecord::Base.connection.execute(query_for_variant_branches)
     build_option_dependency_tree
+    
+    @variants_option_values_and_ids = ActiveRecord::Base.connection.execute(query_for_variant_branches_with_variant_ids)
+    @variants_option_values_and_ids.each_with_index do |variant_branch|
+      variant_branch.each_with_index do |option_value, index|
+        unless index == variant_branch.length - 1
+          variant_branch[index] = [@product_options[index][:option_name], option_value]
+        end
+      end
+    end
+    @variants_info = []
+    @variants.each do |variant|
+      variant_option_values_branch = @variants_option_values_and_ids.find{ |branch| branch.last == variant.id }
+      variant_info = { :variant_id => variant.id }
+      variant_info[:pseudo_product_variant_id] = variant.pseudo_product_variant_id
+      variant_info[:length] = variant.length
+      variant_info[:depth] = variant.depth
+      variant_info[:height] = variant.height
+      variant_info[:price] = variant.price
+      variant_info[:sku] = variant.sku
+      variant_info[:options] = []
+      variant_option_values_branch.each_with_index do |option_with_value, index|
+        unless index == variant_option_values_branch.length - 1
+          variant_info[:options].push(option_with_value)
+        end
+      end
+      #variant_info[:three_sixty_image] = {}
+      three_sixty_image_info = {}
+      @three_sixty_image = variant.three_sixty_image
+      unless @three_sixty_image.nil?
+        three_sixty_image_info[:first_image] = URI.join(request.url, @three_sixty_image.plane_images.first.image.url).to_s
+        three_sixty_image_info[:rotation_speed] = @three_sixty_image.rotation_speed
+        three_sixty_image_info[:rotations_count] = @three_sixty_image.rotations_count
+        three_sixty_image_info[:clockwise] = @three_sixty_image.clockwise
+        three_sixty_image_info[:plane_images_urls] = []
+        @three_sixty_image.plane_images.each do |plane_image|
+          three_sixty_image_info[:plane_images_urls].push(URI.join(request.url, plane_image.image.url).to_s)
+        end
+      end
+      variant_info[:three_sixty_image] = three_sixty_image_info
+      
+      variant_info[:variant_images] = []
+      variant.variant_images.each do |variant_image|
+        variant_info[:variant_images].push(URI.join(request.url, variant_image.image.url).to_s)
+      end
+      @variants_info.push variant_info
+    end
+    #binding.pry
     respond_to do |format|
       format.json #{ render status: :ok, :callback => params[:callback] }
     end
