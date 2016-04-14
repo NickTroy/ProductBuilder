@@ -50,7 +50,7 @@ json.variants @variants_info do |variant_info|
       json.rotations_count variant_info[:three_sixty_image][:rotations_count]
       json.clockwise variant_info[:three_sixty_image][:clockwise]
       json.plane_images_urls variant_info[:three_sixty_image][:plane_images_urls] do |plane_image_url|
-        json.plane_image plane_image_url
+        json.plane_image_url plane_image_url
       end
     end
   end

@@ -116,7 +116,6 @@ class ProductInfoController < ApplicationController
       end
       @variants_info.push variant_info
     end
-    #binding.pry
     respond_to do |format|
       format.json #{ render status: :ok, :callback => params[:callback] }
     end
