@@ -98,19 +98,7 @@ class ProductInfoController < ApplicationController
         end
       end
       three_sixty_image_info = {}
-      #@three_sixty_image = variant.three_sixty_image
-      #unless @three_sixty_image.nil?
-      #  three_sixty_image_info[:first_image] = URI.join(request.url, @three_sixty_image.plane_images.first.image.url).to_s
-      #  three_sixty_image_info[:rotation_speed] = @three_sixty_image.rotation_speed
-      #  three_sixty_image_info[:rotations_count] = @three_sixty_image.rotations_count
-      #  three_sixty_image_info[:clockwise] = @three_sixty_image.clockwise
-      #  three_sixty_image_info[:plane_images_urls] = []
-      #  @three_sixty_image.plane_images.each do |plane_image|
-      #    three_sixty_image_info[:plane_images_urls].push(URI.join(request.url, plane_image.image.url).to_s)
-      #  end
-      #end
       three_sixty_image_info_query = @three_sixty_images_info.select { |branch| branch.last == variant.id } unless @three_sixty_images_info.nil?
-      #three_sixty_image_info_1 = {}
       unless three_sixty_image_info_query.empty?
         three_sixty_image_info[:first_image] = URI.join(request.url, "/system/three_sixty_images/#{three_sixty_image_info_query.first[1]}/#{three_sixty_image_info_query.first[0]}").to_s
         three_sixty_image_info[:rotation_speed] = three_sixty_image_info_query.last[4]
