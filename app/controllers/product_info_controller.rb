@@ -73,7 +73,7 @@ class ProductInfoController < ApplicationController
     
     @variants_option_values_and_ids = ActiveRecord::Base.connection.execute(query_for_variant_branches_with_variant_ids)
     @three_sixty_images_info = ActiveRecord::Base.connection.execute('select plane_images.image_file_name, three_sixty_images.id, three_sixty_images.clockwise, three_sixty_images.rotations_count, three_sixty_images.rotation_speed, variants.id from plane_images inner join three_sixty_images on plane_images.three_sixty_image_id = three_sixty_images.id inner join variants on three_sixty_images.variant_id = variants.id;').to_a
-    
+    @variant_images_info = ActiveRecord::Base.connection.execute('select vi.id, vi.image_file_name, v.id from variant_images vi inner join variants v;')
     @variants_option_values_and_ids.each_with_index do |variant_branch|
       variant_branch.each_with_index do |option_value, index|
         unless index == variant_branch.length - 1
@@ -111,10 +111,17 @@ class ProductInfoController < ApplicationController
       end
       variant_info[:three_sixty_image] = three_sixty_image_info
       
-      variant_info[:variant_images] = []
-      variant.variant_images.each do |variant_image|
-        variant_info[:variant_images].push(URI.join(request.url, variant_image.image.url).to_s)
+      variant_with_images = @variant_images_info.select { |branch| branch.last == variant.id }
+      variant_with_images_info = []
+      variant_with_images.each do |variant_image|
+        variant_image_id = variant_image[0].to_s.rjust(3, '0')
+        variant_with_images_info.push(URI.join(request.url, "/system/variant_images/images/000/000/#{variant_image_id}/original/#{variant_image[1]}").to_s)
       end
+      variant_info[:variant_images] = variant_with_images_info
+      #variant.variant_images.each do |variant_image|
+        #variant_info[:variant_images].push(URI.join(request.url, variant_image.image.url).to_s)
+      #end
+      #binding.pry
       @variants_info.push variant_info
     end
     respond_to do |format|
