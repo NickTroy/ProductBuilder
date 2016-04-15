@@ -72,6 +72,8 @@ class ProductInfoController < ApplicationController
     build_option_dependency_tree
     
     @variants_option_values_and_ids = ActiveRecord::Base.connection.execute(query_for_variant_branches_with_variant_ids)
+    @three_sixty_images_info = ActiveRecord::Base.connection.execute('select plane_images.image_file_name, three_sixty_images.id, three_sixty_images.clockwise, three_sixty_images.rotations_count, three_sixty_images.rotation_speed, variants.id from plane_images inner join three_sixty_images on plane_images.three_sixty_image_id = three_sixty_images.id inner join variants on three_sixty_images.variant_id = variants.id;').to_a
+    
     @variants_option_values_and_ids.each_with_index do |variant_branch|
       variant_branch.each_with_index do |option_value, index|
         unless index == variant_branch.length - 1
@@ -95,17 +97,17 @@ class ProductInfoController < ApplicationController
           variant_info[:options].push(option_with_value)
         end
       end
-      #variant_info[:three_sixty_image] = {}
       three_sixty_image_info = {}
-      @three_sixty_image = variant.three_sixty_image
-      unless @three_sixty_image.nil?
-        three_sixty_image_info[:first_image] = URI.join(request.url, @three_sixty_image.plane_images.first.image.url).to_s
-        three_sixty_image_info[:rotation_speed] = @three_sixty_image.rotation_speed
-        three_sixty_image_info[:rotations_count] = @three_sixty_image.rotations_count
-        three_sixty_image_info[:clockwise] = @three_sixty_image.clockwise
+      three_sixty_image_info_query = @three_sixty_images_info.select { |branch| branch.last == variant.id } unless @three_sixty_images_info.nil?
+      three_sixty_image_info = {}
+      unless three_sixty_image_info_query.empty?
+        three_sixty_image_info[:first_image] = URI.join(request.url, "/system/three_sixty_images/#{three_sixty_image_info_query.last[1]}/#{three_sixty_image_info_query.last[0]}").to_s
+        three_sixty_image_info[:rotation_speed] = three_sixty_image_info_query.last[4]
+        three_sixty_image_info[:rotations_count] = three_sixty_image_info_query.last[3]
+        three_sixty_image_info[:clockwise] = three_sixty_image_info_query.last[2]
         three_sixty_image_info[:plane_images_urls] = []
-        @three_sixty_image.plane_images.each do |plane_image|
-          three_sixty_image_info[:plane_images_urls].push(URI.join(request.url, plane_image.image.url).to_s)
+        @three_sixty_images_info.each_with_index do |plane_image, index|
+          three_sixty_image_info[:plane_images_urls].push(URI.join(request.url, "/system/three_sixty_images/#{three_sixty_image_info_query[index][1]}/#{three_sixty_image_info_query.last[0]}").to_s)
         end
       end
       variant_info[:three_sixty_image] = three_sixty_image_info
