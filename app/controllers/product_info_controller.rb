@@ -117,7 +117,7 @@ class ProductInfoController < ApplicationController
         three_sixty_image_info[:rotations_count] = three_sixty_image_info_query.last[3]
         three_sixty_image_info[:clockwise] = three_sixty_image_info_query.last[2]
         three_sixty_image_info[:plane_images_urls] = []
-        @three_sixty_images_info.each_with_index do |plane_image, index|
+        three_sixty_image_info_query.each_with_index do |plane_image, index|
           three_sixty_image_info[:plane_images_urls].push(URI.join(request.url, "/system/three_sixty_images/#{three_sixty_image_info_query[index][1]}/#{three_sixty_image_info_query[index][0]}").to_s)
         end
       end
