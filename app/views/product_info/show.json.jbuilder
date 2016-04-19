@@ -27,6 +27,39 @@ json.options @product_options do |option|
   end
 end
 json.main_variant_id @main_variant_id
+json.main_variant do
+  json.id @main_variant.id
+  json.pseudo_product_variant_id @main_variant.pseudo_product_variant_id
+
+  json.length @main_variant.length
+  json.depth @main_variant.depth
+  json.height @main_variant.height
+
+  json.price @main_variant.price
+  json.sku @main_variant.sku
+
+  json.options @main_variant.option_values.each do |option_value|
+    json.option_name option_value.option.name
+    json.option_value option_value.value
+  end
+  if @main_variant.three_sixty_image.nil?
+    json.three_sixty_image ''
+  else
+    json.three_sixty_image do
+      json.first_image asset_url(@main_variant.three_sixty_image.plane_images.first.image.url)
+      json.rotation_speed @main_variant.three_sixty_image.rotation_speed
+      json.rotations_count @main_variant.three_sixty_image.rotations_count
+      json.clockwise @main_variant.three_sixty_image.clockwise
+      json.plane_images_urls @main_variant.three_sixty_image.plane_images.each do |plane_image|
+        json.plane_image_url asset_url(plane_image.image.url)
+      end
+    end
+  end
+  json.variant_images @main_variant.variant_images.each do |variant_image|
+    json.image_source asset_url(variant_image.image.url)
+  end
+end
+
 json.sketch_front_image @sketch_front_image.nil? ? "" : asset_url(@sketch_front_image.image.url)
 json.sketch_back_image @sketch_back_image.nil? ? "" : asset_url(@sketch_back_image.image.url)
 json.variants @variants_info do |variant_info|

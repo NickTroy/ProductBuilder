@@ -27,8 +27,11 @@ class ProductInfoController < ApplicationController
 
   def show
     @variants = Variant.where(product_id: params[:id])
-    @main_variant_id = Variant.where(product_id: params[:id], main_variant: true)[0].id unless Variant.where(product_id: params[:id], main_variant: true)[0].nil?
-    @main_variant_id ||= Variant.where(product_id: params[:id]).first.id    
+    @main_variant = Variant.where(product_id: params[:id], main_variant: true)[0] unless Variant.where(product_id: params[:id], main_variant: true)[0].nil?
+    @main_variant ||= Variant.where(product_id: params[:id]).first
+    @main_variant_id = @main_variant.id
+    #@main_variant_id = Variant.where(product_id: params[:id], main_variant: true)[0].id unless Variant.where(product_id: params[:id], main_variant: true)[0].nil?
+    #@main_variant_id ||= Variant.where(product_id: params[:id]).first.id    
     @product_options = []
     Option.all.each do |option|
       if option.products_options.where(:product_id => params[:id]).any?
@@ -68,7 +71,7 @@ class ProductInfoController < ApplicationController
     query_for_variant_branches.chop!.chop!
     query_for_variant_branches_with_variant_ids = query_for_variant_branches + ", v.id from variants v where v.product_id = #{params[:id]}"
     query_for_variant_branches += "from variants v where v.product_id = #{params[:id]}"
-    @variants_option_values = ActiveRecord::Base.connection.execute(query_for_variant_branches)
+    @variants_option_values = ActiveRecord::Base.connection.execute(query_for_variant_branches_with_variant_ids)
     build_option_dependency_tree
     
     @variants_option_values_and_ids = ActiveRecord::Base.connection.execute(query_for_variant_branches_with_variant_ids)
