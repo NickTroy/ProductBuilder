@@ -1,0 +1,2 @@
+module VariantInfoHelper
+end
