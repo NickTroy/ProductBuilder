@@ -7,6 +7,7 @@ Rails.application.routes.draw do
       resources :variant_images
       resource :three_sixty_image
     end
+   
     collection { post :import }
     resources :product_images
     post '/assign_option', to: 'options#assign_option_to_product'
@@ -20,6 +21,7 @@ Rails.application.routes.draw do
   get '/export_products', to: 'products#export'
   
   resources :product_info, defaults: { format: 'json' }
+  resources :variant_info, defaults: { format: 'json' }
   put '/update_order_and_groups', to: 'options#update_order_numbers_and_groups'
   resources :option_groups
   resources :options do

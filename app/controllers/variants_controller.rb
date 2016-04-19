@@ -1,4 +1,6 @@
 class VariantsController < AuthenticatedController
+  
+
 
   def index
     @variants = Variant.all
@@ -179,6 +181,8 @@ class VariantsController < AuthenticatedController
     render json: { message: "success"}, :status => 200 
     #redirect_to edit_product_url(:protocol => 'https', :id => params[:product_id])
   end
+  
+
   
   private
   
