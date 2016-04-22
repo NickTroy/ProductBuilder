@@ -1,3 +1,8 @@
+<style>
+  .products_table .col-md-2:first-child {
+    margin-bottom: 30px !important;
+  }
+</style>
 <script type="text/javascript">
   $(document).ready(function(){
     $('.container').css({'display': 'table'});
@@ -6,7 +11,7 @@
     $('.row.products_table > div').css({'display': 'table-cell'});
     
     $( "#tabs" ).tabs({
-      collapsible: true
+      collapsible: false
     }); 
     
     // slider images params
@@ -155,15 +160,15 @@
 <div class="container">
   <div id="tabs">
     <ul>
-      <li><a href="#tabs-1">Products listing</a></li>
-      <li><a href="#tabs-2">Change 360 viewer parameters</a></li>
-      <li><a href="#tabs-3">Slider images scale managment</a></li>
+      <li><a href="#tabs-1">All Products</a></li>
+      <li><a href="#tabs-2">360 Viewer Settings</a></li>
+      <li><a href="#tabs-3">Image Scaling Settings</a></li>
     </ul>
     <div id="tabs-1" class="products_listing">      
-      <h3>Products</h3>
+      <h3>All Products</h3>
         <div class="row">
           <div class="col-md-4">
-            <label>Quick product edit selection</label>
+            <label>Jump to products</label>
             <select class="form-control quick_edit_product">
               <option val=0>-Select product to edit-</option>
               <% @all_products.each_with_index do |product, index| %>
@@ -175,34 +180,34 @@
           </div>
         </div><br>
         <div class="row products_table">
-          <div class="col-md-1">Product Title</div>
-          <div class="col-md-2">Product Image</div>
-          <div class="col-md-2">Product Description</div>
-          <div class="col-md-1">Number of Product Variants</div>
-          <div class="col-md-1">Collections count</div>
-          <div class="col-md-1"></div>
+          <div class="col-md-2 col-lg-2"><strong>Product Title</strong></div>
+          <div class="col-md-2 col-lg-2 text-center"><strong>Image</strong></div>
+          <div class="col-md-3 col-lg-3"><strong>Description</strong></div>
+          <div class="col-md-2 col-lg-2 text-center"><strong>Num. Variants</strong></div>
+          <div class="col-md-2 col-lg-2 text-center"><strong>Num. Collections</strong></div>
+          <div class="col-md-1 col-lg-1 text-center"><strong>Delete?</strong></div>
           
         </div>
 
        <% @products.each do |product| %>
           <div class="row products_table">
-            <div class="col-md-1">
+            <div class="col-md-2 col-lg-2">
               <input type="checkbox" class="select_for_action" data-product-id="<%= product.id %>">
               <%= link_to product.title, edit_product_url(product.id, :protocol => 'https'), :class => "product_title" %> <!--#{ :controller => "products", :action => "edit", :id => product.id , :protocol => 'https'} -->
             </div>
-            <div class="col-md-2">
+            <div class="col-md-2 col-lg-2 text-center">
               <%= image_tag(product.images.first.src, style: "width:100px;") unless product.images.empty? %>
             </div>
-            <div class="col-md-2" style="height:150px; overflow:hidden;">
+            <div class="col-md-3 col-lg-3" style="height:150px; overflow:hidden;">
               <%= render html: product.body_html.html_safe unless product.body_html.nil? %>
             </div>
-            <div class="col-md-1">
-              Product has <%= @variants.where(product_id: product.id).count %> variants
+            <div class="col-md-2 col-lg-2 text-center">
+              <%= @variants.where(product_id: product.id).count %> Variants
             </div>
-            <div class="col-md-1">
-              Product belongs to <%= product.collections.count %> collections 
+            <div class="col-md-2 col-lg-2 text-center">
+              <%= product.collections.count %> Collections 
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1 col-lg-1 text-center">
               <%= link_to 'Delete', product_url(product.id, :protocol => 'https'), 
                                     { :method => :delete, 
                                     class: "btn btn-danger", style: "width: 80%;",
