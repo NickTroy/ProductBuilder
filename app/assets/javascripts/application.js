@@ -22,4 +22,5 @@
 //= require jquery.reel-bundle
 //= require jquery.elevatezoom
 //= require turbolinks
+//= require jquery-filestyle.min
 //= require_tree .

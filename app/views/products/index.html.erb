@@ -2,6 +2,12 @@
   .products_table .col-md-2:first-child {
     margin-bottom: 30px !important;
   }
+  .page {
+    margin: 3px;
+  }
+  .product_types_table .row {
+    margin-bottom: 15px;
+  }  
 </style>
 <script type="text/javascript">
   $(document).ready(function(){
@@ -13,6 +19,9 @@
     $( "#tabs" ).tabs({
       collapsible: false
     }); 
+
+    // initialize custom file field
+    $("#file").jfilestyle({buttonBefore: true, placeholder: "No file chosen"});
     
     // slider images params
     
@@ -161,16 +170,16 @@
   <div id="tabs">
     <ul>
       <li><a href="#tabs-1">All Products</a></li>
-      <li><a href="#tabs-2">360 Viewer Settings</a></li>
+      <li><a href="#tabs-2">360° Viewer Settings</a></li>
       <li><a href="#tabs-3">Image Scaling Settings</a></li>
     </ul>
     <div id="tabs-1" class="products_listing">      
       <h3>All Products</h3>
         <div class="row">
           <div class="col-md-4">
-            <label>Jump to products</label>
+            <label>Jump to product:</label>
             <select class="form-control quick_edit_product">
-              <option val=0>-Select product to edit-</option>
+              <option val=0>Select product...</option>
               <% @all_products.each_with_index do |product, index| %>
                 <option value=<%= product.id %>>
                   <%= product.title %>
@@ -210,7 +219,7 @@
             <div class="col-md-1 col-lg-1 text-center">
               <%= link_to 'Delete', product_url(product.id, :protocol => 'https'), 
                                     { :method => :delete, 
-                                    class: "btn btn-danger", style: "width: 80%;",
+                                    class: "btn btn-danger",
                                     data: { confirm: 'Are you sure, you want to delete this product?' } } %>      
               
             </div>
@@ -225,12 +234,12 @@
           <%= file_field_tag :file %>  
         </span>
     
-        <%= submit_tag "Import product", class: "btn-info btn" %>
+        <%= submit_tag "Import Product(.xls)", class: "btn-info btn" %>
       <% end %><br>
       <div id="export form" class="row">
         <!--<%= link_to "Export products", export_products_url(:protocol => 'https'), class: "btn btn-info" %>-->
-        <div class="invitation_to_select"> Select products to be exported</div>
-        <button id="export_products" class="btn btn-info col-md-3" disabled>Export products</button>
+        <div class="invitation_to_select"> Place a check mark above for each product to export.</div>
+        <button id="export_products" class="btn btn-info col-md-3" disabled>Export Selected Product(s)</button>
         <div class="col-md-6">
           <input type="text" placeholder="Selected products" class="form-control selected_for_export" disabled>  
         </div>
@@ -258,7 +267,7 @@
           <input id="three_sixty_clockwise" class="form" type="checkbox">
         </div>
         <div class="col-md-4">
-          <input id="update_three_sixty_parameters" class="btn btn-info" type="button" value="Update all 3D images parameters">
+          <input id="update_three_sixty_parameters" class="btn btn-info" type="button" value="Apply Global 360° Image Parameters">
         </div>
       </div>
     </div>
@@ -267,10 +276,10 @@
       <div class="product_types_table">
         <div class="row">
           <div class="col-md-4">
-            Product type
+            <strong>Product Type</strong>
           </div>
           <div class="col-md-4">
-            Base size ratio(in percents)
+            <strong>Base Size Ratio (in percent)</strong>
           </div>
         </div>
         <% @slider_images_params.each do |param| %>
@@ -292,7 +301,7 @@
       </div>
       <div class="row">
         <div class="col-md-2">
-          <input id="add_new_product_type" class="btn btn-info" value="Add new product type">  
+          <input id="add_new_product_type" class="btn btn-info" value="Add New Product Type">  
         </div>
         
         <div class="col-md-2">
