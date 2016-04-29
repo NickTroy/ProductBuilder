@@ -765,6 +765,10 @@ $(document).ready(function(){
     </div>
   </div>
   <br>
+  <div class="paginator" style="text-align:center;">
+    <%= paginate @variants %>
+  </div>
+
   <div class="variants_actions row">
     <div class="variants_form_actions col-md-2">
       <input type='button' value="Canel adding product variants" onclick="clearVariantsForm()" class="btn btn-warning cancel-adding-variants" style ="display:none;"/>
