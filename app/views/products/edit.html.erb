@@ -744,9 +744,9 @@ $(document).ready(function(){
   <div class="current-variants">
     <h3>Product variants list (
       <% if params[:filtering_params].nil? %> 
-    currently has <span class="current_number_of_variants"><%= @variants.count %></span> variants):</h3>  
+    currently has <span class="current_number_of_variants"><%= @variants_count %></span> variants):</h3>  
       <% else %>
-   <span class="current_number_of_variants"><%= @variants.count %></span> match your selection ):</h3>
+   <span class="current_number_of_variants"><%= @variants_count %></span> match your selection ):</h3>
       <% end %>
     <% @variants.each do |variant| %>
       <div class="variant-info row">

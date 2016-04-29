@@ -28,6 +28,7 @@ class ProductsController < AuthenticatedController
     end
     #Option.joins("inner join products_options on products_options.product_id = #{params[:id]}").uniq
     @variants = Variant.where(product_id: @product.id)
+    @variants_count = @variants.count
     @variants = @variants.filter(params[:filtering_params].slice(:sku_like)) if params[:filtering_params]
     @variants = Kaminari.paginate_array(@variants, total_count: @variants.count).page(params[:page]).per(25)
   end
