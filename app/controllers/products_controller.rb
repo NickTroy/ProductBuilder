@@ -28,6 +28,7 @@ class ProductsController < AuthenticatedController
     end
     #Option.joins("inner join products_options on products_options.product_id = #{params[:id]}").uniq
     @variants = Variant.where(product_id: @product.id)
+    @variants = @variants.filter(params[:filtering_params].slice(:sku_like)) if params[:filtering_params]
     @variants = Kaminari.paginate_array(@variants, total_count: @variants.count).page(params[:page]).per(25)
   end
   
@@ -62,6 +63,11 @@ class ProductsController < AuthenticatedController
     
     if params[:commit] == 'Back to all products'
       redirect_to root_url(:protocol => 'https')
+      return true
+    end
+    
+    if params[:search] == 'Search'
+      redirect_to edit_product_url(:protocol => 'https', :id => params[:id], :filtering_params => filtering_params)
       return true
     end
     
@@ -313,5 +319,10 @@ class ProductsController < AuthenticatedController
                     :product_type, :published_scope, :tags,
                     :template_suffix, :title, :variants, :vendor)
     end
-    
+
+
+  def filtering_params
+    params.slice(:sku_like)
+  end
+
 end

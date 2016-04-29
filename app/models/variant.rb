@@ -1,4 +1,6 @@
 class Variant < ActiveRecord::Base
+  include Filterable
+  
   has_many :variants_option_values, dependent: :nullify
   has_many :option_values, through: :variants_option_values, dependent: :destroy
   belongs_to :product_image
@@ -6,6 +8,7 @@ class Variant < ActiveRecord::Base
   has_one :three_sixty_image, dependent: :destroy
   after_update :update_product_image_with_variant_image
   before_destroy :destroy_product_image
+  scope :sku_like, -> (sku) { where("sku like ?", "%#{sku}%")}
 
   private
   
