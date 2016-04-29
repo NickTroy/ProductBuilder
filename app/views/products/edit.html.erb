@@ -465,6 +465,17 @@ function add_make_main_variant_button_click(){
 
 $(document).ready(function(){
   
+  // search
+  $('.search_option_value').change(function(){
+    option_values_ids = [];
+    $('.search_option_value').each(function(){
+      var option_value_id = $(this).val();
+      if (!(option_value_id === "0")) {
+        option_values_ids.push(option_value_id);
+      }
+    })
+    $('#search_option_values_ids').val(option_values_ids);
+  })
   //delete selected variants
   select_for_action_click();
   $('.delete_selected_variants').on('click', function(){
@@ -736,7 +747,20 @@ $(document).ready(function(){
     <div class="form-group col-md-6">
       <%= label_tag 'sku', 'Variant SKU' %>
       <%= text_field_tag :sku_like, nil, :class => 'form-control' %>
-        
+    </div>
+    <%  @options_with_values.each do |option_name, option_values| %>
+      <div class="col-md-6 form-group">
+        <%= label_tag option_name %>
+        <select class="form-control search_option_value">
+          <option value=0>-Select <%= option_name %>-</option>
+          <% option_values.each do |option_value| %>
+            <option value=<%= option_value[0] %>><%= option_value[1] %></option>
+          <% end %>
+        </select>
+      </div>
+    <% end %>
+    <input id="search_option_values_ids" name="search_option_values_ids" type="hidden" value="[]">
+    <div class="col-md-12">
       <%= submit_tag "Search", :name => 'search' %>
     </div>
   </div>

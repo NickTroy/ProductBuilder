@@ -26,7 +26,16 @@ class ProductsController < AuthenticatedController
     ProductsOption.where(:product_id => @product.id).each do |product_option|
       @product_options.push(Option.where(id: product_option.option_id)[0])
     end
-    #Option.joins("inner join products_options on products_options.product_id = #{params[:id]}").uniq
+    variant_option_values_query = "select distinct option_values.id, option_values.value, options.name from options " +
+                                  "inner join option_values on options.id = option_values.option_id " + 
+                                  "inner join variants_option_values on variants_option_values.option_value_id = option_values.id " +
+                                  "inner join variants on variants.id=variants_option_values.variant_id and variants.product_id = #{@product.id};"
+    @variant_option_values = ActiveRecord::Base.connection.execute(variant_option_values_query).to_a
+    @options_with_values = {}
+    @product_options.each do |option|
+      option_values = @variant_option_values.select { |option_value| option_value[2] == option.name}
+      @options_with_values[option.name] = option_values.map { |option_value| [option_value[0], option_value[1]] }
+    end
     @variants = Variant.where(product_id: @product.id)
     @variants = @variants.filter(params[:filtering_params].slice(:sku_like)) if params[:filtering_params]
     @variants_count = @variants.count
@@ -323,7 +332,7 @@ class ProductsController < AuthenticatedController
 
 
   def filtering_params
-    params.slice(:sku_like)
+    params.slice(:sku_like, :search_option_values_ids)
   end
 
 end
