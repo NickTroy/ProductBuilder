@@ -36,7 +36,20 @@ class ProductsController < AuthenticatedController
       option_values = @variant_option_values.select { |option_value| option_value[2] == option.name}
       @options_with_values[option.name] = option_values.map { |option_value| [option_value[0], option_value[1]] }
     end
-    @variants = Variant.where(product_id: @product.id)
+    if filtering_params.nil?
+      @variants = Variant.where(product_id: @product.id)
+    else
+      option_values_ids = filtering_params[:search_option_values_ids]
+      if option_values_ids.nil? or option_values_ids.empty? or option_values_ids == "[]"
+        @variants = Variant.where(product_id: @product.id)
+      else
+        option_values_ids = option_values_ids.split(',').map(&:to_i)
+        @variants = Variant.joins("inner join variants_option_values vov1 on vov1.option_value_id=#{option_values_ids.shift} and variants.id = vov1.variant_id ").where(:product_id => @product.id)
+        option_values_ids.each_with_index do |option_value_id, index|
+          @variants = @variants.joins("inner join variants_option_values vov#{index + 2} on vov#{index + 2}.option_value_id=#{option_value_id} and variants.id = vov#{index + 2}.variant_id ")
+        end
+      end
+    end
     @variants = @variants.filter(params[:filtering_params].slice(:sku_like)) if params[:filtering_params]
     @variants_count = @variants.count
     @variants = Kaminari.paginate_array(@variants, total_count: @variants.count).page(params[:page]).per(25)
@@ -77,7 +90,7 @@ class ProductsController < AuthenticatedController
     end
     
     if params[:search] == 'Search'
-      redirect_to edit_product_url(:protocol => 'https', :id => params[:id], :filtering_params => filtering_params)
+      redirect_to edit_product_url(:protocol => 'https', :id => params[:id], :filtering_params => {:search_option_values_ids => params[:search_option_values_ids], :sku_like => params[:sku_like]})
       return true
     end
     
@@ -332,7 +345,7 @@ class ProductsController < AuthenticatedController
 
 
   def filtering_params
-    params.slice(:sku_like, :search_option_values_ids)
+    params[:filtering_params]
   end
 
 end
