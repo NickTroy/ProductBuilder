@@ -27,6 +27,10 @@ class ProductInfoController < ApplicationController
 
   def show
     @variants = Variant.where(product_id: params[:id])
+    if @variants.length == 0 
+      render json: { message: "No variants found" }, :status => 200
+      return true
+    end
     @main_variant = Variant.where(product_id: params[:id], main_variant: true)[0] unless Variant.where(product_id: params[:id], main_variant: true)[0].nil?
     @main_variant ||= Variant.where(product_id: params[:id]).first
     @main_variant_id = @main_variant.id
@@ -77,6 +81,10 @@ class ProductInfoController < ApplicationController
       format.json #{ render status: :ok, :callback => params[:callback] }
     end
   end  
+  
+  def handle
+    render :json => { :handle => 'handle' }
+  end
 
   private
 

@@ -21,6 +21,7 @@ Rails.application.routes.draw do
   get '/export_products', to: 'products#export'
   
   resources :product_info, defaults: { format: 'json' }
+  get '/handle', to: 'product_info#handle'
   resources :variant_info, defaults: { format: 'json' }
   put '/update_order_and_groups', to: 'options#update_order_numbers_and_groups'
   resources :option_groups
