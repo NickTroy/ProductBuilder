@@ -97,13 +97,12 @@ class ProductsController < AuthenticatedController
     end
     
     @product = ShopifyAPI::Product.find(params[:id])
-    @product_info = ProductInfo.find_by(:main_product_id => @product.id)
+    @product_info = ProductInfo.find_by(:main_product_id => @product.id) || ProductInfo.create(:main_product_id => @product.id)
     @collect = ShopifyAPI::Collect.new(:product_id => @product.id, :collection_id => params[:collection_id])
     @collect.save
     respond_to do |format|
       format.html do 
         if @product.update_attributes(product_params)
-          binding.pry
           @product_info.update_attributes(:handle => @product.handle)
           @product_details = @product.body_html
           unless @product_details.nil?
@@ -137,7 +136,7 @@ class ProductsController < AuthenticatedController
         var.destroy
       end
     end
-    @product_info.destroy
+    @product_info.destroy unless @product_info.nil?
     @product.destroy
     respond_to do |format|
       format.html { redirect_to products_url(:protocol => 'https'), notice: 'Product was successfully deleted.' }

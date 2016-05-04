@@ -83,7 +83,9 @@ class ProductInfoController < ApplicationController
   end  
   
   def handle
-    render :json => { :handle => 'handle' }
+    @variant = Variant.find_by(:pseudo_product_id => params[:product_id])
+    @product_info = ProductInfo.find_by(:main_product_id => @variant.product_id)
+    render :json => { :handle => @product_info.handle }
   end
 
   private
