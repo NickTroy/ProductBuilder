@@ -72,10 +72,12 @@ class ProductsController < AuthenticatedController
     end
     
     @product = ShopifyAPI::Product.new(product_params)   
+    
     @product.attributes[:tags] = "product"
     respond_to do |format|
       format.html do 
         if @product.save
+          @product_info = ProductInfo.create(:handle => @product.handle, :main_product_id => @product.id)
           redirect_to edit_product_url(:id => @product.id, :protocol => 'https')
         end
       end
@@ -95,11 +97,14 @@ class ProductsController < AuthenticatedController
     end
     
     @product = ShopifyAPI::Product.find(params[:id])
+    @product_info = ProductInfo.find_by(:main_product_id => @product.id)
     @collect = ShopifyAPI::Collect.new(:product_id => @product.id, :collection_id => params[:collection_id])
     @collect.save
     respond_to do |format|
       format.html do 
         if @product.update_attributes(product_params)
+          binding.pry
+          @product_info.update_attributes(:handle => @product.handle)
           @product_details = @product.body_html
           unless @product_details.nil?
             Variant.where(:product_id => @product.id).each do |variant|
@@ -116,6 +121,7 @@ class ProductsController < AuthenticatedController
   
   def destroy
     @product = ShopifyAPI::Product.find(params[:id])
+    @product_info = ProductInfo.find_by(:main_product_id => @product.id)
     @images = ProductImage.where(product_id: params[:id])
     @variants = Variant.where(product_id: params[:id])
     
@@ -131,6 +137,7 @@ class ProductsController < AuthenticatedController
         var.destroy
       end
     end
+    @product_info.destroy
     @product.destroy
     respond_to do |format|
       format.html { redirect_to products_url(:protocol => 'https'), notice: 'Product was successfully deleted.' }
@@ -179,20 +186,17 @@ class ProductsController < AuthenticatedController
         end
       end
       
-      #products = ShopifyAPI::Product.where(:title => @product_title, :tags => ["product"]) 
-      #if products.length == 0
-        @product = ShopifyAPI::Product.new({
-          :title => @product_title,
-          :body_html => @product_details,
-          :vendor => @product_vendor
-        })
-      #else
-       # @product = products.first
-      #end
+      @product = ShopifyAPI::Product.new({
+        :title => @product_title,
+        :body_html => @product_details,
+        :vendor => @product_vendor
+      })
+      
       @product.attributes[:tags] = "product" unless @product.attributes[:tags] == "product"
       @product.save
-      #@product.add_metafield(ShopifyAPI::Metafield.new(:namespace => "product", :key => "key", :value => "value", :value_type => "string"))
-     
+      
+      @product_info = ProductInfo.create(:main_product_id => @product.id, :handle => @product.handle)
+      
       1.upto(@number_of_variants) do |i|
         @variant_row = @import_file.sheet(index).row(5 + i)
         @variant = Variant.new(:product_id => @product.id)
