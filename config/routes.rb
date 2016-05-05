@@ -14,6 +14,7 @@ Rails.application.routes.draw do
     delete '/unassign_option', to: 'options#unassign_option_from_product'
     delete '/delete_all_variants', to: 'variants#delete_all_variants'
     delete '/delete_selected_variants', to: 'variants#delete_selected_variants'
+    delete '/unassign_from_collection', to: 'products#unassign_from_collection'
   end
   
   resources :slider_images_params

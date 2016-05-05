@@ -12,6 +12,10 @@
     margin-bottom: 5px;
     padding: 5px;
   }
+  .collections_list {
+    min-height: 100px;
+    overflow-y: scroll;
+  }
 
 </style>
 <script type="text/javascript">
@@ -465,6 +469,18 @@ function add_make_main_variant_button_click(){
 
 $(document).ready(function(){
   
+  //unassign product from collection
+  $('.unassign_from_collection').click(function(){
+    var collection_id = $(this).data("collection_id");
+    $.ajax({
+      url: "<%= product_unassign_from_collection_url(:protocol => 'https', :product_id => @product.id) %>",
+      method: 'POST',
+      data: {
+        collection_id: collection_id,
+        _method: 'DELETE'
+      }
+    })
+  })
   // search
   $('.search_option_value').change(function(){
     option_values_ids = [];
@@ -618,27 +634,17 @@ $(document).ready(function(){
   <div id="tabs-1" class="product_information_container">
 
     <div class="row">
-  
-      <div cilass="col-md-12 form-group">
+      
+      <h2>Product Information</h2>
+      
+      <div class="col-md-8 form-group">
         <%= label_tag 'product[title]', "Product title:" %>  
         <%= text_field_tag :title, @product.title, class: "form-control" %>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-6">
-        Product belongs to:
-        <% @product_collections.each do |collection| %>
-          <span><strong><%= collection.title %>,<strong></span>
-        <% end %>
-      </div>
-   </div>  
-
-  <div class="row">
-  <div class="col-md-12 form-group">
-    <%= label_tag 'product[body_html]', "Product description:" %>
-    <%= text_area_tag :body_html, @product.body_html, class: "tinymce form-control" %>
-    <script> 
-     //<![CDATA[
+  
+        <%= label_tag 'product[body_html]', "Product description:" %>
+        <%= text_area_tag :body_html, @product.body_html, class: "tinymce form-control" %>
+        <script> 
+          //<![CDATA[
           (function() {
             if (typeof tinyMCE != 'undefined') {
               tinyMCE.init({
@@ -674,12 +680,54 @@ $(document).ready(function(){
                 plugins: "textcolor"
               });
             } else {
-              setTimeout(arguments.callee, 50);
+            setTimeout(arguments.callee, 50);
             }
           })();
           //]]>
-    </script>      
-  </div>
+        </script>      
+      </div>
+      
+      <div class="col-md-4">
+        <%= label_tag nil, "In Collections:" %>
+        <div class="form-control collections_list">
+          <% @product_collections.each do |collection| %>
+            <div class="collection_row">
+              <span><%= collection.title %></span>
+              <span data-collection_id="<%= collection.id %>" class="glyphicon glyphicon-remove-sign unassign_from_collection"></span>
+            </div>
+          <% end %>    
+        </div>
+        <!--<select class="form-control" multiple>
+          <% @product_collections.each do |collection| %>
+            <option><%= collection.title %></option>
+          <% end %>  
+        </select>-->
+        
+        
+        
+        <%= label_tag 'product[collections]', "Assign collection" %>
+        <select id="collection_id" name="collection_id" class="form-control"> 
+          <option value="" selected="selected">
+            -Select collection to assign-
+          </option>
+          <% @collections.each do |collection| %>
+            <% unless @product_collections.include? collection %>
+              <option value=<%= collection.id %>>  
+                <span><%= collection.title %></span>
+              </option>
+            <% end %>
+          <% end %>
+        </select>
+    
+      </div>
+    </div>
+    
+    <div class="row">
+      
+    </div>  
+
+  <div class="row pull-left">
+  
 </div>
 
   <div class="row">
@@ -699,23 +747,7 @@ $(document).ready(function(){
       <%= text_field_tag :vendor, @product.vendor, class: "form-control" %>
     </div>
 
-    <div class="col-md-3 form-group">
-      <%= label_tag 'product[collections]', "Assign collection" %>
-      <select id="collection_id" name="collection_id" class="form-control"> 
-        <option value="" selected="selected">
-          -Select collection to assign-
-        </option>
-        <% @collections.each do |collection| %>
-          <% unless @product_collections.include? collection %>
-            <option value=<%= collection.id %>>  
-              <span>
-                <%= collection.title %>
-              </span>
-            </option>
-          <% end %>
-        <% end %>
-      </select>
-    </div>
+    
 
   </div>  
 

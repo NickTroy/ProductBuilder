@@ -335,6 +335,10 @@ class ProductsController < AuthenticatedController
     book.write './public/assets/export.xls'
     render json: { message: "success" }, :status => 200 
   end
+  
+  def unassign_from_collection
+    binding.pry
+  end
 
 
 
