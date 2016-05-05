@@ -86,10 +86,10 @@ class ProductInfoController < ApplicationController
     @variant = Variant.find_by(:pseudo_product_id => params[:product_id])
     selected_option_values = []
     @variant.option_values.each do |option_value|
-      selected_option_values.push({ :option_name => option_value.option.name, :option_value => option_value.value})
+      selected_option_values.push({ :option_name => option_value.option.name, :option_value => option_value.value, :option_order_number => option_value.option.order_number})
     end
     @product_info = ProductInfo.find_by(:main_product_id => @variant.product_id)
-    render :json => { :handle => @product_info.handle, :selected_option_values: selected_option_values }
+    render :json => { :handle => @product_info.handle, :selected_option_values => selected_option_values }
   end
 
   private
