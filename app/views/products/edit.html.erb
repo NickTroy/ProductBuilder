@@ -216,10 +216,8 @@ $(document).ready(function(){
   function handleVariantsJSON(variants_json){
     $('.current_number_of_variants').text(variants_json.length);
     var main_variant_id = parseInt($('.main_variant_label').parents('.variant-actions').find('.make_main_variant').data('variant-id'));
-    console.log($('.main_variant_label').parents('.variant-actions').find('.make_main_variant'));
     $('.variant-info').remove();
     
-    //alert(JSON.stringify(variants_json));
     for(var i = 0; i < variants_json.length; i++) {
       $('<div class="variant-info row"></div>').appendTo('.current-variants');
       var options = variants_json[i]["options"];
@@ -228,17 +226,20 @@ $(document).ready(function(){
       var image_source = variants_json[i]["image_source"];
       if (image_source === undefined) {
         image_source = '';
-      }
-      $('')
+        $('<div class="col-md-1">' + 
+          '<input type="checkbox" class="select_for_action" data-variant-id="' + variant_id + '">' + 
+          '</div>').appendTo('.variant-info:last');
+      } else {
       $('<div class="col-md-1">' + 
           '<input type="checkbox" class="select_for_action" data-variant-id="' + variant_id + '">' + 
           '<img src="' + image_source + '" style="height:30px;"></img>' +
         '</div>').appendTo('.variant-info:last');
-      $('<div class="col-md-8 options_and_values"></div>').appendTo('.variant-info:last');
+      }
+      $('<div class="col-md-4 options_and_values"></div>').appendTo('.variant-info:last');
       for(var j = 0; j< options.length; j++){
         var option_name = JSON.stringify(options[j].option_name);
         var option_value = JSON.stringify(options[j].option_value);
-        var option_name_and_value = '<div class="col-md-2"><span class="option-name-and-value">' + option_name + ' : ' + option_value + ' </span></div>';
+        var option_name_and_value = '<div class="option_value_wrapper"><span class="option-name-and-value"><strong>' + option_name + '</strong> : ' + option_value + ' </span></div>';
         
         $(option_name_and_value.replace(/['"]+/g, '')).appendTo(".options_and_values:last");
         
@@ -253,15 +254,18 @@ $(document).ready(function(){
         sku = 'not set';
       }
       
-      var price_and_sku = '<div class="col-md-2" style="float:right;" >price: '+ price + ' sku: ' + sku   +'</div>';
-      $(price_and_sku.replace(/['"]+/g, '')).appendTo(".options_and_values:last");
+      var price_and_sku = '<div class="col-md-2"><strong>Price:</strong> '+ price + '</div><div class="col-md-2"><strong>SKU: </strong>' + sku   +'</div>';
+      $(price_and_sku.replace(/['"]+/g, '')).appendTo(".variant-info:last");
       $('<div class="col-md-3 variant-actions"></div>').appendTo('.variant-info:last');
-      $('<a class="btn btn-info" href="/products/<%= @product.id %>/variants/<%= @product.id %>/edit?variant_id=' + variant_id + '">Edit variant</a>').appendTo(".variant-actions:last");
-      $('<a class="btn btn-danger" data-confirm="Are you sure, you want to delete this product variant?" rel="nofollow" data-method="delete"' +
-      'href="/products/<%= @product.id %>/variants/<%= @product.id %>?variant_id=' + variant_id + '">Delete variant</a>').appendTo(".variant-actions:last");
-      $('<input class="make_main_variant btn btn-primary" type="button" value="Make main variant" data-variant-id="' + variant_id + '">').appendTo(".variant-actions:last");
+      $('<a class="btn btn-primary" href="/products/<%= @product.id %>/variants/<%= @product.id %>/edit?variant_id=' + variant_id + '" style="width:100% !important">' + 
+        '<span>Edit Variant </span><span class="glyphicon glyphicon-edit"></span></a>').appendTo(".variant-actions:last");
+      $('<a class="btn btn-danger" style="width:100% !important" data-confirm="Are you sure, you want to delete this product variant?" rel="nofollow" data-method="delete"' +
+        'href="/products/<%= @product.id %>/variants/<%= @product.id %>?variant_id=' + variant_id + '">' + 
+        '<span>Delete Variant </span><span class="glyphicon glyphicon-remove-sign"></span></a>').appendTo(".variant-actions:last");
+      $('<button class="make_main_variant btn btn-warning" style="width: 100% !important" data-variant-id="' + variant_id + '">' + 
+        '<span>Make main variant </span><span class="glyphicon glyphicon-ok-sign"></span></button>').appendTo(".variant-actions:last");
       if (parseInt(main_variant_id) === parseInt(variant_id)){
-        $('<span class="main_variant_label"><strong> Main produt variant</strong></span>').appendTo(".variant-actions:last");        
+        $('<div class="main_variant_label"><strong> Main produt variant</strong></div>').appendTo(".variant-actions:last");        
       }
       add_make_main_variant_button_click();
       select_for_action_click();
@@ -535,7 +539,6 @@ $(document).ready(function(){
         $('.select_for_action:checked').each(function(){
           $(this).parents('.variant-info').remove();
         })
-        alert($('.main_variant_label').length);
         if ($('.main_variant_label').length === 0){
           $('.edit_main_variant').prop("disabled", true);
         }
@@ -850,7 +853,7 @@ $(document).ready(function(){
           <span>Canel adding product variants</span>
           <span class="glyphicon glyphicon-minus-sign"></span>
         </button>
-        <button  class="btn btn-primary add-variants" style="width:100% !important">
+        <button  class="btn btn-success add-variants" style="width:100% !important">
           <span>Add product variants</span>
           <span class="glyphicon glyphicon-plus-sign"></span>
         </button>  
@@ -898,7 +901,7 @@ $(document).ready(function(){
     </div>
   
     <div class="current-variants">
-      <h3>Product variants list (
+      <h3>Existing Variants (
         <% if params[:filtering_params].nil? %> 
       currently has <span class="current_number_of_variants"><%= @variants_count %></span> variants):</h3>  
         <% else %>
@@ -910,29 +913,44 @@ $(document).ready(function(){
             <input type="checkbox" class="select_for_action" data-variant-id="<%= variant.id %>">
             <%= variant.main_image_id.nil? ? "" : image_tag(VariantImage.find(variant.main_image_id).image.url(:thumb), style: "height:30px;") %>
           </div>
-          <div class="col-md-8 options_and_values">
+          <div class="col-md-4 options_and_values">
             <% variant.option_values.each do |opt_val| %>
-              <div class="col-md-2">
+              <div class="option_value_wrapper">
                 <span class="option-name-and-value" >
-                  <%= opt_val.option.name %> : <%= opt_val.value %> 
+                  <strong><%= opt_val.option.name %></strong> : <%= opt_val.value %> 
                 </span>  
               </div>
               
             <% end %>
-            <div class="col-md-3">
-              <%= "price: #{((variant.price.nil?) or (variant.price == '')) ? "not set" : variant.price} sku: #{((variant.sku.nil?) or (variant.sku == '')) ? "not set" : variant.sku}" %>  
-            </div>
-          
           </div>
+          
+          <div class="col-md-2">
+            <strong>Price: </strong><%= "#{((variant.price.nil?) or (variant.price == '')) ? "not set" : variant.price}" %>  
+          </div>
+          
+          <div class="col-md-2">
+            <strong>SKU: </strong><%= "#{((variant.sku.nil?) or (variant.sku == '')) ? "not set" : variant.sku}" %>  
+          </div>
+          
           <div class="col-md-3 variant-actions">
-            <!--<%= link_to 'Edit variant', { :controller => "variants", :action => "edit", :product_id => @product.id, :variant_id => variant.id }, { class: "btn"}  %>-->
-            <%= link_to 'Edit variant', edit_product_variant_url(:id => variant.id, :variant_id => variant.id, :product_id => @product.id, :protocol => 'https'), class: "btn btn-info" %>
-            <%= link_to 'Delete variant', { :controller => "variants", :action => "destroy", :product_id => @product.id, :variant_id => variant.id }, 
-                                          { :method => :delete, class: "btn btn-danger", 
-                                          data: { confirm: 'Are you sure, you want to delete this product variant?' } } %>  
-            <input class="make_main_variant btn btn-primary" type="button" value="Make main variant" data-variant-id="<%= variant.id %>">                              
+            <%= link_to edit_product_variant_url(:id => variant.id, :variant_id => variant.id, :product_id => @product.id, :protocol => 'https'), :style => "width: 100% !important", class: "btn btn-primary" do %>
+              <span>Edit Variant</span>
+              <span class="glyphicon glyphicon-edit"></span>
+            <% end %>
+            <br>
+            
+            <%= link_to product_variant_url(:product_id => @product.id, :variant_id => variant.id, :protocol => 'https', :_method => 'delete'), 
+                        { :method => :delete, class: "btn btn-danger", style: "width: 100% !important", data: { confirm: 'Are you sure, you want to delete this product variant?' } } do %>
+              <span>Delete Variant</span>
+              <span class="glyphicon glyphicon-remove-sign"></span>
+            <% end %>                                          
+            <br>
+            <button class="make_main_variant btn btn-warning" style="width: 100% !important" data-variant-id="<%= variant.id %>">
+              <span>Make main variant</span>            
+              <span class="glyphicon glyphicon-ok-sign"></span>
+            </button>                              
             <% if variant.main_variant %>
-              <span class="main_variant_label"><strong> Main produt variant</strong></span>
+              <div class="main_variant_label"><strong> Main produt variant</strong></div>
             <% end %>
           </div>
         
