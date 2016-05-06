@@ -460,7 +460,6 @@ function add_make_main_variant_button_click(){
           this_make_main_variant.hide();
           $('.main_variant_label').remove();
           $(this_make_main_variant).after('<span class="main_variant_label"><strong> Main produt variant</strong></span>');
-          //$('.main_variant_label').insertAfter(this_make_main_variant);
         }
       }
     })
@@ -471,6 +470,7 @@ $(document).ready(function(){
   
   //unassign product from collection
   $('.unassign_from_collection').click(function(){
+    var collection_row = $(this).parents('.collection_row');
     var collection_id = $(this).data("collection_id");
     $.ajax({
       url: "<%= product_unassign_from_collection_url(:protocol => 'https', :product_id => @product.id) %>",
@@ -478,6 +478,9 @@ $(document).ready(function(){
       data: {
         collection_id: collection_id,
         _method: 'DELETE'
+      },
+      success: function(){
+        collection_row.remove();
       }
     })
   })

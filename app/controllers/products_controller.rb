@@ -337,7 +337,13 @@ class ProductsController < AuthenticatedController
   end
   
   def unassign_from_collection
-    binding.pry
+    @collect =  ShopifyAPI::Collect.where(:product_id => params[:product_id], :collection_id => params[:collection_id])[0]
+    if @collect.destroy
+      render json: { message: "deleted" }, :status => 200
+    else
+      render json: { message: "failed" }, :status => 500
+    end
+    
   end
 
 
