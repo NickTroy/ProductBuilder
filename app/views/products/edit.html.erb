@@ -16,6 +16,9 @@
     min-height: 100px;
     overflow-y: scroll;
   }
+  .search_label h4:hover {
+    text-decoration: underline;
+  }
 
 </style>
 <script type="text/javascript">
@@ -313,24 +316,25 @@ $(document).ready(function(){
   
   function deleteAllVariants(){
     if (confirm('Are you sure, you want to delete all product variants?')) {
-    $('.loader_image_wrapper').insertAfter('.variant-info:last');
-    $('.loader_image_wrapper').show();
-    $.ajax({
-      url: "<%= product_delete_all_variants_path(product_id: @product.id) %>",
-      method: 'POST',
-      dataType: 'json',
-      data: {
-        _method: "delete",
-        product_id: <%= @product.id %>
-      },
-      success: function(){
-        $('.variant-info').each(function (){
-          $(this).remove();
-        });
-        $('.current_number_of_variants').text('0');
-        $('.loader_image_wrapper').hide();
-      }
-    })
+      $('.loader_image_wrapper').insertAfter('.variant-info:last');
+      $('.loader_image_wrapper').show();
+      $.ajax({
+        url: "<%= product_delete_all_variants_path(product_id: @product.id) %>",
+        method: 'POST',
+        dataType: 'json',
+        data: {
+          _method: "delete",
+          product_id: <%= @product.id %>
+       },
+        success: function(){
+          $('.edit_main_variant').prop("disabled", true);
+          $('.variant-info').each(function (){
+            $(this).remove();
+          });
+          $('.current_number_of_variants').text('0');
+          $('.loader_image_wrapper').hide();
+        }
+      })
     }
   }
 
@@ -444,6 +448,7 @@ $(document).ready(function(){
 function add_make_main_variant_button_click(){
   $('.main_variant_label').parents('.variant-actions').find('.make_main_variant').hide();
   $('.make_main_variant').on('click', function(){
+    $('.edit_main_variant').prop("disabled", false);
     var this_make_main_variant = $(this);
     var variant_id = this_make_main_variant.data('variant-id');
     $.ajax({
@@ -468,6 +473,17 @@ function add_make_main_variant_button_click(){
 
 $(document).ready(function(){
   
+  $('.search_label').click(function(){
+    $('.search_form').toggle();
+  })
+  // edit product's main variant
+  $('.edit_main_variant').click(function(e){
+    e.preventDefault();
+    var main_variant_href = $('.main_variant_label').parents('.variant-actions').find('.btn:contains("Edit variant")').attr("href");
+    if (main_variant_href != undefined) {
+      location.href = main_variant_href;
+    }
+  })
   //unassign product from collection
   $('.unassign_from_collection').click(function(){
     var collection_row = $(this).parents('.collection_row');
@@ -497,7 +513,8 @@ $(document).ready(function(){
   })
   //delete selected variants
   select_for_action_click();
-  $('.delete_selected_variants').on('click', function(){
+  $('.delete_selected_variants').on('click', function(e){
+    e.preventDefault();
     $('.loader_image_wrapper').insertAfter('.variant-info:last');
     $('.loader_image_wrapper').show();
     var variant_ids = [];
@@ -512,11 +529,16 @@ $(document).ready(function(){
         variant_ids: variant_ids
       },
       success: function(){
+        
         var variants_count = $('.select_for_action:not(:checked)').length;
         $('.current_number_of_variants').text(variants_count);
         $('.select_for_action:checked').each(function(){
           $(this).parents('.variant-info').remove();
         })
+        alert($('.main_variant_label').length);
+        if ($('.main_variant_label').length === 0){
+          $('.edit_main_variant').prop("disabled", true);
+        }
         $('.loader_image_wrapper').hide();
       }
     })
@@ -551,6 +573,19 @@ $(document).ready(function(){
   showNeccesaryOptionsActions();
   
   clearVariantsForm();
+  $('.cancel-adding-variants').click(function(e){
+    e.preventDefault();
+    clearVariantsForm();
+  });
+  
+  $('.delete_all_variants').click(function(e){
+    e.preventDefault();
+    deleteAllVariants();  
+  })
+  $('.add-variants').click(function(e){
+    e.preventDefault();
+    showVariantsForm();
+  })
   $('.option_values').on('change', '.option_value', function(){
     var options_selected, number_of_variants;
     options_selected = parseInt($(this).parents('.option_values_row').children('.number_of_values_selected').text());
@@ -724,174 +759,196 @@ $(document).ready(function(){
     
       </div>
     </div>
-    
+    <hr>
     <div class="row">
+  
+      <div class="col-md-3 form-group">
+        <%= label_tag 'product[type]', "Product type:" %>
+        <%= text_field_tag :product_type, @product.product_type, class: "form-control" %>
+      </div>
+  
+      <div class="col-md-3 form-group">
+        <%= label_tag 'product[published_scope]', "Visibility:" %>
+        <%= text_field_tag :published_scope, @product.published_scope, class: "form-control" %>
+      </div>
+  
+      <div class="col-md-3 form-group">
+        <%= label_tag 'product[vendor]', "Vendor:" %>
+        <%= text_field_tag :vendor, @product.vendor, class: "form-control" %>
+      </div>
       
+      <div class="col-md-3">
+        <br>
+        <button class="btn btn-primary edit_main_variant" <%= "disabled" unless @main_variant_present %>>
+          Edit Product's Main Variant 
+          <span class="glyphicon glyphicon-edit"></span>
+        </button>
+      </div>
+
     </div>  
 
-  <div class="row pull-left">
-  
-</div>
-
-  <div class="row">
-  
-    <div class="col-md-3 form-group">
-      <%= label_tag 'product[type]', "Product type:" %>
-      <%= text_field_tag :product_type, @product.product_type, class: "form-control" %>
-    </div>
-  
-    <div class="col-md-3 form-group">
-      <%= label_tag 'product[published_scope]', "Product published scope:" %>
-      <%= text_field_tag :published_scope, @product.published_scope, class: "form-control" %>
-    </div>
-  
-    <div class="col-md-3 form-group">
-      <%= label_tag 'product[vendor]', "Product vendor:" %>
-      <%= text_field_tag :vendor, @product.vendor, class: "form-control" %>
+    <div class="images-container">
+      <div class="row">
+        <div class="col-md-12">
+          <h4><strong>Product Sketches (SketchBuilder):</strong></h4>
+          <div class="dropzone-previews dropzone"> 
+            <div class="dz-default dz-message"><span>Drop files here to upload</span>
+            </div>
+          </div>  
+         </div>
+      </div><br>  
     </div>
 
-    
-
-  </div>  
-
-  <div class="images-container">
     <div class="row">
       <div class="col-md-12">
-        <h2>PRODUCT IMAGE FOR SKETCHES</h2>
-        <div class="dropzone-previews dropzone"> 
-          <div class="dz-default dz-message"><span>Drop files here to upload</span>
-          </div>
-        </div>  
+        <button type="submit" name="commit" class="btn btn-success" style="width:100%;">
+          <span>Save product information</span> 
+          <span class="glyphicon glyphicon-floppy-disk"></span>
+        </button>
       </div>
-    </div><br>  
-  </div>
-
-  <div class="row">
-    <div class="col-md-2">
-      <%= submit_tag "Save product information", :class => "btn btn-success" %>
     </div>
-  </div>
+    <hr>
+  <% end %>
 
-<% end %>
-
-<div class="variants-container">
+  <div class="variants-container">
   
-  <h2>VARIANTS</h2>
-  
-  <div class="search_form row">
-    <div class="form-group col-md-6">
-      <%= label_tag 'sku', 'Variant SKU' %>
-      <%= text_field_tag :sku_like, nil, :class => 'form-control' %>
-    </div>
-    <%  @options_with_values.each do |option_name, option_values| %>
-      <div class="col-md-6 form-group">
-        <%= label_tag option_name %>
-        <select class="form-control search_option_value">
-          <option value=0>-Select <%= option_name %>-</option>
-          <% option_values.each do |option_value| %>
-            <option value=<%= option_value[0] %>><%= option_value[1] %></option>
-          <% end %>
-        </select>
+    <h3>Product Variants</h3>
+    <div class="row search_label">
+      <div class="col-md-12">
+        <h4>
+          <strong>Filter and Search Variants</strong>
+          <span class="glyphicon glyphicon-menu-down search_area_toggle"></span>  
+        </h4>
       </div>
-    <% end %>
-    <input id="search_option_values_ids" name="search_option_values_ids" type="hidden" value="[]">
-    <div class="col-md-12">
-      <%= submit_tag "Search", :name => 'search', :class => "btn btn-info" %>
     </div>
-  </div>
-  
-  <div class="current-variants">
-    <h3>Product variants list (
-      <% if params[:filtering_params].nil? %> 
-    currently has <span class="current_number_of_variants"><%= @variants_count %></span> variants):</h3>  
-      <% else %>
-   <span class="current_number_of_variants"><%= @variants_count %></span> match your selection ):</h3>
+    <div class="search_form row" style="display:none;">
+      <div class="form-group col-md-6">
+       <%= label_tag 'sku', 'Variant SKU' %>
+        <%= text_field_tag :sku_like, nil, :class => 'form-control' %>
+      </div>
+      <%  @options_with_values.each do |option_name, option_values| %>
+        <div class="col-md-6 form-group">
+          <%= label_tag option_name %>
+          <select class="form-control search_option_value">
+            <option value=0>-Select <%= option_name %>-</option>
+            <% option_values.each do |option_value| %>
+              <option value=<%= option_value[0] %>><%= option_value[1] %></option>
+            <% end %>
+          </select>
+        </div>
       <% end %>
-    <% @variants.each do |variant| %>
-      <div class="variant-info row">
-        <div class="col-md-1">
-          <input type="checkbox" class="select_for_action" data-variant-id="<%= variant.id %>">
-          <%= variant.main_image_id.nil? ? "" : image_tag(VariantImage.find(variant.main_image_id).image.url(:thumb), style: "height:30px;") %>
-        </div>
-        <div class="col-md-8 options_and_values">
-          <% variant.option_values.each do |opt_val| %>
-            <div class="col-md-2">
-              <span class="option-name-and-value" >
-                <%= opt_val.option.name %> : <%= opt_val.value %> 
-              </span>  
-            </div>
-              
-          <% end %>
-          <div class="col-md-3">
-            <%= "price: #{((variant.price.nil?) or (variant.price == '')) ? "not set" : variant.price} sku: #{((variant.sku.nil?) or (variant.sku == '')) ? "not set" : variant.sku}" %>  
-          </div>
-          
-        </div>
-        <div class="col-md-3 variant-actions">
-          <!--<%= link_to 'Edit variant', { :controller => "variants", :action => "edit", :product_id => @product.id, :variant_id => variant.id }, { class: "btn"}  %>-->
-          <%= link_to 'Edit variant', edit_product_variant_url(:id => variant.id, :variant_id => variant.id, :product_id => @product.id, :protocol => 'https'), class: "btn btn-info" %>
-          <%= link_to 'Delete variant', { :controller => "variants", :action => "destroy", :product_id => @product.id, :variant_id => variant.id }, 
-                                        { :method => :delete, class: "btn btn-danger", 
-                                        data: { confirm: 'Are you sure, you want to delete this product variant?' } } %>  
-          <input class="make_main_variant btn btn-primary" type="button" value="Make main variant" data-variant-id="<%= variant.id %>">                              
-          <% if variant.main_variant %>
-            <span class="main_variant_label"><strong> Main produt variant</strong></span>
-          <% end %>
-        </div>
-        
+      <input id="search_option_values_ids" name="search_option_values_ids" type="hidden" value="[]">
+      <div class="col-md-12">
+        <%= submit_tag "Search", :name => 'search', :class => "btn btn-info" %>
       </div>
-    <% end %>
-    <div class="loader_image_wrapper text-center" style="display:none;">
-      <%= image_tag("loader.gif") %>
     </div>
-  </div>
-  <br>
-  <div class="paginator" style="text-align:center;">
-    <%= paginate @variants %>
-  </div>
-
-  <div class="variants_actions row">
-    <div class="variants_form_actions col-md-2">
-      <input type='button' value="Canel adding product variants" onclick="clearVariantsForm()" class="btn btn-warning cancel-adding-variants" style ="display:none;"/>
-      <input type='button' value="Add product variants" onclick="showVariantsForm()" class="btn btn-primary add-variants"/>  
-    </div>
-    <div class="col-md-2">
-      <input type='button' value="Delete selected product variants" class="btn btn-warning delete_selected_variants" disabled/><br>      
-    </div>
-    <div class="col-md-2 delete_all_variants_button">
-      <input type='button' value="Delete all product variants" onclick="deleteAllVariants()" class="btn btn-danger delete_all_variants"/><br>      
-    </div>
-  </div>
+    <br>
   
-  
-  <div class="variants_form" style="display:none;">
-    <% @product_options.each do |opt| %>
-     
-      <div class="option_values_row">
-        <h4 class="option-name">Select <%= opt.name.pluralize %></h4>
-        <input class="option-name" type="hidden" value="<%= opt.name %>"/>
-        <% opt.option_values.each do |value| %>
-          <span class="option_values">
-            <label for="<%= value.value %>"><%= value.value %></label>
-            <input type="checkbox" class="option_value" value=0 />
-          </span>
-        <% end %>
-        <span class="number_of_values_selected">0</span>
-        <span><%= opt.name.pluralize %> selected</span>
-        <input name="options_selected" class="options_selected" value="0" type="hidden">
-      </div> 
-    <% end %>
-    <p class="variants-number-notice">
-      <span class="number_of_variants">0</span>
-      <span> variants will be created </span>
-    </p>
-    <input type='button' value="Preview product variants" onclick="previewVariants()" class="btn btn-primary preview-variants"/><br>
-    <%= hidden_field_tag :variants, {} %>
-    <div class="preview_product_variants">
+    <div class="variants_actions row">
+      <div class="variants_form_actions col-md-4">
+        <button class="btn btn-warning cancel-adding-variants" style="display:none; width:100% !important">
+          <span>Canel adding product variants</span>
+          <span class="glyphicon glyphicon-minus-sign"></span>
+        </button>
+        <button  class="btn btn-primary add-variants" style="width:100% !important">
+          <span>Add product variants</span>
+          <span class="glyphicon glyphicon-plus-sign"></span>
+        </button>  
+      </div>
+      <div class="col-md-4">
+        <button  class="btn btn-warning delete_selected_variants" style="width:100% !important" disabled>
+          <span>Delete selected product variants</span>
+          <span class="glyphicon glyphicon-remove-sign"></span>
+        </button><br>      
+      </div>
+      <div class="col-md-4 delete_all_variants_button">
+        <button class="btn btn-danger delete_all_variants" style="width:100% !important">
+          <span>Delete all product variants</span>
+          <span class="glyphicon glyphicon-remove-sign"></span>
+        </button><br>      
+      </div>
+    </div>
     
+    <div class="variants_form" style="display:none;">
+      <% @product_options.each do |opt| %>
+     
+        <div class="option_values_row">
+          <h4 class="option-name">Select <%= opt.name.pluralize %></h4>
+          <input class="option-name" type="hidden" value="<%= opt.name %>"/>
+          <% opt.option_values.each do |value| %>
+            <span class="option_values">
+              <label for="<%= value.value %>"><%= value.value %></label>
+              <input type="checkbox" class="option_value" value=0 />
+            </span>
+          <% end %>
+          <span class="number_of_values_selected">0</span>
+          <span><%= opt.name.pluralize %> selected</span>
+          <input name="options_selected" class="options_selected" value="0" type="hidden">
+        </div> 
+      <% end %>
+      <p class="variants-number-notice">
+        <span class="number_of_variants">0</span>
+        <span> variants will be created </span>
+      </p>
+      <input type='button' value="Preview product variants" onclick="previewVariants()" class="btn btn-primary preview-variants"/><br>
+        <%= hidden_field_tag :variants, {} %>
+      <div class="preview_product_variants">
+    
+      </div>
     </div>
-  </div>
-</div><br>
+  
+    <div class="current-variants">
+      <h3>Product variants list (
+        <% if params[:filtering_params].nil? %> 
+      currently has <span class="current_number_of_variants"><%= @variants_count %></span> variants):</h3>  
+        <% else %>
+     <span class="current_number_of_variants"><%= @variants_count %></span> match your selection ):</h3>
+        <% end %>
+      <% @variants.each do |variant| %>
+        <div class="variant-info row">
+          <div class="col-md-1">
+            <input type="checkbox" class="select_for_action" data-variant-id="<%= variant.id %>">
+            <%= variant.main_image_id.nil? ? "" : image_tag(VariantImage.find(variant.main_image_id).image.url(:thumb), style: "height:30px;") %>
+          </div>
+          <div class="col-md-8 options_and_values">
+            <% variant.option_values.each do |opt_val| %>
+              <div class="col-md-2">
+                <span class="option-name-and-value" >
+                  <%= opt_val.option.name %> : <%= opt_val.value %> 
+                </span>  
+              </div>
+              
+            <% end %>
+            <div class="col-md-3">
+              <%= "price: #{((variant.price.nil?) or (variant.price == '')) ? "not set" : variant.price} sku: #{((variant.sku.nil?) or (variant.sku == '')) ? "not set" : variant.sku}" %>  
+            </div>
+          
+          </div>
+          <div class="col-md-3 variant-actions">
+            <!--<%= link_to 'Edit variant', { :controller => "variants", :action => "edit", :product_id => @product.id, :variant_id => variant.id }, { class: "btn"}  %>-->
+            <%= link_to 'Edit variant', edit_product_variant_url(:id => variant.id, :variant_id => variant.id, :product_id => @product.id, :protocol => 'https'), class: "btn btn-info" %>
+            <%= link_to 'Delete variant', { :controller => "variants", :action => "destroy", :product_id => @product.id, :variant_id => variant.id }, 
+                                          { :method => :delete, class: "btn btn-danger", 
+                                          data: { confirm: 'Are you sure, you want to delete this product variant?' } } %>  
+            <input class="make_main_variant btn btn-primary" type="button" value="Make main variant" data-variant-id="<%= variant.id %>">                              
+            <% if variant.main_variant %>
+              <span class="main_variant_label"><strong> Main produt variant</strong></span>
+            <% end %>
+          </div>
+        
+        </div>
+      <% end %>
+      <div class="loader_image_wrapper text-center" style="display:none;">
+        <%= image_tag("loader.gif") %>
+      </div>
+    </div>
+    <br>
+    <div class="paginator" style="text-align:center;">
+      <%= paginate @variants %>
+    </div>
+  
+    
+  </div><br>
 
 
 

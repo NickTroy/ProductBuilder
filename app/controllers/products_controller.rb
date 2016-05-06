@@ -18,6 +18,7 @@ class ProductsController < AuthenticatedController
   def edit
     @product = ShopifyAPI::Product.find(params[:id])
     @images = ProductImage.where(product_id: @product.id)
+    @main_variant_present = Variant.where(:product_id => @product.id, :main_variant => true).length == 1
     @options = Option.all
     @option_groups = OptionGroup.all
     @product_options = []
