@@ -19,6 +19,9 @@
   .search_label h4:hover {
     text-decoration: underline;
   }
+  .variant-actions .btn {
+    margin-bottom: 10px !important;
+  }
 
 </style>
 <script type="text/javascript">
@@ -249,6 +252,8 @@ $(document).ready(function(){
       
       if (price === undefined) {
         price = 'not set';
+      } else {
+        price = '$ ' + price;
       }
       if (sku === undefined) {
         sku = 'not set';
@@ -451,7 +456,8 @@ $(document).ready(function(){
   }
 function add_make_main_variant_button_click(){
   $('.main_variant_label').parents('.variant-actions').find('.make_main_variant').hide();
-  $('.make_main_variant').on('click', function(){
+  $('.make_main_variant').on('click', function(e){
+    e.preventDefault();
     $('.edit_main_variant').prop("disabled", false);
     var this_make_main_variant = $(this);
     var variant_id = this_make_main_variant.data('variant-id');
@@ -478,15 +484,24 @@ function add_make_main_variant_button_click(){
 $(document).ready(function(){
   
   $('.search_label').click(function(){
+    $('.glyphicon-menu-down').toggle();
+    $('.glyphicon-menu-up').toggle();
     $('.search_form').toggle();
   })
   // edit product's main variant
   $('.edit_main_variant').click(function(e){
     e.preventDefault();
-    var main_variant_href = $('.main_variant_label').parents('.variant-actions').find('.btn:contains("Edit variant")').attr("href");
-    if (main_variant_href != undefined) {
+    
+    var main_variant_href = $('.main_variant_label').parents('.variant-actions').find('.btn:contains("Edit Variant")').attr("href");
+    if ((main_variant_href != undefined)) {
       location.href = main_variant_href;
+    } else {
+      <% unless @main_variant.nil? %>
+        var main_variant_href = "<%= edit_product_variant_url(:protocol => 'https', :product_id => @product.id, :variant_id => @main_variant.id, :id => @main_variant.id) %>"
+        location.href = main_variant_href;
+      <% end %>
     }
+    
   })
   //unassign product from collection
   $('.unassign_from_collection').click(function(){
@@ -782,7 +797,7 @@ $(document).ready(function(){
       
       <div class="col-md-3">
         <br>
-        <button class="btn btn-primary edit_main_variant" <%= "disabled" unless @main_variant_present %>>
+        <button class="btn btn-primary edit_main_variant" style="width: 100% !important;" <%= "disabled" unless @main_variant_present %>>
           Edit Product's Main Variant 
           <span class="glyphicon glyphicon-edit"></span>
         </button>
@@ -820,7 +835,8 @@ $(document).ready(function(){
       <div class="col-md-12">
         <h4>
           <strong>Filter and Search Variants</strong>
-          <span class="glyphicon glyphicon-menu-down search_area_toggle"></span>  
+          <span class="glyphicon glyphicon-menu-down search_area_toggle"></span>
+          <span class="glyphicon glyphicon-menu-up search_area_toggle" style="display:none;"></span>
         </h4>
       </div>
     </div>
@@ -901,11 +917,10 @@ $(document).ready(function(){
     </div>
   
     <div class="current-variants">
-      <h3>Existing Variants (
         <% if params[:filtering_params].nil? %> 
-      currently has <span class="current_number_of_variants"><%= @variants_count %></span> variants):</h3>  
+      <h3>Existing Variants (currently has <span class="current_number_of_variants"><%= @variants_count %></span> variants):</h3>  
         <% else %>
-     <span class="current_number_of_variants"><%= @variants_count %></span> match your selection ):</h3>
+      <h3>Existing Variants (<span class="current_number_of_variants"><%= @variants_count %></span> match your selection ):</h3>
         <% end %>
       <% @variants.each do |variant| %>
         <div class="variant-info row">
@@ -925,7 +940,7 @@ $(document).ready(function(){
           </div>
           
           <div class="col-md-2">
-            <strong>Price: </strong><%= "#{((variant.price.nil?) or (variant.price == '')) ? "not set" : variant.price}" %>  
+            <strong>Price: </strong><%= "#{((variant.price.nil?) or (variant.price == '')) ? "not set" : "$ " + variant.price.to_s}" %>  
           </div>
           
           <div class="col-md-2">
