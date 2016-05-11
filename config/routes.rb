@@ -5,7 +5,6 @@ Rails.application.routes.draw do
     get 'page/:page', :action => :index, :on => :collection
     resources :variants do
       resources :variant_images
-      resource :three_sixty_image
     end
    
     collection { post :import }
@@ -15,6 +14,10 @@ Rails.application.routes.draw do
     delete '/delete_all_variants', to: 'variants#delete_all_variants'
     delete '/delete_selected_variants', to: 'variants#delete_selected_variants'
     delete '/unassign_from_collection', to: 'products#unassign_from_collection'
+  end
+  
+  resources :three_sixty_images do
+    post '/upload_plane_images', to: 'three_sixty_images#upload_plane_images'
   end
   
   resources :slider_images_params

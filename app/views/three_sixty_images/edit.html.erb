@@ -1,0 +1,149 @@
+<script type="text/javascript">
+
+
+//product image dropzone
+$(document).ready(function(){
+  Dropzone.autoDiscover = false;
+  $("#three-sixty-form").dropzone({
+    url: "<%= three_sixty_image_upload_plane_images_url(:protocol => 'https', :three_sixty_image_id => @three_sixty_image.id) %>",
+    uploadMultiple: true,
+    paramName: "three_sixty_images",
+    previewsContainer: '.three_sixty_previews',
+    parallelUploads: 100,
+    clickable: '.three_sixty_previews',
+    autoProcessQueue: false,
+    success: function(file, response){
+      // find the remove button link of the uploaded file and give it an id
+      // based of the fileID response from the server
+    },
+    //when the remove button is clicked
+    init: function(){
+      
+      var $dropzone = this;
+      $('#upload_images').click(function(){
+        $dropzone.processQueue();
+      });
+      function process3Dimage(three_sixty_image_info){
+        var first_image = three_sixty_image_info["first_plane_image"];
+        var images_path = three_sixty_image_info["images_path"] + '/';
+        var images_names = three_sixty_image_info["images_names"];
+        $('#three_sixty_speed').val(5);
+        $('#three_sixty_rotations_count').val(5);
+        $('#update_three_sixty_parameters').on('click', function(){
+          var rotation_speed, rotations_count, clockwise;
+          rotation_speed = $('#three_sixty_speed').val();
+          rotations_count = $('#three_sixty_rotations_count').val();
+          clockwise = $('#three_sixty_clockwise').prop('checked');
+          $.ajax({
+            url: "<%= three_sixty_image_upload_plane_images_url(:three_sixty_image_id => @three_sixty_image.id, :protocol => 'https')%>",
+            method: "POST",
+            dataType: "json",
+            data: {
+              _method: "PATCH",
+              rotation_speed: rotation_speed,
+              rotations_count: rotations_count,
+              clockwise: clockwise
+            },
+            success: function(){
+              $('.reel').unreel();
+              var duration = rotations_count / rotation_speed * 10;
+              $('.reel').reel({
+                frames: images_names.length,
+                speed: rotation_speed / 10.0,
+                duration: duration,
+                path: images_path,
+                images: images_names,
+                cw: clockwise
+              });
+
+            }  
+          });
+        }); 
+        $('#three_sixty_image').attr('src', first_image);
+        $('.reel').reel({
+          frames: images_names.length,
+          speed: 0.5,
+          duration: 5,
+          path: images_path,
+          images: images_names,
+          
+        });
+      }
+      this.on("queuecomplete", function(file){
+        $dropzone.removeAllFiles();
+        $('.three_sixty_previews').hide();
+        $('#three_sixty_parameters_form').show();
+        $('#upload_images').hide();
+        $('.delete_3D_image').show(); 
+        $('.reel').show();
+        $.ajax({
+          url: "<%= url_for(action: 'show', controller: 'three_sixty_images', :protocol => 'https', :three_sixty_image_id => @three_sixty_image.id ) %>.json",
+          success: function(three_sixty_image_info){
+            process3Dimage(three_sixty_image_info);
+          }
+        })              
+      })
+    }
+                
+  }); 
+  
+  // initial state of buttons on page
+  <% if @three_sixty_image.nil? %>
+    $('.delete_3D_image').hide(); 
+    $('#three_sixty_parameters_form').hide();
+    $('.reel').hide();
+  <% elsif @three_sixty_image.plane_images.any? %>
+    $('.three_sixty_previews').hide();
+    $('#upload_images').hide();
+  <% end %>
+	
+});
+</script>
+<div class="container">
+  <%= render 'form' %>    
+  
+  <div class="three-sixty-images-container">
+    <div class="row">
+      <div class="col-md-12">
+        <h2>360 IMAGE BUILDER</h2>
+        <div class="three_sixty_previews dropzone">
+          <div class="dz-default dz-message"><span>Drop files here to upload</span>
+          </div>
+        </div><br>
+      </div>
+      <div class="col-md-12">
+        <input type="button" value="Build 3D image" id="upload_images" class="btn btn-info">
+        <%= link_to 'Delete 3D image', three_sixty_image_url(:three_sixty_image_id => @three_sixty_image.id, :protocol => 'https'),
+                          { :method => :delete, class: "btn btn-danger delete_3D_image",
+                          data: { confirm: 'Are you sure, you want to delete this 3D image?' } } %>
+      </div>
+      <div id="three_sixty_parameters_form">
+        <div class="col-md-6 form-group">
+          <label for="three_sixty_speed">Rotation speed(number of complete rotations per 10 seconds)</label>
+          <input id="three_sixty_speed" class="form-control" type="number" max="10" min="1">
+        </div>
+        <div class="col-md-6 form-group">
+          <label for="three_sixty_rotations_count">Rotations count</label>
+          <input id="three_sixty_rotations_count" class="form-control" type="number" min="1">
+        </div>
+        <div class="col-md-12 form-group">
+          <label for="three_sixty_clockwise">Reversed rotation direction</label>
+          <input id="three_sixty_clockwise" class="form" type="checkbox">
+        </div>
+        <div class="col-md-4">
+          <input id="update_three_sixty_parameters" class="btn btn-info" type="button" value="Update 3D image parameters">
+        </div>
+        </div><br>
+    
+      <div class="col-md-12">
+        <div class="3d_image">
+          <img src="<%= @first_plane_image %>" width="400" height="auto" class="reel" id="three_sixty_image">
+        </div>
+      </div>
+    </div><br>
+  </div>
+  
+  <form id="three-sixty-form" action="" method="post" name="three-sixty-form">
+    <input id="three_sixty_pictures" style="display:none;" name="three_sixty_pictures" type="file">
+  </form>
+</div>

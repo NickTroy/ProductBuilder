@@ -9,6 +9,7 @@ class ProductsController < AuthenticatedController
     @products = Kaminari.paginate_array(@all_products, total_count: @all_products.count).page(params[:page]).per(10)
     @variants = Variant.all
     @slider_images_params = SliderImagesParam.all
+    @three_sixty_images = ThreeSixtyImage.all
   end
 
   def new

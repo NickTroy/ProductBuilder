@@ -1,0 +1,27 @@
+  <%= form_for @three_sixty_image  do |f| %>
+    <div class="row">
+      <div class="col-md-6">
+        <%= f.label "three_sixty_image[title]", "Title" %>
+        <%= f.text_field :title, :class => "form-control" %>    
+      </div>
+      <div class="col-md-6">
+        <%= f.label "three_sixty_image[rotation_speed]", "Rotations Speed" %>
+        <%= f.number_field :rotation_speed, :class => "form-control" %>    
+      </div>
+      <div class="col-md-6">
+        <%= f.label "three_sixty_image[rotations_count]", "Rotations Count" %>
+        <%= f.number_field :rotations_count, :class => "form-control" %>    
+      </div>
+      <div class="col-md-12">
+        <%= f.label "three_sixty_image[clockwise]", "Clockwise" %>
+        <%= f.check_box :clockwise %>    
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-md-6">
+        <%= f.submit "Save", :class => "btn btn-info" %>
+      </div>
+    </div>
+    
+  <% end %>
