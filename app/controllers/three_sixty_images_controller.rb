@@ -13,7 +13,7 @@ class ThreeSixtyImagesController < AuthenticatedController
       unless @three_sixty_image.plane_images.empty?      
         @first_plane_image = @three_sixty_image.plane_images.first.image.url
         @three_sixty_image_url = URI.join(request.url, @first_plane_image).to_s
-        @three_sixty_image_url.insert(4,'s')
+        #@three_sixty_image_url.insert(4,'s')
         @images_path = @three_sixty_image_url.split('/')
         @images_path.delete_at(-1)
         @images_path = @images_path.join('/') 
@@ -27,6 +27,11 @@ class ThreeSixtyImagesController < AuthenticatedController
   end
 
   def create
+    if params[:commit] == 'Back'
+      redirect_to root_url(:protocol => 'https')
+      return true
+    end
+    
     @three_sixty_image = ThreeSixtyImage.new(three_sixty_image_params)
     if @three_sixty_image.save
       redirect_to edit_three_sixty_image_url(:id => @three_sixty_image.id, :protocol => 'https')
@@ -36,13 +41,48 @@ class ThreeSixtyImagesController < AuthenticatedController
   end
 
   def update
-    @three_sixty_image = ThreeSixtyImage.find(params[:id])
-    binding.pry
-    if @three_sixty_image.update_attributes(three_sixty_image_params)
-      redirect_to root_url
-    else 
-      render json: { message: "failed" }, :status => 500
+    if params[:commit] == 'Back'
+      redirect_to root_url(:protocol => 'https')
+      return true
     end
+    @three_sixty_image = ThreeSixtyImage.find(params[:id])
+    respond_to do |format|
+      format.html do
+        if @three_sixty_image.update_attributes(three_sixty_image_params)
+          redirect_to root_url
+        else 
+          render json: { message: "failed" }, :status => 500
+        end
+      end
+      format.json do
+        unless @three_sixty_image.nil?
+          unless @three_sixty_image.plane_images.empty?      
+            @first_plane_image = @three_sixty_image.plane_images.first.image.url
+            @three_sixty_image_url = URI.join(request.url, @first_plane_image).to_s
+            #@three_sixty_image_url.insert(4,'s')
+            @images_path = @three_sixty_image_url.split('/')
+            @images_path.delete_at(-1)
+            @images_path = @images_path.join('/') 
+            @images_names = []
+            @three_sixty_image.plane_images.each do |plane_image|
+              @images_names.push(plane_image.image.original_filename)
+            end
+            @images_names = @images_names.join(',')
+          end
+          @three_sixty_image_info = {
+            images_names: @images_names, 
+            images_path: @images_path,
+            first_plane_image: @first_plane_image
+          }
+        end
+        if @three_sixty_image.update_attributes(three_sixty_image_params)
+          render json: @three_sixty_image_info, :status => 200
+        else 
+          render json: { message: "failed" }, :status => 500
+        end
+      end
+    end
+    
   end
   
   def show
@@ -87,7 +127,6 @@ class ThreeSixtyImagesController < AuthenticatedController
     params[:three_sixty_images].each do |number, img|
       @images.push(img)
     end
-    binding.pry
     if @three_sixty.plane_images.any?
       @three_sixty.plane_images.each do |plane_image|
         plane_image.destroy
@@ -97,7 +136,6 @@ class ThreeSixtyImagesController < AuthenticatedController
     @images.each do |img|
       PlaneImage.create(:three_sixty_image_id => @three_sixty.id, :image => img, :big_image => img )
     end
-    binding.pry
     @three_sixty.rotations_count = 5
     @three_sixty.rotation_speed = 5
     if @three_sixty.save
@@ -105,6 +143,14 @@ class ThreeSixtyImagesController < AuthenticatedController
     else
       render json: { message: "failed" }, :status => 500
     end
+  end
+  
+  def delete_plane_images
+    @three_sixty_image = ThreeSixtyImage.find(params[:three_sixty_image_id])
+    @three_sixty_image.plane_images.each do |plane_image|
+      plane_image.destroy
+    end
+    render json: { message: "deleted" }, :status => 200
   end
   
   private

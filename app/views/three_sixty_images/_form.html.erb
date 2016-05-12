@@ -1,5 +1,11 @@
   <%= form_for @three_sixty_image  do |f| %>
     <div class="row">
+      <div class="col-md-2">
+        <%= submit_tag "Back", :class => "btn btn-info" %>
+      </div>
+    </div><br>
+    
+    <div class="row">
       <div class="col-md-6">
         <%= f.label "three_sixty_image[title]", "Title" %>
         <%= f.text_field :title, :class => "form-control" %>    
@@ -13,15 +19,23 @@
         <%= f.number_field :rotations_count, :class => "form-control" %>    
       </div>
       <div class="col-md-12">
-        <%= f.label "three_sixty_image[clockwise]", "Clockwise" %>
+        <%= f.label "three_sixty_image[clockwise]", "Reversed rotation direction" %>
         <%= f.check_box :clockwise %>    
       </div>
-    </div>
+      
+      <% if params[:action] == "edit" %>     
+        <div class="col-md-4">
+          <input id="update_three_sixty_parameters" class="btn btn-info" type="button" value="Update 3D image parameters">
+        </div>
+      <% end %>
+    </div><br>
     
     <div class="row">
       <div class="col-md-6">
-        <%= f.submit "Save", :class => "btn btn-info" %>
+        <%= f.submit "Save", :class => "btn btn-success" %>
       </div>
     </div>
     
   <% end %>
+  
+  

@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   
   resources :three_sixty_images do
     post '/upload_plane_images', to: 'three_sixty_images#upload_plane_images'
+    delete '/delete_plane_images', to: 'three_sixty_images#delete_plane_images'
   end
   
   resources :slider_images_params

@@ -1,6 +1,4 @@
 class VariantsController < AuthenticatedController
-  
-
 
   def index
     @variants = Variant.all
