@@ -48,7 +48,7 @@ class ThreeSixtyImagesController < AuthenticatedController
     respond_to do |format|
       format.html do
         if @three_sixty_image.update_attributes(three_sixty_image_params)
-          redirect_to root_url
+          redirect_to root_url(:protocol => 'https')
         else 
           render json: { message: "failed" }, :status => 500
         end
