@@ -18,17 +18,19 @@ class VariantsController < AuthenticatedController
       @shopify_variant = ShopifyAPI::Variant.find(@variant.pseudo_product_variant_id) if @shopify_variant.nil?
       @variant_images = @variant.variant_images
       @three_sixty_image_url = ""
+      @three_sixty_images = ThreeSixtyImage.all
       @three_sixty_image = @variant.three_sixty_image
       unless @three_sixty_image.nil?
-        unless @three_sixty_image.plane_images.empty?      
-          @first_plane_image = @three_sixty_image.plane_images.first.image.url
+        @plane_images = @three_sixty_image.plane_images
+        unless @plane_images.empty?      
+          @first_plane_image = @plane_images.first.image.url
           @three_sixty_image_url = URI.join(request.url, @first_plane_image).to_s
-          @three_sixty_image_url.insert(4,'s')
+          #@three_sixty_image_url.insert(4,'s')
           @images_path = @three_sixty_image_url.split('/')
           @images_path.delete_at(-1)
           @images_path = @images_path.join('/') 
           @images_names = []
-          @three_sixty_image.plane_images.each do |plane_image|
+          @plane_images.each do |plane_image|
             @images_names.push(plane_image.image.original_filename)
           end
           @images_names = @images_names.join(',')
@@ -177,7 +179,6 @@ class VariantsController < AuthenticatedController
       end
     end
     render json: { message: "success"}, :status => 200 
-    #redirect_to edit_product_url(:protocol => 'https', :id => params[:product_id])
   end
   
 

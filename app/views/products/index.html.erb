@@ -327,7 +327,7 @@
               <%= link_to three_sixty_image.title.nil? ? "placeholder" : three_sixty_image.title, edit_three_sixty_image_url(:protocol => 'https', :id => three_sixty_image.id) %>
             </div>
             <div class="col-md-2 col-lg-2">
-              <%= @all_products.find { |product| product.id == three_sixty_image.variant.product_id unless three_sixty_image.variant.nil? }.title unless @all_products.find { |product| product.id == three_sixty_image.variant.product_id unless three_sixty_image.variant.nil? }.nil? %>
+
             </div>
             <div class="col-md-1 col-lg-1">
               <%= link_to 'Delete', three_sixty_image_url(three_sixty_image.id, :protocol => 'https'), 

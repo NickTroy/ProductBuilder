@@ -8,7 +8,6 @@ class ThreeSixtyImagesController < AuthenticatedController
   def edit
     @three_sixty_image = ThreeSixtyImage.find(params[:id])
     @plane_images = @three_sixty_image.plane_images
-    
     unless @three_sixty_image.nil?
       unless @three_sixty_image.plane_images.empty?      
         @first_plane_image = @three_sixty_image.plane_images.first.image.url
@@ -142,6 +141,28 @@ class ThreeSixtyImagesController < AuthenticatedController
       render json: { message: "created" }, :status => 200
     else
       render json: { message: "failed" }, :status => 500
+    end
+  end
+  
+  def assign_to_variant
+    @variant = Variant.find(params[:variant_id])
+    @three_sixty_image = ThreeSixtyImage.find(params[:three_sixty_image_id])
+    
+    if @variant.update_attributes(:three_sixty_image_id => @three_sixty_image.id)
+      if @three_sixty_image.plane_images.empty? 
+        render json: { message: "assigned" }, status: 200
+      else
+        @first_plane_image = @three_sixty_image.plane_images.first.image.url
+        @first_plane_image = URI.join(request.url, @first_plane_image).to_s
+        @images_path = @first_plane_image.split('/')
+        @images_path.delete_at(-1)
+        @images_path = @images_path.join('/')
+        @images_names = []
+        @three_sixty_image.plane_images.each do |plane_image|
+          @images_names.push(plane_image.image.original_filename)
+        end
+        render 'show'
+      end
     end
   end
   

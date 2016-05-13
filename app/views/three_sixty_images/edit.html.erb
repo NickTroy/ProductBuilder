@@ -41,6 +41,7 @@ $(document).ready(function(){
       }
       this.on("queuecomplete", function(file){
         $dropzone.removeAllFiles();
+        $('#update_three_sixty_parameters').show();
         $('.three_sixty_previews').hide();
         $('#three_sixty_parameters_form').show();
         $('#upload_images').hide();
@@ -68,6 +69,7 @@ $(document).ready(function(){
           _method: 'DELETE'
         },
         success: function(){
+          $('#update_three_sixty_parameters').hide();
           $('#delete_3D_image').hide();
           $('#upload_images').show();
           $('.three_sixty_previews').show();
@@ -83,6 +85,7 @@ $(document).ready(function(){
     $('#delete_3D_image').hide(); 
     $('#three_sixty_parameters_form').hide();
     $('.3d_image').hide();
+    $('#update_three_sixty_parameters').hide();
   <% else %>
     $('.three_sixty_previews').hide();
     $('#upload_images').hide();

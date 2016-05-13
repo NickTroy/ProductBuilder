@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160510121117) do
+ActiveRecord::Schema.define(version: 20160513125034) do
 
   create_table "images_variants", force: :cascade do |t|
     t.integer  "image_id",   limit: 4
@@ -118,7 +118,6 @@ ActiveRecord::Schema.define(version: 20160510121117) do
   end
 
   create_table "three_sixty_images", force: :cascade do |t|
-    t.integer  "variant_id",      limit: 4
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
     t.string   "rotation_speed",  limit: 255
@@ -126,8 +125,6 @@ ActiveRecord::Schema.define(version: 20160510121117) do
     t.boolean  "clockwise"
     t.string   "title",           limit: 255
   end
-
-  add_index "three_sixty_images", ["variant_id"], name: "index_three_sixty_images_on_variant_id", using: :btree
 
   create_table "variant_images", force: :cascade do |t|
     t.integer  "variant_id",         limit: 4
@@ -156,9 +153,11 @@ ActiveRecord::Schema.define(version: 20160510121117) do
     t.string   "height",                    limit: 255
     t.string   "depth",                     limit: 255
     t.boolean  "main_variant"
+    t.integer  "three_sixty_image_id",      limit: 4
   end
 
   add_index "variants", ["product_image_id"], name: "index_variants_on_product_image_id", using: :btree
+  add_index "variants", ["three_sixty_image_id"], name: "index_variants_on_three_sixty_image_id", using: :btree
 
   create_table "variants_option_values", force: :cascade do |t|
     t.integer  "variant_id",      limit: 4
@@ -176,9 +175,9 @@ ActiveRecord::Schema.define(version: 20160510121117) do
   add_foreign_key "options", "option_groups"
   add_foreign_key "plane_images", "three_sixty_images"
   add_foreign_key "products_options", "options"
-  add_foreign_key "three_sixty_images", "variants"
   add_foreign_key "variant_images", "variants"
   add_foreign_key "variants", "product_images"
+  add_foreign_key "variants", "three_sixty_images"
   add_foreign_key "variants_option_values", "option_values"
   add_foreign_key "variants_option_values", "variants"
 end
