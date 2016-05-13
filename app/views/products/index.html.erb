@@ -313,10 +313,10 @@
     </div>
     
     <div id="tabs-4" class="three_sixty_images_listing">      
-      <h3>All three_sixty_images</h3>
+      <h3>All 3D images</h3>
         <div class="row">
           <div class="col-md-2 col-lg-2"><strong>Three Sixty Image Title</strong></div>
-          <div class="col-md-2 col-lg-2"><strong>Product Title</strong></div>
+          
           <div class="col-md-1 col-lg-1 text-center"><strong>Delete?</strong></div>
           
         </div>
@@ -326,9 +326,7 @@
             <div class="col-md-2 col-lg-2">
               <%= link_to three_sixty_image.title.nil? ? "placeholder" : three_sixty_image.title, edit_three_sixty_image_url(:protocol => 'https', :id => three_sixty_image.id) %>
             </div>
-            <div class="col-md-2 col-lg-2">
-
-            </div>
+          
             <div class="col-md-1 col-lg-1">
               <%= link_to 'Delete', three_sixty_image_url(three_sixty_image.id, :protocol => 'https'), 
                                     { :method => :delete, class: "btn btn-danger",
