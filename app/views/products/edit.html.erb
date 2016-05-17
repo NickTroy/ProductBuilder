@@ -842,10 +842,20 @@ $(document).ready(function(){
     </div>
     <div class="search_form row" style="display:none;">
       <div class="form-group col-md-6">
-       <%= label_tag 'sku', 'Variant SKU' %>
+        <%= label_tag 'sku', 'Variant SKU' %>
         <%= text_field_tag :sku_like, nil, :class => 'form-control' %>
       </div>
-      <%  @options_with_values.each do |option_name, option_values| %>
+      <div class="form-group col-md-6">
+        <%= label_tag 'per_page', 'Variants Per Page' %>
+        <select class="form-control" name="per_page">
+          <option value="10">10 Variants Per Page</option>
+          <option value="25">25 Variants Per Page</option>
+          <option value="50">50 Variants Per Page</option>
+          <option value="100">100 Variants Per Page</option>
+          <option value="-1">All Variants</option>
+        </select>
+      </div>
+      <% @options_with_values.each do |option_name, option_values| %>
         <div class="col-md-6 form-group">
           <%= label_tag option_name %>
           <select class="form-control search_option_value">

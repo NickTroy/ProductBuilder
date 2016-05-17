@@ -123,7 +123,6 @@ $(document).ready(function(){
         }
       },
       success: function(three_sixty_image_info){
-        //alert(JSON.stringify(three_sixty_image_info))
         $('.reel').unreel();
         var images_names = three_sixty_image_info["images_names"];
         images_names = images_names.split(',');

@@ -52,10 +52,22 @@ class ProductsController < AuthenticatedController
           @variants = @variants.joins("inner join variants_option_values vov#{index + 2} on vov#{index + 2}.option_value_id=#{option_value_id} and variants.id = vov#{index + 2}.variant_id ")
         end
       end
+      @per_page = filtering_params[:per_page]
     end
+    
     @variants = @variants.filter(params[:filtering_params].slice(:sku_like)) if params[:filtering_params]
     @variants_count = @variants.count
-    @variants = Kaminari.paginate_array(@variants, total_count: @variants.count).page(params[:page]).per(25)
+    case @per_page
+    when ""
+      @per_page = 25
+    when nil
+      @per_page = 25
+    when "-1"
+      @per_page = @variants.count
+    else
+      @per_page = @per_page.to_i
+    end
+    @variants = Kaminari.paginate_array(@variants, total_count: @variants.count).page(params[:page]).per(@per_page)
   end
   
   def show
@@ -95,7 +107,7 @@ class ProductsController < AuthenticatedController
     end
     
     if params[:search] == 'Search'
-      redirect_to edit_product_url(:protocol => 'https', :id => params[:id], :filtering_params => {:search_option_values_ids => params[:search_option_values_ids], :sku_like => params[:sku_like]})
+      redirect_to edit_product_url(:protocol => 'https', :id => params[:id], :filtering_params => {:search_option_values_ids => params[:search_option_values_ids], :sku_like => params[:sku_like], :per_page => params[:per_page]})
       return true
     end
     
