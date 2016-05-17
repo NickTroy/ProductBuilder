@@ -2,7 +2,7 @@ class ThreeSixtyImage < ActiveRecord::Base
   has_many :variants, dependent: :nullify
   has_many :plane_images, dependent: :destroy
   after_save :update_product_image 
-  after_destroy :update_product_image_with_variant_image
+  #after_destroy :update_product_image_with_variant_image
   
   private
   
