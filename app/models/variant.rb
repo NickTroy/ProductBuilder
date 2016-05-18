@@ -47,7 +47,7 @@ class Variant < ActiveRecord::Base
     unless @three_sixty_image.plane_images.empty?
       @first_plane_image = @three_sixty_image.plane_images.first
       unless @first_plane_image.nil?
-        @shopify_product_image = ShopifyAPI::Image.new(:product_id => @product.id)
+        @shopify_product_image = ShopifyAPI::Image.new(:product_id => @product.id, :position => 1)
         @shopify_product_image.src ='https://productbuilder.arborgentry.com/' + @first_plane_image.image.url
         @shopify_product_image.save
       end

@@ -33,4 +33,22 @@ class VariantInfoController < ApplicationController
       format.json
     end
   end
+  
+  def main_variants_images
+    pseudo_product_ids = params[:pseudo_product_ids]
+    pseudo_product_ids_with_images_urls = {}
+    pseudo_product_ids.each do |pseudo_product_id|
+      main_variant_product_id = Variant.find_by(:pseudo_product_id => pseudo_product_id.split(';')[0]).product_id
+      main_variant = Variant.where(:product_id => main_variant_product_id, :main_variant => true)[0] || Variant.where(:product_id => main_variant_product_id)[0]
+      main_variant_image_url = ""
+      if !(main_variant.three_sixty_image.nil?)
+        main_variant_image_url = URI.join(request.url, main_variant.three_sixty_image.plane_images.first.image.url).to_s
+      else
+        main_variant_image_url = URI.join(request.url, VariantImage.find(main_variant.main_image_id).image.url).to_s
+      end
+      main_variant_image_url.insert(4,"s") unless main_variant_image_url[4] == "s"
+      pseudo_product_ids_with_images_urls[pseudo_product_id] = main_variant_image_url
+    end
+    render json: pseudo_product_ids_with_images_urls, status: 200
+  end
 end
