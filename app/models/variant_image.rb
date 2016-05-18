@@ -50,7 +50,7 @@ class VariantImage < ActiveRecord::Base
       unless @shopify_product_image.nil?
         @shopify_product_image.destroy
       end
-      @shopify_product_image = ShopifyAPI::Image.new(:product_id => @product.id)
+      @shopify_product_image = ShopifyAPI::Image.new(:product_id => @product.id, :position => 1)
       @shopify_product_image.src = 'https://productbuilder.arborgentry.com/' + @main_variant_image.image.url
       @shopify_product_image.save
     end
