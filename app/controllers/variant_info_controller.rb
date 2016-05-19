@@ -43,8 +43,10 @@ class VariantInfoController < ApplicationController
       main_variant_image_url = ""
       if !(main_variant.three_sixty_image.nil?)
         main_variant_image_url = URI.join(request.url, main_variant.three_sixty_image.plane_images.first.image.url).to_s
-      else
+      elsif !(main_variant.main_image_id.nil?)
         main_variant_image_url = URI.join(request.url, VariantImage.find(main_variant.main_image_id).image.url).to_s
+      elsif !(main_variant.variant_images.empty?)
+        main_variant_image_url = URI.join(request.url, main_variant.variant_images.first.image.url).to_s
       end
       main_variant_image_url.insert(4,"s") unless main_variant_image_url[4] == "s"
       pseudo_product_ids_with_images_urls[pseudo_product_id] = main_variant_image_url
