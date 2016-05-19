@@ -156,6 +156,16 @@ class VariantsController < AuthenticatedController
     end
   end
   
+  def multiple_three_sixty_image_assignment
+    @three_sixty_image = ThreeSixtyImage.find(params[:three_sixty_image_id])
+    variants_ids = params[:variants_ids]
+    variants_ids.each do |variant_id|
+      @variant = Variant.find(variant_id)
+      @three_sixty_image.variants << @variant
+    end
+    render json: { message: "assigned", title: @three_sixty_image.title }, status: 200
+  end
+  
   def delete_selected_variants
     variant_ids = params[:variant_ids]
     variant_ids.each do |variant_id|

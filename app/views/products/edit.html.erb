@@ -105,8 +105,14 @@ $(document).ready(function(){
     $('.select_for_action').on('click', function(){
       if ($('.select_for_action:checked').length === 0) {
         $('.delete_selected_variants').prop('disabled',true);
+        $('.assign_3d_image').prop('disabled',true);
       } else {
         $('.delete_selected_variants').prop('disabled',false);
+        if ($('.select_3d_image').val() != "0") {
+          $('.assign_3d_image').prop('disabled',false);
+        } else {
+          $('.assign_3d_image').prop('disabled',true);
+        }
       }
     });  
   }
@@ -483,11 +489,53 @@ function add_make_main_variant_button_click(){
 
 $(document).ready(function(){
   
+  
+  
   $('.search_label').click(function(){
     $('.glyphicon-menu-down').toggle();
     $('.glyphicon-menu-up').toggle();
     $('.search_form').toggle();
   })
+  
+  // assign 3d image form
+  $('.assign_3d_image').prop("disabled", true);
+  $('.select_3d_image').change(function(){
+    if ($(this).val() === "0"){
+      $('.assign_3d_image').prop("disabled", true);
+    } else if ($('.select_for_action:checked').length === 0) {
+      $('.assign_3d_image').prop("disabled", true);
+    } else {
+      $('.assign_3d_image').prop("disabled", false);
+    }
+  });
+  $('.assign_3d_image').click(function(e){
+    e.preventDefault();
+    var variants_ids = [];
+    var three_sixty_image_title = $('.select_3d_image option:selected').text();
+    $('.select_for_action:checked').each(function(){
+      this_variant_checkbox = $(this);
+      
+      variants_ids.push($(this).data('variant-id'));
+    });
+    var three_sixty_image_id = $('.select_3d_image').val();
+    $.ajax({
+      url: "<%= product_multiple_three_sixty_image_assignment_url(:product_id => @product.id, :protocol => 'https') %>",
+      method: "POST",
+      data: {
+        variants_ids: variants_ids,
+        three_sixty_image_id: three_sixty_image_id
+      },
+      success: function(three_sixty_info){
+        alert("Successfully assigned 3D image " + three_sixty_info.title + " to " + variants_ids.length + " variants");
+        $('.assign_3d_image').prop("disabled", true);
+        $('.select_for_action:checked').each(function(){
+          $(this).prop("checked", false);
+        });
+      }
+    })
+    console.log(variants_ids);
+    console.log(three_sixty_image_id);
+  });
   // edit product's main variant
   $('.edit_main_variant').click(function(e){
     e.preventDefault();
@@ -896,6 +944,32 @@ $(document).ready(function(){
           <span class="glyphicon glyphicon-remove-sign"></span>
         </button><br>      
       </div>
+      <div class="assign_3d_image_form">
+        <div class="col-md-4 text-center">
+          <br>
+          <span>Assign 3D image to selected variants</span>
+        </div>
+        
+        <div class="col-md-4">
+          <br>
+          <select class="form-control select_3d_image">
+            <option value="0">-Select 3D image-</option>
+            <% @three_sixty_images.each do |three_sixty_image| %>
+            <option value="<%= three_sixty_image.id %>">
+              <span><%= three_sixty_image.title %></span>
+            </option>
+            <% end %>
+          </select>
+        </div>
+        
+        <div class="col-md-4">
+          <br>
+          <button class="btn btn-info assign_3d_image" style="width:100%">
+            <span>Confirm Assignment</span>
+          </button>
+        </div>
+      </div>
+      
     </div>
     
     <div class="variants_form" style="display:none;">

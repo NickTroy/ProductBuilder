@@ -6,6 +6,8 @@ Rails.application.routes.draw do
     resources :variants do
       resources :variant_images
     end
+    
+    post '/multiple_three_sixty_image_assignment', to: 'variants#multiple_three_sixty_image_assignment'
    
     collection { post :import }
     resources :product_images
