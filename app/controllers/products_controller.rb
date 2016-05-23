@@ -9,7 +9,7 @@ class ProductsController < AuthenticatedController
     @products = Kaminari.paginate_array(@all_products, total_count: @all_products.count).page(params[:page]).per(10)
     @variants = Variant.all
     @slider_images_params = SliderImagesParam.all
-    @three_sixty_images = ThreeSixtyImage.all
+    @three_sixty_images = ThreeSixtyImage.order('title ASC')
   end
 
   def new
@@ -19,7 +19,7 @@ class ProductsController < AuthenticatedController
   def edit
     @product = ShopifyAPI::Product.find(params[:id])
     @images = ProductImage.where(product_id: @product.id)
-    @three_sixty_images = ThreeSixtyImage.all
+    @three_sixty_images = ThreeSixtyImage.order('title ASC')
     @main_variant = Variant.where(:product_id => @product.id, :main_variant => true)[0]
     @main_variant_present = Variant.where(:product_id => @product.id, :main_variant => true).length == 1
     @options = Option.all

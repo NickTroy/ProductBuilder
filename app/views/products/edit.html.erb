@@ -114,6 +114,11 @@ $(document).ready(function(){
           $('.assign_3d_image').prop('disabled',true);
         }
       }
+      if ($('.select_for_action:not(:checked)').length === 0) {
+        $('.select_all_variants').prop("checked", true)
+      } else {
+        $('.select_all_variants').prop("checked", false)
+      }
     });  
   }
   
@@ -489,12 +494,31 @@ function add_make_main_variant_button_click(){
 
 $(document).ready(function(){
   
-  
-  
   $('.search_label').click(function(){
     $('.glyphicon-menu-down').toggle();
     $('.glyphicon-menu-up').toggle();
     $('.search_form').toggle();
+  })
+  
+  //select all variants button
+  
+  $('.select_all_variants').click(function(){
+    var unselected_variants_count = $('.select_for_action:not(:checked)').length;
+    if (unselected_variants_count !== 0) {
+      $('.select_for_action:not(:checked)').each(function(){
+        $(this).prop('checked', true);
+        $('.delete_selected_variants').prop('disabled', false);
+        if ($('.select_3d_image').val() !== "0") {
+          $('.assign_3d_image').prop('disabled', false);
+        }
+      })
+    } else {
+      $('.select_for_action:checked').each(function(){
+        $(this).prop('checked', false);
+        $('.delete_selected_variants').prop('disabled', true);
+        $('.assign_3d_image').prop('disabled', true);
+      })
+    }
   })
   
   // assign 3d image form
@@ -531,6 +555,7 @@ $(document).ready(function(){
         $('.select_for_action:checked').each(function(){
           $(this).prop("checked", false);
         });
+        $('.select_all_variants').prop('checked', false);
       }
     })
     console.log(variants_ids);
@@ -1001,11 +1026,17 @@ $(document).ready(function(){
     </div>
   
     <div class="current-variants">
-        <% if params[:filtering_params].nil? %> 
+      <% if params[:filtering_params].nil? %> 
       <h3>Existing Variants (currently has <span class="current_number_of_variants"><%= @variants_count %></span> variants):</h3>  
-        <% else %>
+      <% else %>
       <h3>Existing Variants (<span class="current_number_of_variants"><%= @variants_count %></span> match your selection ):</h3>
-        <% end %>
+      <% end %>
+      <div class="row">
+        <div class="col-md-6">
+          <input class="select_all_variants" type="checkbox">  
+          <span class="select_all"><strong>Select All Variants</strong></span>
+        </div>
+      </div> 
       <% @variants.each do |variant| %>
         <div class="variant-info row">
           <div class="col-md-1">
