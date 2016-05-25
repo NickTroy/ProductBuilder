@@ -13,7 +13,9 @@ json.options @option_values.each do |option_value|
   json.option_value option_value.value
 end
 if @three_sixty_image.nil?
- json.three_sixty_image ''
+  json.three_sixty_image ''
+elsif @three_sixty_image.plane_images.empty?
+  json.three_sixty_image ''
 else
   json.three_sixty_image do
     json.first_image asset_url(@three_sixty_image.plane_images.first.image.url)
