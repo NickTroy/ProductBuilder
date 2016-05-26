@@ -1,152 +1,260 @@
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/image-picker/0.2.4/image-picker.min.js"></script>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/image-picker/0.2.4/image-picker.min.css' rel='stylesheet' type='text/css'>
+<style>
+  .reel img {
+    width: 400px !important;
+    height: auto !important;
+
+  }
+  #three_sixty_image-reel {
+    width: 575px !important;
+    height: auto !important;
+    text-align: center;
+    margin: auto auto;
+  }
+  .image_picker_image {
+    height: 200px;
+  }
+</style>
+
 <script type="text/javascript">
-
-
-//product image dropzone
 $(document).ready(function(){
   Dropzone.autoDiscover = false;
-  $("#three-sixty-form").dropzone({
-    url: "<%= three_sixty_image_upload_plane_images_url(:protocol => 'https', :three_sixty_image_id => @three_sixty_image.id) %>",
-    uploadMultiple: true,
-    paramName: "three_sixty_images",
-    previewsContainer: '.three_sixty_previews',
-    parallelUploads: 100,
-    clickable: '.three_sixty_previews',
-    autoProcessQueue: false,
+  $("#product-variant-images").dropzone({
+    url: "<%= three_sixty_image_variant_images_url(:protocol => 'https', :three_sixty_image_id => @three_sixty_image.id) %>",
+    // restrict image size to a maximum 1MB
+    maxFilesize: 1,
+    // changed the passed param to one accepted by
+    // our rails app
+    paramName: "image",
+    previewsContainer: '.dropzone-previews',
+    clickable: '.dropzone-previews',
+    // show remove links on each image upload
+    addRemoveLinks: true,
     success: function(file, response){
       // find the remove button link of the uploaded file and give it an id
       // based of the fileID response from the server
+      $('.dropzone-previews').find('.dz-remove:last').attr('id', response.imageID);
+      // add the dz-success class (the green tick sign)
+      $('.dropzone-previews').addClass("dz-success");
+	    
+      $('.dz-remove:last').click(function(){
+        var id = $(this).attr('id'); 
+        // make a DELETE ajax request to delete the file
+        $.ajax({
+          type: 'POST',
+          data: { _method: 'DELETE' },
+          url: '<%= three_sixty_image_variant_images_url(:protocol => 'https', :three_sixty_image_id => @three_sixty_image.id) %>/' + id,
+          success: function(data){
+            console.log(data.message);
+          }
+        });
+        $('#selectImage option[value="'+ id +'"]').remove();
+        $('#selectImage').imagePicker();
+      })		
     },
     //when the remove button is clicked
     init: function(){
+      var existingFiles = [];
+        <% @variant_images.each_with_index do |image, index| %>
+          existingFiles.push({ id: "<%= image.id %>"});
+          this.emit("addedfile", existingFiles[<%= index %>]);
+          this.emit("thumbnail", existingFiles[<%= index %>], "<%= image.image.url %>");
+          $('.dropzone-previews').find('.dz-remove:last').attr('id', <%= image.id %>);
+        <% end %>
       
-      var $dropzone = this;
-      $('#upload_images').click(function(){
-        $dropzone.processQueue();
-      });
-      function process3Dimage(three_sixty_image_info){
-        var first_image = three_sixty_image_info["first_plane_image"];
-        var images_path = three_sixty_image_info["images_path"] + '/';
-        var images_names = three_sixty_image_info["images_names"];
-        $('#three_sixty_image_rotation_speed').val(5);
-        $('#three_sixty_image_rotations_count').val(5);
-        $('#three_sixty_image').attr('src', first_image);
-        $('.reel').reel({
-          frames: images_names.length,
-          speed: 0.5,
-          duration: 10,
-          path: images_path,
-          images: images_names,
-          
-        });
-      }
-      this.on("queuecomplete", function(file){
-        $dropzone.removeAllFiles();
-        $('#update_three_sixty_parameters').show();
-        $('.three_sixty_previews').hide();
-        $('#three_sixty_parameters_form').show();
-        $('#upload_images').hide();
-        $('#delete_3D_image').show(); 
-        $('.3d_image').show();
-        $.ajax({
-          url: "<%= url_for(action: 'show', controller: 'three_sixty_images', :protocol => 'https', :three_sixty_image_id => @three_sixty_image.id ) %>.json",
-          success: function(three_sixty_image_info){
-            process3Dimage(three_sixty_image_info);
-          }
-        })              
+      this.on("removedfile", function(file){
+		      
       })
     }
-                
-  }); 
-  
-  //delete 3D image
-  $('#delete_3D_image').click(function(e){
-    e.preventDefault();
-    if (confirm("Are you sure, you want to delete this 3D image?")) {
-      $.ajax({
-        url: "<%= three_sixty_image_delete_plane_images_url(:three_sixty_image_id => @three_sixty_image.id, :protocol => 'https') %>", 
-        method: "POST",
-        data: {
-          _method: 'DELETE'
-        },
-        success: function(){
-          $('#update_three_sixty_parameters').hide();
-          $('#delete_3D_image').hide();
-          $('#upload_images').show();
-          $('.three_sixty_previews').show();
-          $('.3d_image').hide();
-        }
-      })
-    }
-    
-  })
-  
-  // initial state of buttons on page
-  <% if @three_sixty_image.plane_images.empty? %>
-    $('#delete_3D_image').hide(); 
-    $('#three_sixty_parameters_form').hide();
-    $('.3d_image').hide();
-    $('#update_three_sixty_parameters').hide();
-  <% else %>
-    $('.three_sixty_previews').hide();
-    $('#upload_images').hide();
-  <% end %>
-
-  <% unless @three_sixty_image.nil? %>
-    var images_names = "<%= @images_names %>";
-    images_names = images_names.split(',');
-    var rotation_speed = <%= @three_sixty_image.rotation_speed.to_f / 10 %>;
-    var duration = <%= @three_sixty_image.rotations_count.to_f / @three_sixty_image.rotation_speed.to_f * 10 %>;
-    var clockwise = <%= @three_sixty_image.clockwise.nil? ? false : @three_sixty_image.clockwise %>;
-    $('.reel').reel({
-      frames: <%= @three_sixty_image.plane_images.count %>,
-      speed: rotation_speed,
-      duration: duration,
-      path: "<%= @images_path %>/",
-      images: images_names,
-      cw: clockwise
-    });
-  $('#update_three_sixty_parameters').on('click', function(){
-    var rotation_speed, rotations_count, clockwise;
-    rotation_speed = $('#three_sixty_image_rotation_speed').val();
-    rotations_count = $('#three_sixty_image_rotations_count').val();
-    clockwise = $('#three_sixty_image_clockwise').prop('checked');  
-    $.ajax({
-      url: "<%= three_sixty_image_url(:three_sixty_image_id => @three_sixty_image.id, :protocol => 'https')%>",
-      method: "POST",
-      dataType: "json",
-      data: {
-        _method: "PATCH",
-        three_sixty_image: {
-          rotation_speed: rotation_speed,
-          rotations_count: rotations_count,
-          clockwise: clockwise 
-        }
-      },
-      success: function(three_sixty_image_info){
-        $('.reel').unreel();
-        var images_names = three_sixty_image_info["images_names"];
-        images_names = images_names.split(',');
-        var images_path = three_sixty_image_info["images_path"];
-        var frames = three_sixty_image_info["images_path"];
-        var duration = rotations_count / rotation_speed * 10;
-        $('.reel').reel({
-          frames: images_names.count,
-          speed: rotation_speed / 10,
-          cw: clockwise,
-          duration: duration,
-          path: images_path + "/",
-          images: images_names
-        });
-
-      }
-    });
-  }); 
-  <% end %>
+		
+  });	
 	
+  $('.dz-remove').click(function(){
+    var id = $(this).attr('id'); 
+    // make a DELETE ajax request to delete the file
+    $.ajax({
+      type: 'POST',
+      data: { _method: 'DELETE' },
+      url: '<%= three_sixty_image_variant_images_url(:protocol => 'https', :three_sixty_image_id => @three_sixty_image.id) %>/' + id,
+      success: function(data){
+        console.log(data.message);
+      }
+    });
+    $('#selectImage option[value="'+ id +'"]').remove();
+    $('#selectImage').imagepicker();
+
+  })
+
 });
+  
 </script>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    Dropzone.autoDiscover = false;
+    $("#three-sixty-form").dropzone({
+      url: "<%= three_sixty_image_upload_plane_images_url(:protocol => 'https', :three_sixty_image_id => @three_sixty_image.id) %>",
+      uploadMultiple: true,
+      paramName: "three_sixty_images",
+      previewsContainer: '.three_sixty_previews',
+      parallelUploads: 100,
+      clickable: '.three_sixty_previews',
+      autoProcessQueue: false,
+      success: function(file, response){
+        // find the remove button link of the uploaded file and give it an id
+        // based of the fileID response from the server
+      },
+      //when the remove button is clicked
+      init: function(){
+       
+        var $dropzone = this;
+        $('#upload_images').click(function(){
+          $dropzone.processQueue();
+        });
+        function process3Dimage(three_sixty_image_info){
+          var first_image = three_sixty_image_info["first_plane_image"];
+          var images_path = three_sixty_image_info["images_path"] + '/';
+          var images_names = three_sixty_image_info["images_names"];
+          $('#three_sixty_image_rotation_speed').val(5);
+          $('#three_sixty_image_rotations_count').val(5);
+          $('#three_sixty_image').attr('src', first_image);
+          $('.reel').reel({
+            frames: images_names.length,
+            speed: 0.5,
+            duration: 10,
+            path: images_path,
+            images: images_names,
+            
+          });
+        }
+        this.on("queuecomplete", function(file){
+          $dropzone.removeAllFiles();
+          $('#update_three_sixty_parameters').show();
+          $('.three_sixty_previews').hide();
+          $('#three_sixty_parameters_form').show();
+          $('#upload_images').hide();
+          $('#delete_3D_image').show(); 
+          $('.3d_image').show();
+          $.ajax({
+            url: "<%= url_for(action: 'show', controller: 'three_sixty_images', :protocol => 'https', :three_sixty_image_id => @three_sixty_image.id ) %>.json",
+            success: function(three_sixty_image_info){
+              process3Dimage(three_sixty_image_info);
+            }
+          })              
+        })
+      }
+                  
+    }); 
+  
+    //delete 3D image
+    $('#delete_3D_image').click(function(e){
+      e.preventDefault();
+      if (confirm("Are you sure, you want to delete this 3D image?")) {
+        $.ajax({
+          url: "<%= three_sixty_image_delete_plane_images_url(:three_sixty_image_id => @three_sixty_image.id, :protocol => 'https') %>", 
+          method: "POST",
+          data: {
+            _method: 'DELETE'
+          },
+          success: function(){
+            $('#update_three_sixty_parameters').hide();
+            $('#delete_3D_image').hide();
+            $('#upload_images').show();
+            $('.three_sixty_previews').show();
+            $('.3d_image').hide();
+          }
+        })
+      }
+      
+    })
+    
+    
+    //image picker
+    <% unless @three_sixty_image.main_image_id.nil? %>
+      var selected_image = <%= @three_sixty_image.main_image_id %>;
+      $("#selectImage").find('option[value="'+ selected_image +'"]').prop('selected',true);
+    <% end %>
+    $("#selectImage").imagepicker();
+    // initial state of buttons on page
+    <% if @three_sixty_image.plane_images.empty? %>
+      $('#delete_3D_image').hide(); 
+      $('#three_sixty_parameters_form').hide();
+      $('.3d_image').hide();
+      $('#update_three_sixty_parameters').hide();
+    <% else %>
+      $('.three_sixty_previews').hide();
+      $('#upload_images').hide();
+    <% end %> 
+
+    <% unless @three_sixty_image.nil? %>
+      var images_names = "<%= @images_names %>";
+      images_names = images_names.split(',');
+      var rotation_speed = <%= @three_sixty_image.rotation_speed.to_f / 10 %>;
+      var duration = <%= @three_sixty_image.rotations_count.to_f / @three_sixty_image.rotation_speed.to_f * 10 %>;
+      var clockwise = <%= @three_sixty_image.clockwise.nil? ? false : @three_sixty_image.clockwise %>;
+      $('.reel').reel({
+        frames: <%= @three_sixty_image.plane_images.count %>,
+        speed: rotation_speed,
+        duration: duration,
+        path: "<%= @images_path %>/",
+        images: images_names,
+        cw: clockwise
+      });
+    $('#update_three_sixty_parameters').on('click', function(){
+      var rotation_speed, rotations_count, clockwise;
+      rotation_speed = $('#three_sixty_image_rotation_speed').val();
+      rotations_count = $('#three_sixty_image_rotations_count').val();
+      clockwise = $('#three_sixty_image_clockwise').prop('checked');  
+      $.ajax({
+        url: "<%= three_sixty_image_url(:three_sixty_image_id => @three_sixty_image.id, :protocol => 'https')%>",
+        method: "POST",
+        dataType: "json",
+        data: {
+          _method: "PATCH",
+          three_sixty_image: {
+            rotation_speed: rotation_speed,
+            rotations_count: rotations_count,
+            clockwise: clockwise 
+          }
+        },
+        success: function(three_sixty_image_info){
+          $('.reel').unreel();
+          var images_names = three_sixty_image_info["images_names"];
+          images_names = images_names.split(',');
+          var images_path = three_sixty_image_info["images_path"];
+          var frames = three_sixty_image_info["images_path"];
+          var duration = rotations_count / rotation_speed * 10;
+          $('.reel').reel({
+            frames: images_names.count,
+            speed: rotation_speed / 10,
+            cw: clockwise,
+            duration: duration,
+            path: images_path + "/",
+            images: images_names
+          });  
+
+        }
+      });
+    });  
+    <% end %>
+  });
+</script>
+
 <div class="container">
   <%= render 'form' %>    
+
+  <div class="variant-images-container">
+    <div class="row">
+      <div class="col-md-12">
+        <h2>Upload product variant images</h2>
+        <div class="dropzone-previews dropzone">
+          <div class="dz-default dz-message"><span>Drop files here to upload</span>
+          </div>
+        </div>
+      </div>
+    </div><br>
+  </div>
   
   <div class="three-sixty-images-container">
     <div class="row">
@@ -174,5 +282,8 @@ $(document).ready(function(){
   <form id="three-sixty-form" action="" method="post" name="three-sixty-form">
     <input id="three_sixty_pictures" style="display:none;" name="three_sixty_pictures" type="file">
   </form>
+  <form id="product-variant-images" action="" method="post" name="product-images">
+    <input id="image" style="display:none;" name="image" type="file">
+  </form> 
 </div>
 

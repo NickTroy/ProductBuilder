@@ -55,8 +55,12 @@ json.main_variant do
       end
     end
   end
-  json.variant_images @main_variant.variant_images.each do |variant_image|
-    json.image_source asset_url(variant_image.image.url)
+  if @main_variant.three_sixty_image.nil?
+    json.variant_images []
+  else
+    json.variant_images @main_variant.three_sixty_image.variant_images.each do |variant_image|
+      json.image_source asset_url(variant_image.image.url)
+    end
   end
 end
 

@@ -1,94 +1,3 @@
-
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/image-picker/0.2.4/image-picker.min.js"></script>
-<link href='https://cdnjs.cloudflare.com/ajax/libs/image-picker/0.2.4/image-picker.min.css' rel='stylesheet' type='text/css'>
-<style>
-  .reel img {
-    width: 400px !important;
-    height: auto !important;
-
-  }
-  #three_sixty_image-reel {
-    width: 575px !important;
-    height: auto !important;
-    text-align: center;
-    margin: auto auto;
-  }
-  .image_picker_image {
-    height: 200px;
-  }
-</style>
-<script type="text/javascript">
-$(document).ready(function(){
-  Dropzone.autoDiscover = false;
-  $("#product-variant-images").dropzone({
-    url: "<%= product_variant_variant_images_url(:protocol => 'https', :variant_id => @variant.id) %>",
-    // restrict image size to a maximum 1MB
-    maxFilesize: 1,
-    // changed the passed param to one accepted by
-    // our rails app
-    paramName: "image",
-    previewsContainer: '.dropzone-previews',
-    clickable: '.dropzone-previews',
-    // show remove links on each image upload
-    addRemoveLinks: true,
-    success: function(file, response){
-      // find the remove button link of the uploaded file and give it an id
-      // based of the fileID response from the server
-      $('.dropzone-previews').find('.dz-remove:last').attr('id', response.imageID);
-      // add the dz-success class (the green tick sign)
-      $('.dropzone-previews').addClass("dz-success");
-	    
-      $('.dz-remove:last').click(function(){
-        var id = $(this).attr('id'); 
-        // make a DELETE ajax request to delete the file
-        $.ajax({
-          type: 'POST',
-          data: { _method: 'DELETE' },
-          url: '<%= product_variant_variant_images_url(:variant_id => @variant.id, :protocol => 'https') %>/' + id,
-          success: function(data){
-            console.log(data.message);
-          }
-        });
-        $('#selectImage option[value="'+ id +'"]').remove();
-        $('#selectImage').imagePicker();
-      })		
-    },
-    //when the remove button is clicked
-    init: function(){
-      var existingFiles = [];
-        <% @variant_images.each_with_index do |image, index| %>
-          existingFiles.push({ id: "<%= image.id %>"});
-          this.emit("addedfile", existingFiles[<%= index %>]);
-          this.emit("thumbnail", existingFiles[<%= index %>], "<%= image.image.url %>");
-          $('.dropzone-previews').find('.dz-remove:last').attr('id', <%= image.id %>);
-        <% end %>
-      
-      this.on("removedfile", function(file){
-		      
-      })
-    }
-		
-  });	
-	
-  $('.dz-remove').click(function(){
-    var id = $(this).attr('id'); 
-    // make a DELETE ajax request to delete the file
-    $.ajax({
-      type: 'POST',
-      data: { _method: 'DELETE' },
-      url: '<%= product_variant_variant_images_url(:variant_id => @variant.id, :protocol => 'https') %>/' + id,
-      success: function(data){
-        console.log(data.message);
-      }
-    });
-    $('#selectImage option[value="'+ id +'"]').remove();
-    $('#selectImage').imagepicker();
-
-  })
-
-});
-  
-</script>
 <script type="text/javascript">
 
 $(document).ready(function(){
@@ -133,12 +42,7 @@ $(document).ready(function(){
       })  
     }
   });
-  
-  <% unless @variant.main_image_id.nil? %>
-    var selected_image = <%= @variant.main_image_id %>;
-    $("#selectImage").find('option[value="'+ selected_image +'"]').prop('selected',true);
-  <% end %>
-  $("#selectImage").imagepicker();
+
 
   <% unless @plane_images.nil? %>
     var images_names = "<%= @images_names %>";
@@ -204,27 +108,7 @@ $(document).ready(function(){
       </div>
       
     </div>  
-    <h2>
-      Select main variant image
-    </h2>
-    <select class="image-picker show-html" id="selectImage" name="image_id">
-      
-      <% @variant_images.each_with_index do |img, i| %>
-        <option data-img-src="<%= img.image.url(:medium) %>" value="<%= img.id %>"></option>
-      <% end %>
-    </select>
-
-    <div class="variant-images-container">
-      <div class="row">
-        <div class="col-md-12">
-          <h2>Upload product variant images</h2>
-          <div class="dropzone-previews dropzone">
-            <div class="dz-default dz-message"><span>Drop files here to upload</span>
-            </div>
-          </div>
-        </div>
-      </div><br>
-    </div>
+    
 
     <div class="three-sixty-images-container">
       <div class="row three_sixty_image_assignment">
@@ -267,7 +151,5 @@ $(document).ready(function(){
       </div>     
     </div>
 <% end %>    
-  <form id="product-variant-images" action="" method="post" name="product-images">
-    <input id="image" style="display:none;" name="image" type="file">
-  </form> 
+  
 </div>

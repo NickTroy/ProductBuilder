@@ -3,9 +3,7 @@ Rails.application.routes.draw do
 
   resources :products do
     get 'page/:page', :action => :index, :on => :collection
-    resources :variants do
-      resources :variant_images
-    end
+    resources :variants
     
     post '/multiple_three_sixty_image_assignment', to: 'variants#multiple_three_sixty_image_assignment'
    
@@ -19,6 +17,7 @@ Rails.application.routes.draw do
   end
   
   resources :three_sixty_images do
+    resources :variant_images
     post '/upload_plane_images', to: 'three_sixty_images#upload_plane_images'
     post '/assign_to_variant', to: 'three_sixty_images#assign_to_variant'
     delete '/delete_plane_images', to: 'three_sixty_images#delete_plane_images'

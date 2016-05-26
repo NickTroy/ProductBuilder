@@ -8,6 +8,7 @@ class ThreeSixtyImagesController < AuthenticatedController
   def edit
     @three_sixty_image = ThreeSixtyImage.find(params[:id])
     @plane_images = @three_sixty_image.plane_images
+    @variant_images = @three_sixty_image.variant_images
     unless @three_sixty_image.nil?
       unless @three_sixty_image.plane_images.empty?      
         @first_plane_image = @three_sixty_image.plane_images.first.image.url
@@ -45,6 +46,13 @@ class ThreeSixtyImagesController < AuthenticatedController
       return true
     end
     @three_sixty_image = ThreeSixtyImage.find(params[:id])
+
+    unless params[:image_id].nil? 
+      @image_selected = VariantImage.find(params[:image_id])
+      @three_sixty_image.main_image_id = params[:image_id]
+      @three_sixty_image.save
+    end
+
     respond_to do |format|
       format.html do
         if @three_sixty_image.update_attributes(three_sixty_image_params)

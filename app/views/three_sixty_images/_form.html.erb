@@ -28,6 +28,7 @@
           <input id="update_three_sixty_parameters" class="btn btn-info" type="button" value="Update 3D image parameters">
         </div>
       <% end %>
+        
     </div><br>
     
     <div class="row">
@@ -35,7 +36,17 @@
         <%= f.submit "Save", :class => "btn btn-success" %>
       </div>
     </div>
-    
+    <% if params[:action] == "edit" %>     
+      
+      <h2>
+        Select main variant image 
+      </h2>
+      <select class="image-picker show-html" id="selectImage" name="image_id">
+        <% @variant_images.each_with_index do |img, i| %>
+          <option data-img-src="<%= img.image.url(:medium) %>" value="<%= img.id %>"></option>
+        <% end %>
+      </select>
+    <% end %>  
   <% end %>
   
   

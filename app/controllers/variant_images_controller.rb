@@ -2,8 +2,8 @@ class VariantImagesController < AuthenticatedController
   skip_before_action :verify_authenticity_token
     
   def create
-    @variant = Variant.find(params[:variant_id])
-    @image = VariantImage.new(:image => params[:image], :variant_id => @variant.id)
+    @three_sixty_image = ThreeSixtyImage.find(params[:three_sixty_image_id])
+    @image = VariantImage.new(:image => params[:image], :three_sixty_image_id => @three_sixty_image.id)
     if @image.save
       render json: { message: "success", imageID: @image.id }, :status => 200 
     end

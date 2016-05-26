@@ -1,7 +1,7 @@
 class VariantImage < ActiveRecord::Base
   require 'open-uri'
   
-  belongs_to :variant
+  belongs_to :three_sixty_image
   before_destroy :update_main_image_id
   after_destroy :update_main_product_image
   has_attached_file :image, :styles => { :medium => "300x300>",:thumb => "100x100>" }
@@ -19,31 +19,34 @@ class VariantImage < ActiveRecord::Base
   private
   
   def update_main_image_id
-    if self.id == self.variant.main_image_id
-      if self.variant.variant_images.count == 1
-        self.variant.update_attributes(main_image_id: nil)
+    if self.id == self.three_sixty_image.main_image_id
+      if self.three_sixty_image.variant_images.count == 1
+        self.three_sixty_image.update_attributes(main_image_id: nil)
       else
         @images_ids = []
-        self.variant.variant_images.each do |img|
+        self.three_sixty_image.variant_images.each do |img|
           @images_ids.push img.id
         end
         @images_ids.delete(self.id)
-        self.variant.update_attributes(main_image_id: @images_ids.first)
+        self.three_sixty_image.update_attributes(main_image_id: @images_ids.first)
       end
     end
   end
 
   def update_main_product_image
-    if self.variant.three_sixty_image.nil?
+    if self.three_sixty_image.plane_images.empty?
       #@product_variants = Variant.where(:product_id => self.variant.product_id)
-      if self.variant.main_variant
-        update_product_image(self.variant.main_image_id)
+      self.three_sixty_image.variants.each do |variant|
+        if variant.main_variant
+          update_product_image(self.three_sixty_image.main_image_id, variant.id)
+        end
       end
     end
   end
   
-  def update_product_image main_image_id
-    @product = ShopifyAPI::Product.find(self.variant.product_id)
+  def update_product_image main_image_id, variant_id
+    @variant = Variant.find(variant_id)
+    @product = ShopifyAPI::Product.find(@variant.product_id)
     unless main_image_id.nil? or main_image_id == ""
       @main_variant_image = VariantImage.find(main_image_id)
       @shopify_product_image = @product.images.first

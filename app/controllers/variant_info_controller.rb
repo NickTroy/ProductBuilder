@@ -32,7 +32,8 @@ class VariantInfoController < ApplicationController
       main_variant = Variant.find_by(product_id: @variant.product_id, main_variant: true) || Variant.where(product_id: @variant.product_id).first
       @three_sixty_image = main_variant.three_sixty_image
     end
-    @variant_images = @variant.variant_images
+    @variant_images = []
+    @variant_images = @three_sixty_image.variant_images unless @three_sixty_image.nil?
     respond_to do |format|
       format.json
     end

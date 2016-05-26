@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160513125034) do
+ActiveRecord::Schema.define(version: 20160526114333) do
 
   create_table "images_variants", force: :cascade do |t|
     t.integer  "image_id",   limit: 4
@@ -124,18 +124,21 @@ ActiveRecord::Schema.define(version: 20160513125034) do
     t.string   "rotations_count", limit: 255
     t.boolean  "clockwise"
     t.string   "title",           limit: 255
+    t.integer  "main_image_id",   limit: 4
   end
 
   create_table "variant_images", force: :cascade do |t|
-    t.integer  "variant_id",         limit: 4
-    t.datetime "created_at",                     null: false
-    t.datetime "updated_at",                     null: false
-    t.string   "image_file_name",    limit: 255
-    t.string   "image_content_type", limit: 255
-    t.integer  "image_file_size",    limit: 4
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+    t.string   "image_file_name",      limit: 255
+    t.string   "image_content_type",   limit: 255
+    t.integer  "image_file_size",      limit: 4
     t.datetime "image_updated_at"
+    t.integer  "three_sixty_image_id", limit: 4
+    t.integer  "variant_id",           limit: 4
   end
 
+  add_index "variant_images", ["three_sixty_image_id"], name: "index_variant_images_on_three_sixty_image_id", using: :btree
   add_index "variant_images", ["variant_id"], name: "index_variant_images_on_variant_id", using: :btree
 
   create_table "variants", force: :cascade do |t|
@@ -147,13 +150,13 @@ ActiveRecord::Schema.define(version: 20160513125034) do
     t.integer  "product_image_id",          limit: 4
     t.integer  "pseudo_product_id",         limit: 8
     t.integer  "pseudo_product_variant_id", limit: 8
-    t.integer  "main_image_id",             limit: 4
     t.text     "product_details",           limit: 65535
     t.string   "length",                    limit: 255
     t.string   "height",                    limit: 255
     t.string   "depth",                     limit: 255
     t.boolean  "main_variant"
     t.integer  "three_sixty_image_id",      limit: 4
+    t.integer  "main_image_id",             limit: 4
   end
 
   add_index "variants", ["product_image_id"], name: "index_variants_on_product_image_id", using: :btree
@@ -175,6 +178,7 @@ ActiveRecord::Schema.define(version: 20160513125034) do
   add_foreign_key "options", "option_groups"
   add_foreign_key "plane_images", "three_sixty_images"
   add_foreign_key "products_options", "options"
+  add_foreign_key "variant_images", "three_sixty_images"
   add_foreign_key "variant_images", "variants"
   add_foreign_key "variants", "product_images"
   add_foreign_key "variants", "three_sixty_images"

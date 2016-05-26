@@ -1041,7 +1041,7 @@ $(document).ready(function(){
         <div class="variant-info row">
           <div class="col-md-1">
             <input type="checkbox" class="select_for_action" data-variant-id="<%= variant.id %>">
-            <%= variant.main_image_id.nil? ? "" : image_tag(VariantImage.find(variant.main_image_id).image.url(:thumb), style: "height:30px;") %>
+            
           </div>
           <div class="col-md-4 options_and_values">
             <% variant.option_values.each do |opt_val| %>
