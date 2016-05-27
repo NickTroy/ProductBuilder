@@ -106,7 +106,7 @@ class ThreeSixtyImagesController < AuthenticatedController
       end
       #@images_names = @images_names.join(',')
     end
-    
+    @variant_images = @three_sixty_image.variant_images
   end 
 
   def destroy
@@ -184,6 +184,7 @@ class ThreeSixtyImagesController < AuthenticatedController
         @three_sixty_image.plane_images.each do |plane_image|
           @images_names.push(plane_image.image.original_filename)
         end
+        @variant_images = @three_sixty_image.variant_images
         render 'show'
       end
     end

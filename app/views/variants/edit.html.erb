@@ -38,6 +38,14 @@ $(document).ready(function(){
             path: images_path + "/",
             images: images_names
           });
+          $('.variant_images_gallery').empty();
+          var variant_images = three_sixty_image_info.variant_images;
+          if (variant_images.length != 0) {
+            for (var image_index in variant_images) {
+              var image_url = variant_images[image_index]["image_url"];
+              $('<div class="col-md-4"><img src="' + image_url +'" style="width:100%;"></div>').appendTo('.variant_images_gallery');
+            }
+          }
         }
       })  
     }
@@ -137,7 +145,14 @@ $(document).ready(function(){
           <div class="3d_image">
             <img src="<%= @first_plane_image %>" width="400" height="auto" class="reel" id="three_sixty_image">
           </div>
+        </div>
       </div>
+      <div class="variant_images_gallery row">
+        <% @variant_images.each do |variant_image| %>
+        <div class="col-md-4">
+          <%= image_tag asset_url(variant_image.image.url), :style => "width:100%" %>
+        </div>
+        <% end %>
       </div>
     </div>
 

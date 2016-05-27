@@ -19,6 +19,7 @@ class VariantsController < AuthenticatedController
       @three_sixty_image_url = ""
       @three_sixty_images = ThreeSixtyImage.order('title ASC')
       @three_sixty_image = @variant.three_sixty_image
+      @variant_images = @three_sixty_image.variant_images
       unless @three_sixty_image.nil?
         @plane_images = @three_sixty_image.plane_images
         unless @plane_images.empty?      
