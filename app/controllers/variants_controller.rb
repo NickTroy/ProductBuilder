@@ -16,7 +16,6 @@ class VariantsController < AuthenticatedController
       recreate_pseudo_product
     ensure
       @shopify_variant = ShopifyAPI::Variant.find(@variant.pseudo_product_variant_id) if @shopify_variant.nil?
-      @variant_images = @variant.variant_images
       @three_sixty_image_url = ""
       @three_sixty_images = ThreeSixtyImage.order('title ASC')
       @three_sixty_image = @variant.three_sixty_image

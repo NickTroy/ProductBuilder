@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160526114333) do
+ActiveRecord::Schema.define(version: 20160527093619) do
 
   create_table "images_variants", force: :cascade do |t|
     t.integer  "image_id",   limit: 4
@@ -135,11 +135,9 @@ ActiveRecord::Schema.define(version: 20160526114333) do
     t.integer  "image_file_size",      limit: 4
     t.datetime "image_updated_at"
     t.integer  "three_sixty_image_id", limit: 4
-    t.integer  "variant_id",           limit: 4
   end
 
   add_index "variant_images", ["three_sixty_image_id"], name: "index_variant_images_on_three_sixty_image_id", using: :btree
-  add_index "variant_images", ["variant_id"], name: "index_variant_images_on_variant_id", using: :btree
 
   create_table "variants", force: :cascade do |t|
     t.integer  "product_id",                limit: 8
@@ -156,7 +154,6 @@ ActiveRecord::Schema.define(version: 20160526114333) do
     t.string   "depth",                     limit: 255
     t.boolean  "main_variant"
     t.integer  "three_sixty_image_id",      limit: 4
-    t.integer  "main_image_id",             limit: 4
   end
 
   add_index "variants", ["product_image_id"], name: "index_variants_on_product_image_id", using: :btree
@@ -179,7 +176,6 @@ ActiveRecord::Schema.define(version: 20160526114333) do
   add_foreign_key "plane_images", "three_sixty_images"
   add_foreign_key "products_options", "options"
   add_foreign_key "variant_images", "three_sixty_images"
-  add_foreign_key "variant_images", "variants"
   add_foreign_key "variants", "product_images"
   add_foreign_key "variants", "three_sixty_images"
   add_foreign_key "variants_option_values", "option_values"

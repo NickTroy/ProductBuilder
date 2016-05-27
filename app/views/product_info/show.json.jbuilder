@@ -44,6 +44,8 @@ json.main_variant do
   end
   if @main_variant.three_sixty_image.nil?
     json.three_sixty_image ''
+  elsif @main_variant.three_sixty_image.plane_images.empty?
+    json.three_sixty_image ''
   else
     json.three_sixty_image do
       json.first_image asset_url(@main_variant.three_sixty_image.plane_images.first.image.url)

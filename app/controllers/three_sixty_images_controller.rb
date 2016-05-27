@@ -113,7 +113,7 @@ class ThreeSixtyImagesController < AuthenticatedController
     @three_sixty = ThreeSixtyImage.find(params[:id])
     @three_sixty.variants.each do |variant|
       @product = ShopifyAPI::Product.find(variant.product_id)
-      @main_variant_image = VariantImage.find(variant.main_image_id) unless variant.main_image_id.nil?
+      @main_variant_image = VariantImage.find(@three_sixty.main_image_id) unless @three_sixty.main_image_id.nil?
       @shopify_product_image = @product.images.first
       unless @shopify_product_image.nil?
         @shopify_product_image.destroy
