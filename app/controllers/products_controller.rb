@@ -213,7 +213,6 @@ class ProductsController < AuthenticatedController
         @product.save
       end
       @product_info = ProductInfo.create(:main_product_id => @product.id, :handle => @product.handle)
-      
       1.upto(@number_of_variants) do |i|
         variant_updating = true
         @variant_row = @import_file.sheet(index).row(5 + i)
@@ -351,8 +350,10 @@ class ProductsController < AuthenticatedController
           variant_row[price_column] = variant.price
         end
         images_links = []
-        variant.three_sixty_image.variant_images.each do |variant_image|
-          images_links.push URI.join(request.url, variant_image.image.url).to_s
+        unless variant.three_sixty_image.nil?
+          variant.three_sixty_image.variant_images.each do |variant_image|
+            images_links.push URI.join(request.url, variant_image.image.url).to_s
+          end
         end
         variant_row[variant_images_column] = images_links.join(',')
       end
