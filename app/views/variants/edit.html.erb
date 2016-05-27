@@ -121,9 +121,9 @@ $(document).ready(function(){
     <div class="three-sixty-images-container">
       <div class="row three_sixty_image_assignment">
         <div class="col-md-6">
-          <label>Assign 3D image</label>
+          <label>Assign Image Set</label>
           <select class="form-control select_three_sixty_image">
-            <option value="0">-Select 3D image-</option>
+            <option value="0">-Select Image Set-</option>
             <% @three_sixty_images.each do |three_sixty_image| %>
               <option value="<%= three_sixty_image.id %>">
                 <span class="three_sixty_title">
@@ -136,7 +136,7 @@ $(document).ready(function(){
         <div class="col-md-6">
           <br>
           <button class="btn btn-info assign_three_sixty_image">
-            Confirm 3D Image Assignment
+            Confirm Image Set Assignment
           </button>
         </div>
       </div>

@@ -172,7 +172,7 @@
       <li><a href="#tabs-1">All Products</a></li>
       <li><a href="#tabs-2">360° Viewer Settings</a></li>
       <li><a href="#tabs-3">Image Scaling Settings</a></li>
-      <li><a href="#tabs-4">Three Sixty Images Listing</a></li>
+      <li><a href="#tabs-4">Images Sets Listing</a></li>
     </ul>
     <div id="tabs-1" class="products_listing">      
       <h3>All Products</h3>
@@ -313,9 +313,9 @@
     </div>
     
     <div id="tabs-4" class="three_sixty_images_listing">      
-      <h3>All 3D images</h3>
+      <h3>All Images Sets</h3>
         <div class="row">
-          <div class="col-md-2 col-lg-2"><strong>Three Sixty Image Title</strong></div>
+          <div class="col-md-2 col-lg-2"><strong>Image Set Title</strong></div>
           
           <div class="col-md-1 col-lg-1 text-center"><strong>Delete?</strong></div>
           
@@ -334,7 +334,7 @@
             </div>
           </div>
       <% end %>
-      <%= link_to "Create New 3D Image", new_three_sixty_image_url(:protocol => 'https') , :class => "btn btn-info" %> 
+      <%= link_to "Create New Image Set", new_three_sixty_image_url(:protocol => 'https') , :class => "btn btn-info" %> 
     </div>
 
   </div>

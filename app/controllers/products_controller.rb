@@ -253,7 +253,7 @@ class ProductsController < AuthenticatedController
           unless variant_images_links.nil?
             @three_sixty_image = @variant.three_sixty_image
             if @three_sixty_image.nil?
-              @three_sixty_image = ThreeSixtyImage.create(:title => @product.title)
+              @three_sixty_image = ThreeSixtyImage.create(:title => @pseudo_product_title)
             end
             
             @three_sixty_image.variants << @variant

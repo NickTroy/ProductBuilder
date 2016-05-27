@@ -972,13 +972,13 @@ $(document).ready(function(){
       <div class="assign_3d_image_form">
         <div class="col-md-4 text-center">
           <br>
-          <span>Assign 3D image to selected variants</span>
+          <span>Assign image set to selected variants</span>
         </div>
         
         <div class="col-md-4">
           <br>
           <select class="form-control select_3d_image">
-            <option value="0">-Select 3D image-</option>
+            <option value="0">-Select Image Set-</option>
             <% @three_sixty_images.each do |three_sixty_image| %>
             <option value="<%= three_sixty_image.id %>">
               <span><%= three_sixty_image.title %></span>
