@@ -201,33 +201,37 @@ class ProductsController < AuthenticatedController
         end
       end
       
-      @product = ShopifyAPI::Product.new({
-        :title => @product_title,
-        :body_html => @product_details,
-        :vendor => @product_vendor
-      })
+      @product = ShopifyAPI::SmartCollection.where(title:"Product_builder_products")[0].products.find { |product| product.title == @product_title }
+      if @product.nil?
+        @product = ShopifyAPI::Product.new({
+          :title => @product_title,
+          :body_html => @product_details,
+          :vendor => @product_vendor
+        })
       
-      @product.attributes[:tags] = "product" unless @product.attributes[:tags] == "product"
-      @product.save
-      
+        @product.attributes[:tags] = "product" unless @product.attributes[:tags] == "product"
+        @product.save
+      end
       @product_info = ProductInfo.create(:main_product_id => @product.id, :handle => @product.handle)
       
       1.upto(@number_of_variants) do |i|
+        variant_updating = true
         @variant_row = @import_file.sheet(index).row(5 + i)
-        @variant = Variant.new(:product_id => @product.id)
-        @pseudo_product_title = ""
-        @first_option_column.upto(@first_option_column + @options_count - 1) do |j|
-          @option_name = @options_row[j]
-          @option = Option.where(name: @option_name)[0] || Option.create(name: @option_name)
-          if @option.products_options.where(:product_id => @product.id).empty?
-            @option.products_options.create(:product_id => @product.id)
+        @variant = Variant.where(:product_id => @product.id, :sku => @variant_row[@sku_column])[0]
+        if @variant.nil?
+          variant_updating = false
+          @variant = Variant.new(:product_id => @product.id) 
+          @pseudo_product_title = ""
+          @first_option_column.upto(@first_option_column + @options_count - 1) do |j|
+            @option_name = @options_row[j]
+            @option = Option.where(name: @option_name)[0] || Option.create(name: @option_name)
+            if @option.products_options.where(:product_id => @product.id).empty?
+              @option.products_options.create(:product_id => @product.id)
+            end
+            @option_value = @option.option_values.where(:value => @variant_row[j].capitalize)[0] || OptionValue.create(:option_id => @option.id, :value => @variant_row[j].capitalize)
+            @variant.option_values << @option_value
           end
-          @option_value = @option.option_values.where(:value => @variant_row[j].capitalize)[0] || OptionValue.create(:option_id => @option.id, :value => @variant_row[j].capitalize)
-          @variant.option_values << @option_value
-          #@pseudo_product_title += " #{@option.name} : #{@option_value.value}"
-    
         end
-        
         @pseudo_product_title = "#{@product.title} "
         @color_option_value = @variant.option_values.find { |opt_val| opt_val.option.name == "Color"}
         @pseudo_product_title += @color_option_value.nil? ? "(" : "(#{@color_option_value.value} " 
@@ -245,11 +249,17 @@ class ProductsController < AuthenticatedController
         @variant.depth = @variant_row[@depth_column].to_s unless @variant_row[@depth_column].nil?
         @variant.price = @variant_row[@price_column].to_s unless @variant_row[@price_column].nil?
         @variant.save
-        unless @variant_images_column.nil? 
+        unless @variant_images_column.nil? or variant_updating
           variant_images_links = @variant_row[@variant_images_column].split(',') unless @variant_row[@variant_images_column].nil?
           unless variant_images_links.nil?
+            @three_sixty_image = @variant.three_sixty_image
+            if @three_sixty_image.nil?
+              @three_sixty_image = ThreeSixtyImage.create(:title => @product.title)
+            end
+            
+            @three_sixty_image.variants << @variant
             variant_images_links.each do |image_link|
-              @variant_image = VariantImage.new(:variant_id => @variant.id)
+              @variant_image = VariantImage.new(:three_sixty_image_id => @three_sixty_image.id)
               @variant_image.image_from_url(image_link)
               @variant_image.save
             end
@@ -263,7 +273,6 @@ class ProductsController < AuthenticatedController
         @pseudo_product_variant.update_attributes(:option1 => @pseudo_product_title, :price => @variant.price, :sku => @variant.sku)
         @variant.update_attributes(:pseudo_product_id => @pseudo_product.id, 
                                  :pseudo_product_variant_id => @pseudo_product_variant.id)
-        #@pseudo_product.add_metafield(ShopifyAPI::Metafield.new(:namespace => "variant", :key => "variant_id", :value => "#{@variant.id}", :value_type => "integer"))
       end
     end
     @import_file.close
@@ -342,7 +351,7 @@ class ProductsController < AuthenticatedController
           variant_row[price_column] = variant.price
         end
         images_links = []
-        variant.variant_images.each do |variant_image|
+        variant.three_sixty_image.variant_images.each do |variant_image|
           images_links.push URI.join(request.url, variant_image.image.url).to_s
         end
         variant_row[variant_images_column] = images_links.join(',')

@@ -19,9 +19,10 @@ class VariantsController < AuthenticatedController
       @three_sixty_image_url = ""
       @three_sixty_images = ThreeSixtyImage.order('title ASC')
       @three_sixty_image = @variant.three_sixty_image
-      @variant_images = @three_sixty_image.variant_images
+      @variant_images = []
       unless @three_sixty_image.nil?
         @plane_images = @three_sixty_image.plane_images
+        @variant_images = @three_sixty_image.variant_images || []
         unless @plane_images.empty?      
           @first_plane_image = @plane_images.first.image.url
           @three_sixty_image_url = URI.join(request.url, @first_plane_image).to_s
