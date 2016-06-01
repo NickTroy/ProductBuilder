@@ -8,6 +8,9 @@
   .product_types_table .row {
     margin-bottom: 15px;
   }  
+  .three_sixty_images_listing .row {
+    margin-bottom:  20px; 
+  }
 </style>
 <script type="text/javascript">
   $(document).ready(function(){
@@ -315,19 +318,19 @@
     <div id="tabs-4" class="three_sixty_images_listing">      
       <h3>All Images Sets</h3>
         <div class="row">
-          <div class="col-md-2 col-lg-2"><strong>Image Set Title</strong></div>
+          <div class="col-md-4 col-lg-4"><strong>Image Set Title</strong></div>
           
-          <div class="col-md-1 col-lg-1 text-center"><strong>Delete?</strong></div>
+          <div class="col-md-4 col-lg-4 text-center"><strong>Delete?</strong></div>
           
         </div>
 
       <% @three_sixty_images.each do |three_sixty_image| %>
           <div class="row">
-            <div class="col-md-2 col-lg-2">
+            <div class="col-md-4 col-lg-4">
               <%= link_to three_sixty_image.title.nil? ? "placeholder" : three_sixty_image.title, edit_three_sixty_image_url(:protocol => 'https', :id => three_sixty_image.id) %>
             </div>
           
-            <div class="col-md-1 col-lg-1">
+            <div class="col-md-4 col-lg-4 text-center">
               <%= link_to 'Delete', three_sixty_image_url(three_sixty_image.id, :protocol => 'https'), 
                                     { :method => :delete, class: "btn btn-danger",
                                     data: { confirm: 'Are you sure, you want to delete this 3D image?' } } %>      
