@@ -18,15 +18,15 @@ elsif @three_sixty_image.plane_images.empty?
   json.three_sixty_image ''
 else
   json.three_sixty_image do
-    json.first_image asset_url(@three_sixty_image.plane_images.first.image.url)
+    json.first_image asset_url(@three_sixty_image.plane_images.first.image.url, :host => 'https://productbuilder.arborgentry.com')
     json.rotation_speed @three_sixty_image.rotation_speed
     json.rotations_count @three_sixty_image.rotations_count
     json.clockwise @three_sixty_image.clockwise
     json.plane_images_urls @three_sixty_image.plane_images.each do |plane_image|
-      json.plane_image_url asset_url(plane_image.image.url)
+      json.plane_image_url asset_url(plane_image.image.url, :host => 'https://productbuilder.arborgentry.com')
     end
   end
 end
 json.variant_images @variant_images.each do |variant_image|
-  json.image_source asset_url(variant_image.image.url)
+  json.image_source asset_url(variant_image.image.url, :host => 'https://productbuilder.arborgentry.com')
 end
