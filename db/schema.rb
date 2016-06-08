@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160527093619) do
+ActiveRecord::Schema.define(version: 20160608114153) do
 
   create_table "images_variants", force: :cascade do |t|
     t.integer  "image_id",   limit: 4
@@ -85,10 +85,12 @@ ActiveRecord::Schema.define(version: 20160527093619) do
   end
 
   create_table "product_infos", force: :cascade do |t|
-    t.string   "handle",          limit: 255
-    t.integer  "main_product_id", limit: 8
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
+    t.string   "handle",           limit: 255
+    t.integer  "main_product_id",  limit: 8
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+    t.text     "be_sure_to_note",  limit: 65535
+    t.text     "why_we_love_this", limit: 65535
   end
 
   create_table "products_options", force: :cascade do |t|

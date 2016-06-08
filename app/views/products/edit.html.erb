@@ -494,6 +494,11 @@ function add_make_main_variant_button_click(){
 
 $(document).ready(function(){
   
+  $('.product_type_select').change(function(){
+    var product_type = $(this).val();
+    $('.product_type').val(product_type);
+    alert($('.product_type').val());
+  })
   $('.search_label').click(function(){
     $('.glyphicon-menu-down').toggle();
     $('.glyphicon-menu-up').toggle();
@@ -771,19 +776,19 @@ $(document).ready(function(){
         <%= text_field_tag :title, @product.title, class: "form-control" %>
   
         <%= label_tag 'product[body_html]', "Product description:" %>
-        <%= text_area_tag :body_html, @product.body_html, class: "tinymce form-control" %>
+        <%= text_area_tag :body_html, @product.body_html, class: "tinymce form-control body_html" %>
         <script> 
           //<![CDATA[
           (function() {
             if (typeof tinyMCE != 'undefined') {
               tinyMCE.init({
-                selector: "textarea.tinymce",
+                selector: "textarea.tinymce.body_html",
                 statusbar: false,
                 menubar: false,
                 resize: false,
                 setup: function (editor) {
                   editor.on('change', function (e) {  
-                    enable_save();
+                    
                   });
                 },
                 theme: "modern",
@@ -852,10 +857,269 @@ $(document).ready(function(){
     </div>
     <hr>
     <div class="row">
+      <div class="col-md-6">
+        <%= label_tag 'product_info[why_we_love_this]', "Why We Love This:" %>  
+        <%= text_area_tag :why_we_love_this, @product_info.why_we_love_this , class: "form-control why_we_love_this tinymce" %>
+        <script> 
+          //<![CDATA[
+          (function() {
+            if (typeof tinyMCE != 'undefined') {
+              tinyMCE.init({
+                selector: "textarea.tinymce.why_we_love_this",
+                statusbar: false,
+                menubar: false,
+                resize: false,
+                setup: function (editor) {
+                  editor.on('change', function (e) {  
+                    
+                  });
+                },
+                theme: "modern",
+                fontsize_formats: "8pt 10pt 12pt 14pt 18pt 24pt 36pt",
+                font_formats: "Andale Mono=andale mono,times;"+
+                "Arial=arial,helvetica,sans-serif;"+
+                "Arial Black=arial black,avant garde;"+
+                "Book Antiqua=book antiqua,palatino;"+
+                "Comic Sans MS=comic sans ms,sans-serif;"+
+                "Courier New=courier new,courier;"+
+                "Georgia=georgia,palatino;"+
+                "Helvetica=helvetica;"+
+                "Impact=impact,chicago;"+
+                "Symbol=symbol;"+
+                "Tahoma=tahoma,arial,helvetica,sans-serif;"+
+                "Terminal=terminal,monaco;"+
+                "Times New Roman=times new roman,times;"+
+                "Trebuchet MS=trebuchet ms,geneva;"+
+                "Verdana=verdana,geneva;"+
+                "Webdings=webdings;"+
+                "Wingdings=wingdings,zapf dingbats; Open Sans='Open Sans', sans-serif;Playfair Display='Playfair Display', serif;",
+                toolbar: ["undo redo | removeformat bold italic underline | fontsizeselect | forecolor backcolor | fontselect | letterspacing | lineheight"],
+                plugins: "textcolor"
+              });
+            } else {
+            setTimeout(arguments.callee, 50);
+            }
+          })();
+          //]]>
+        </script>      
+      </div>
+      
+      <div class="col-md-6">
+        <%= label_tag 'product_info[be_sure_to_note]', "Be Sure To Note:" %>  
+        <%= text_area_tag :be_sure_to_note, @product_info.be_sure_to_note , class: "form-control be_sure_to_note tinymce" %>
+        <script> 
+          //<![CDATA[
+          (function() {
+            if (typeof tinyMCE != 'undefined') {
+              tinyMCE.init({
+                selector: "textarea.tinymce.be_sure_to_note",
+                statusbar: false,
+                menubar: false,
+                resize: false,
+                setup: function (editor) {
+                  editor.on('change', function (e) {  
+                    
+                  });
+                },
+                theme: "modern",
+                fontsize_formats: "8pt 10pt 12pt 14pt 18pt 24pt 36pt",
+                font_formats: "Andale Mono=andale mono,times;"+
+                "Arial=arial,helvetica,sans-serif;"+
+                "Arial Black=arial black,avant garde;"+
+                "Book Antiqua=book antiqua,palatino;"+
+                "Comic Sans MS=comic sans ms,sans-serif;"+
+                "Courier New=courier new,courier;"+
+                "Georgia=georgia,palatino;"+
+                "Helvetica=helvetica;"+
+                "Impact=impact,chicago;"+
+                "Symbol=symbol;"+
+                "Tahoma=tahoma,arial,helvetica,sans-serif;"+
+                "Terminal=terminal,monaco;"+
+                "Times New Roman=times new roman,times;"+
+                "Trebuchet MS=trebuchet ms,geneva;"+
+                "Verdana=verdana,geneva;"+
+                "Webdings=webdings;"+
+                "Wingdings=wingdings,zapf dingbats; Open Sans='Open Sans', sans-serif;Playfair Display='Playfair Display', serif;",
+                toolbar: ["undo redo | removeformat bold italic underline | fontsizeselect | forecolor backcolor | fontselect | letterspacing | lineheight"],
+                plugins: "textcolor"
+              });
+            } else {
+            setTimeout(arguments.callee, 50);
+            }
+          })();
+          //]]>
+        </script>      
+      </div>
+    </div>
+    <div class="row">
   
       <div class="col-md-3 form-group">
         <%= label_tag 'product[type]', "Product type:" %>
-        <%= text_field_tag :product_type, @product.product_type, class: "form-control" %>
+        <%= hidden_field_tag :product_type, @product.product_type, class: "form-control product_type" %>
+        <select class="form-control product_type_select">
+          <optgroup label="FURNITURE - SEATING">
+          <option value="SOFAS &amp; LOVESEATS">SOFAS &amp; LOVESEATS</option>
+          <option value="SECTIONALS">SECTIONALS</option>
+          <option value="SLEEPERS &amp; DAYBEDS">SLEEPERS &amp; DAYBEDS</option>
+          <option value="ACCENT CHAIRS">ACCENT CHAIRS</option>
+          <option value="DINING CHAIRS">DINING CHAIRS</option>
+          <option value="DESK CHAIRS">DESK CHAIRS</option>
+          <option value="CHAISES, SETTEES">CHAISES, SETTEES</option>
+          <option value="BENCHES, OTTOMANS &amp; POUFS">BENCHES, OTTOMANS &amp; POUFS</option>
+          <option value="BAR &amp; COUNTER">BAR &amp; COUNTER</option>
+          <option value="STOOLS">STOOLS</option></optgroup><optgroup label="FURNITURE - SHELVING &amp; CABINETS"><option value="ARMOIRES &amp; CABINETS">ARMOIRES &amp; CABINETS</option>
+          <option value="BAR STORAGE &amp; CARTS">BAR STORAGE &amp; CARTS</option>
+          <option value="SIDEBOARDS &amp; HUTCHES">SIDEBOARDS &amp; HUTCHES</option>
+          <option value="MEDIA CONSOLES">MEDIA CONSOLES</option>
+          <option value="SHELVES &amp; BOOKCASES">SHELVES &amp; BOOKCASES</option></optgroup><optgroup label="FURNITURE - TABLES"><option value="DINING TABLES">DINING TABLES</option>
+          <option value="BAR &amp; COUNTER TABLES">BAR &amp; COUNTER TABLES</option>
+          <option value="COCKTAIL &amp; COFFEE TABLES">COCKTAIL &amp; COFFEE TABLES</option>
+          <option value="CONSOLE TABLES">CONSOLE TABLES</option>
+          <option value="SIDE TABLES">SIDE TABLES</option>
+          <option value="TRUNKS">TRUNKS</option>
+          <option value="DESKS">DESKS</option></optgroup><optgroup label="FURNITURE - BEDROOM FURNITURE"><option value="BED FRAMES">BED FRAMES</option>
+          <option value="HEADBOARDS">HEADBOARDS</option>
+          <option value="MATTRESSES">MATTRESSES</option>
+          <option value="NIGHTSTANDS">NIGHTSTANDS</option>
+          <option value="DRESSERS">DRESSERS</option></optgroup><optgroup label="FURNITURE - BATH FURNITURE"><option value="ÉTAGÈRES &amp; CABINETS">ÉTAGÈRES &amp; CABINETS</option>
+          <option value="MIRRORS">MIRRORS</option>
+          <option value="VANITIES &amp; SINKS">VANITIES &amp; SINKS</option>
+          <option value="TUBS">TUBS</option></optgroup><optgroup label="FURNITURE - OFFICE FURNITURE"><option value="DESKS">DESKS</option>
+          <option value="CHAIRS">CHAIRS</option>
+          <option value="OFFICE STORAGE">OFFICE STORAGE</option></optgroup><optgroup label="FURNITURE - OUTDOOR FURNITURE"><option value="SOFAS &amp; LOVESEATS">SOFAS &amp; LOVESEATS</option>
+          <option value="SECTIONALS">SECTIONALS</option>
+          <option value="LOUNGERS">LOUNGERS</option>
+          <option value="ACCENT CHAIRS">ACCENT CHAIRS</option>
+          <option value="COFFEE TABLES">COFFEE TABLES</option>
+          <option value="DINING CHAIRS">DINING CHAIRS</option>
+          <option value="DINING &amp; BAR TABLES">DINING &amp; BAR TABLES</option>
+          <option value="STOOLS">STOOLS</option></optgroup><optgroup label="KITCHEN &amp; TABLETOP - APPLIANCES"><option value="REFRIGERATOR">REFRIGERATOR</option>
+          <option value="OVENS">OVENS</option>
+          <option value="COOKTOPS">COOKTOPS</option>
+          <option value="RANGES">RANGES</option>
+          <option value="DISHWASHERS">DISHWASHERS</option>
+          <option value="HOODS">HOODS</option>
+          <option value="FITTINGS">FITTINGS</option></optgroup><optgroup label="KITCHEN &amp; TABLETOP - ACCESSORIES"><option value="STEP STOOLS + LADDERS">STEP STOOLS + LADDERS</option>
+          <option value="KNOBS &amp; HANDLES">KNOBS &amp; HANDLES</option>
+          <option value="STORAGE">STORAGE</option>
+          <option value="TRASHCANS">TRASHCANS</option></optgroup><optgroup label="KITCHEN &amp; TABLETOP - COOKWARE, BAKEWARE &amp; TOOLS"><option value="CUTLERY &amp; PREP">CUTLERY &amp; PREP</option>
+          <option value="BAKEWARE">BAKEWARE</option>
+          <option value="POTS &amp; PANS">POTS &amp; PANS</option>
+          <option value="COOKING TOOLS">COOKING TOOLS</option>
+          <option value="CANISTERS &amp; JARS">CANISTERS &amp; JARS</option>
+          <option value="DISH TOWELS, APRONS &amp; MITTS">DISH TOWELS, APRONS &amp; MITTS</option>
+          <option value="GOURMET">GOURMET</option></optgroup><optgroup label="KITCHEN &amp; TABLETOP - TABLETOP"><option value="PLATES">PLATES</option>
+          <option value="BOWLS">BOWLS</option>
+          <option value="MUGS &amp; CUPS">MUGS &amp; CUPS</option>
+          <option value="STEMWARE">STEMWARE</option>
+          <option value="GLASSWARE">GLASSWARE</option>
+          <option value="FLATWARE">FLATWARE</option></optgroup><optgroup label="KITCHEN &amp; TABLETOP - SERVEWARE"><option value="PLATTERS &amp; TRAYS">PLATTERS &amp; TRAYS</option>
+          <option value="COFFEE &amp; TEA">COFFEE &amp; TEA</option>
+          <option value="SALT &amp; PEPPER">SALT &amp; PEPPER</option>
+          <option value="SERVING BOWLS">SERVING BOWLS</option>
+          <option value="SERVING UTENSILS">SERVING UTENSILS</option>
+          <option value="PITCHERS &amp; JUGS">PITCHERS &amp; JUGS</option>
+          <option value="CHEESE BOARDS">CHEESE BOARDS</option></optgroup><optgroup label="KITCHEN &amp; TABLETOP - ENTERTAINING"><option value="COCKTAIL PLATES">COCKTAIL PLATES</option>
+          <option value="COASTERS">COASTERS</option>
+          <option value="CHARGERS">CHARGERS</option>
+          <option value="SERVING TRAYS">SERVING TRAYS</option>
+          <option value="ACCESSORIES">ACCESSORIES</option></optgroup><optgroup label="KITCHEN &amp; TABLETOP - TABLE LINENS"><option value="NAPKINS">NAPKINS</option>
+          <option value="PLACEMATS">PLACEMATS</option>
+          <option value="TABLECLOTHS &amp; RUNNERS">TABLECLOTHS &amp; RUNNERS</option>
+          <option value="NAPKIN RINGS">NAPKIN RINGS</option></optgroup><optgroup label="KITCHEN &amp; TABLETOP - BARWARE"><option value="COCKTAIL GLASSES">COCKTAIL GLASSES</option>
+          <option value="PITCHERS &amp; DECANTERS">PITCHERS &amp; DECANTERS</option>
+          <option value="BAR ACCESSORIES">BAR ACCESSORIES</option></optgroup><optgroup label="BED &amp; BATH - BED LINENS"><option value="DUVET COVERS &amp; SHAMS">DUVET COVERS &amp; SHAMS</option>
+          <option value="SHEETING">SHEETING</option>
+          <option value="QUILTS &amp; COVERLETS">QUILTS &amp; COVERLETS</option></optgroup><optgroup label="BED &amp; BATH - BEDDING ACCESSORIES"><option value="THROWS &amp; BLANKETS">THROWS &amp; BLANKETS</option>
+          <option value="PILLOW INSERTS">PILLOW INSERTS</option>
+          <option value="DECORATIVE PILLOWS BATH LINENS">DECORATIVE PILLOWS BATH LINENS</option>
+          <option value="TOWELS">TOWELS</option>
+          <option value="BATH RUGS">BATH RUGS</option>
+          <option value="SHOWER CURTAINS">SHOWER CURTAINS</option></optgroup><optgroup label="BED &amp; BATH - BATH FITTINGS"><option value="WALL MOUNTED HARDWARE">WALL MOUNTED HARDWARE</option>
+          <option value="VANITIES &amp; WALL SHELVES">VANITIES &amp; WALL SHELVES</option>
+          <option value="KNOBS, HOOKS &amp; PULLS">KNOBS, HOOKS &amp; PULLS</option>
+          <option value="FAUCETS &amp; FITTINGS">FAUCETS &amp; FITTINGS</option></optgroup><optgroup label="BED &amp; BATH - BATH ACCESSORIES"><option value="COUNTERTOP ACCESSORIES">COUNTERTOP ACCESSORIES</option>
+          <option value="COUNTERTOP MIRRORS">COUNTERTOP MIRRORS</option>
+          <option value="BATH STORAGE">BATH STORAGE</option>
+          <option value="SHOWER BASKETS">SHOWER BASKETS</option>
+          <option value="SOAP &amp; LOTION COLLECTIONS">SOAP &amp; LOTION COLLECTIONS</option></optgroup><optgroup label="LIGHTING - CEILING"><option value="CHANDELIERS">CHANDELIERS</option>
+          <option value="PENDANTS">PENDANTS</option>
+          <option value="FLUSHMOUNTS">FLUSHMOUNTS</option>
+          <option value="CEILING FANS">CEILING FANS</option></optgroup><optgroup label="LIGHTING - LAMPS"><option value="FLOOR LAMPS">FLOOR LAMPS</option>
+          <option value="TABLE LAMPS">TABLE LAMPS</option></optgroup><optgroup label="LIGHTING - WALL"><option value="WALL SCONCES">WALL SCONCES</option>
+          <option value="BATH SCONCES">BATH SCONCES</option>
+          <option value="PICTURE LIGHTS">PICTURE LIGHTS</option></optgroup><optgroup label="LIGHTING - OUTDOOR"><option value="OUTDOOR PENDANTS">OUTDOOR PENDANTS</option>
+          <option value="OUTDOOR SCONCES">OUTDOOR SCONCES</option>
+          <option value="OUTDOOR FLUSHMOUNTS">OUTDOOR FLUSHMOUNTS</option>
+          <option value="STRING LIGHTS">STRING LIGHTS</option></optgroup><optgroup label="LIGHTING - LIGHTING ACCESSORIES"><option value="SHADES">SHADES</option>
+          <option value="LIGHTBULBS">LIGHTBULBS</option>
+          <option value="SWITCH PLATES">SWITCH PLATES</option>
+          <option value="LIT DÉCOR">LIT DÉCOR</option></optgroup><optgroup label="RUGS - RUGS BY STYLE"><option value="HIDES, SKINS &amp; LEATHER">HIDES, SKINS &amp; LEATHER</option>
+          <option value="NATURAL FIBER, SISAL &amp; TEXTURE">NATURAL FIBER, SISAL &amp; TEXTURE</option>
+          <option value="PATTERN">PATTERN</option>
+          <option value="SHAG">SHAG</option>
+          <option value="SOLIDS">SOLIDS</option>
+          <option value="SILK">SILK</option>
+          <option value="FLATWEAVE">FLATWEAVE</option>
+          <option value="ANTIQUE &amp; VINTAGE">ANTIQUE &amp; VINTAGE</option>
+          <option value="RUG ACCESSORIES">RUG ACCESSORIES</option></optgroup><optgroup label="DÉCOR - OBJECTS"><option value="BOOKENDS">BOOKENDS</option>
+          <option value="BOOKS">BOOKS</option>
+          <option value="CANDLES &amp; CANDLE HOLDERS">CANDLES &amp; CANDLE HOLDERS</option>
+          <option value="CLOCKS">CLOCKS</option>
+          <option value="FRAMES">FRAMES</option>
+          <option value="LETTERS &amp; NUMBERS">LETTERS &amp; NUMBERS</option>
+          <option value="OBJECTS">OBJECTS</option>
+          <option value="VASES">VASES</option>
+          <option value="VESSELS &amp; TRAYS">VESSELS &amp; TRAYS</option></optgroup><optgroup label="DÉCOR - MIRRORS"><option value="FLOOR MIRRORS">FLOOR MIRRORS</option>
+          <option value="WALL MIRRORS">WALL MIRRORS</option></optgroup><optgroup label="DÉCOR - WINDOWS"><option value="DRAPERY">DRAPERY</option>
+          <option value="SHADES">SHADES</option>
+          <option value="BLINDS">BLINDS</option>
+          <option value="HARDWARE">HARDWARE</option></optgroup><optgroup label="DÉCOR - OFFICE &amp; STORAGE"><option value="BASKETS &amp; TOTES">BASKETS &amp; TOTES</option>
+          <option value="SHELVING">SHELVING</option>
+          <option value="DESK ACCESSORIES">DESK ACCESSORIES</option>
+          <option value="BOXES">BOXES</option></optgroup><optgroup label="DÉCOR - WALL DÉCOR"><option value="ARTWORK">ARTWORK</option>
+          <option value="WALL CARVINGS/PLAQUES">WALL CARVINGS/PLAQUES</option>
+          <option value="DISPLAY SHELVES">DISPLAY SHELVES</option></optgroup><optgroup label="DÉCOR - HEARTH"><option value="SCREENS">SCREENS</option>
+          <option value="TOOLS &amp; ACCESSORIES">TOOLS &amp; ACCESSORIES</option></optgroup><optgroup label="DÉCOR - PILLOWS &amp; THROWS"><option value="PILLOWS">PILLOWS</option>
+          <option value="PILLOW INSERTS">PILLOW INSERTS</option>
+          <option value="THROWS">THROWS</option></optgroup><optgroup label="DÉCOR - SMALL FURNITURE"><option value="BAR CARTS">BAR CARTS</option>
+          <option value="COAT RACKS">COAT RACKS</option>
+          <option value="LUGGAGE RACKS">LUGGAGE RACKS</option>
+          <option value="LADDERS &amp; SCREENS">LADDERS &amp; SCREENS</option>
+          <option value="WALL SHELVING">WALL SHELVING</option></optgroup><optgroup label="DÉCOR - HARDWARE"><option value="DOORBELLS">DOORBELLS</option>
+          <option value="HINGES &amp; LATCHES">HINGES &amp; LATCHES</option>
+          <option value="HOOKS">HOOKS</option>
+          <option value="KNOBS">KNOBS</option>
+          <option value="KNOCKERS">KNOCKERS</option>
+          <option value="MAILBOXES">MAILBOXES</option>
+          <option value="NUMBERS">NUMBERS</option>
+          <option value="PULLS, HANDLES &amp; KNOBS">PULLS, HANDLES &amp; KNOBS</option>
+          <option value="REGISTER COVERS">REGISTER COVERS</option>
+          <option value="SWITCH PLATES">SWITCH PLATES</option></optgroup><optgroup label="DÉCOR - FABRIC BY THE YARD"><option value="FABRIC BY THE YARD">FABRIC BY THE YARD</option></optgroup><optgroup label="OUTDOOR - OUTDOOR FURNITURE"><option value="SOFAS &amp; LOVESEATS">SOFAS &amp; LOVESEATS</option>
+          <option value="SECTIONALS">SECTIONALS</option>
+          <option value="LOUNGERS">LOUNGERS</option>
+          <option value="ACCENT CHAIRS">ACCENT CHAIRS</option>
+          <option value="COFFEE TABLES">COFFEE TABLES</option>
+          <option value="DINING CHAIRS">DINING CHAIRS</option>
+          <option value="DINING &amp; BAR TABLES">DINING &amp; BAR TABLES</option>
+          <option value="STOOLS">STOOLS</option></optgroup><optgroup label="OUTDOOR - OUTDOOR DÉCOR"><option value="FOUNTAINS">FOUNTAINS</option>
+          <option value="GARDEN OBJECTS">GARDEN OBJECTS</option>
+          <option value="TOPIARIES">TOPIARIES</option>
+          <option value="URNS &amp; PEDESTALS">URNS &amp; PEDESTALS</option></optgroup><optgroup label="OUTDOOR - FIRE &amp; HEAT"><option value="FIREPLACE &amp; PITS">FIREPLACE &amp; PITS</option>
+          <option value="FIRE ACCESSORIES">FIRE ACCESSORIES</option>
+          <option value="OUTDOOR HEATERS">OUTDOOR HEATERS</option>
+          <option value="FIRE &amp; HEAT COVERS">FIRE &amp; HEAT COVERS</option>
+          <option value="GRILLS &amp; OVENS">GRILLS &amp; OVENS</option></optgroup><optgroup label="OUTDOOR - OUTDOOR LIGHTING"><option value="PENDANTS">PENDANTS</option>
+          <option value="SCONCES">SCONCES</option>
+          <option value="FLUSHMOUNTS">FLUSHMOUNTS</option>
+          <option value="STRING LIGHTS">STRING LIGHTS</option></optgroup><optgroup label="OUTDOOR - UMBRELLAS"><option value="UMBRELLAS">UMBRELLAS</option>
+          <option value="UMBRELLA STANDS">UMBRELLA STANDS</option>
+          <option value="UMBRELLA COVERS">UMBRELLA COVERS</option></optgroup><optgroup label="OUTDOOR - OUTDOOR ACCESSORIES"><option value="COVERS">COVERS</option>
+          <option value="CUSHIONS">CUSHIONS</option>
+          <option value="PILLOWS">PILLOWS</option>
+          <option value="PLANTERS">PLANTERS</option>
+          <option value="DOORMATS">DOORMATS</option></optgroup>
+        </select>
       </div>
   
       <div class="col-md-3 form-group">

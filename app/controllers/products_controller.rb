@@ -18,6 +18,7 @@ class ProductsController < AuthenticatedController
   
   def edit
     @product = ShopifyAPI::Product.find(params[:id])
+    @product_info = ProductInfo.find_by(main_product_id: @product.id) || ProductInfo.create(:main_product_id => @product.id)
     @images = ProductImage.where(product_id: @product.id)
     @three_sixty_images = ThreeSixtyImage.order('title ASC')
     @main_variant = Variant.where(:product_id => @product.id, :main_variant => true)[0]
@@ -114,6 +115,7 @@ class ProductsController < AuthenticatedController
     
     @product = ShopifyAPI::Product.find(params[:id])
     @product_info = ProductInfo.find_by(:main_product_id => @product.id) || ProductInfo.create(:main_product_id => @product.id)
+    @product_info.update_attributes(product_info_params)
     @collect = ShopifyAPI::Collect.new(:product_id => @product.id, :collection_id => params[:collection_id])
     @collect.save
     respond_to do |format|
@@ -380,6 +382,10 @@ class ProductsController < AuthenticatedController
       params.permit(:body_html, :handle, :options, 
                     :product_type, :published_scope, :tags,
                     :template_suffix, :title, :variants, :vendor)
+    end
+    
+    def product_info_params
+      params.permit(:why_we_love_this, :be_sure_to_note)
     end
 
 
