@@ -122,17 +122,17 @@ $(document).ready(function(){
       
       <div class="col-md-6 form-group">
         <%= f.label 'variant[length]', "Length" %>
-        <%= f.text_field :length, class: "form-control" %>
+        <%= f.number_field :length, class: "form-control", min: 0 %>
       </div>
       
       <div class="col-md-6 form-group">
         <%= f.label 'variant[height]', "Height" %>
-        <%= f.text_field :height, class: "form-control" %>
+        <%= f.number_field :height, class: "form-control", min: 0 %>
       </div>
       
       <div class="col-md-6 form-group">
         <%= f.label 'variant[depth]', "Depth" %>
-        <%= f.text_field :depth, class: "form-control" %>
+        <%= f.number_field :depth, class: "form-control", min: 0 %>
       </div>
       
       <div class="col-md-6 form-group">
