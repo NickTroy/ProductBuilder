@@ -1,6 +1,21 @@
 <script type="text/javascript">
 
 $(document).ready(function(){
+  
+  $('.room_select option:contains("<%= @variant.room %>")').prop("selected", true);
+  
+  $('.room_select').change(function(){
+    var room = $(this).val();
+    $('.room').val(room);
+  });
+  
+  $('.condition_select option:contains("<%= @variant.condition %>")').prop("selected", true);
+  
+  $('.condition_select').change(function(){
+    var condition = $(this).val();
+    $('.condition').val(condition);
+  });
+  
   <% if @shopify_variant.inventory_management.nil? %>
     $('.inventory_quantity').hide();
   <% end %>
@@ -77,6 +92,11 @@ $(document).ready(function(){
         <%= f.label 'variant[sku]', "SKU (Stock Keeping Unit)" %>
         <%= f.text_field :sku, class: "form-control" %>
       </div>
+      
+      <div class="col-md-6 form-group">
+        <%= f.label 'variant[vendor_sku]', "Vendor SKU" %>
+        <%= f.text_field :vendor_sku, class: "form-control" %>
+      </div>
 
       <div class="col-md-6 form-group">
         <%= f.label 'variant[price]', "Price" %>
@@ -115,6 +135,79 @@ $(document).ready(function(){
         <%= f.text_field :depth, class: "form-control" %>
       </div>
       
+      <div class="col-md-6 form-group">
+        <%= f.label 'variant[weight]', "Weight" %>
+        <%= f.number_field :weight, class: "form-control", min: 0 %>
+      </div>
+      
+      <div class="col-md-6 from-group">
+        <%= label_tag 'variant[room]', "Room" %>
+        <%= f.hidden_field :room, class: "form-control room" %>
+        <select class="form-control room_select">
+          <option value="Indoor">Indoor</option>
+          <option value="Outdoor">Outdoor</option>
+          <option value="Both">Both</option>
+        </select>
+      </div>
+      
+      <div class="col-md-6 from-group">
+        <%= label_tag 'variant[conditon]', "Condition" %>
+        <%= f.hidden_field :condition, class: "form-control condition" %>
+        <select class="form-control condition_select">
+          <option value="Available Now">Available Now</option>
+          <option value="Made-to-Order">Made-to-Order</option>
+          <option value="Vintage">Vintage</option>
+          <option value="Antique">Antique</option>
+          <option value="One of a Kind">One of a Kind</option>
+        </select>
+      </div>
+      
+      <div class="col-md-6">
+        <%= label_tag 'variant[care_instructions]', "Care Instructions:" %>  
+        <%= f.text_area :care_instructions, class: "form-control care_instructions tinymce" %>
+        <script> 
+          //<![CDATA[
+          (function() {
+            if (typeof tinyMCE != 'undefined') {
+              tinyMCE.init({
+                selector: "textarea.tinymce.care_instructions",
+                statusbar: false,
+                menubar: false,
+                resize: false,
+                setup: function (editor) {
+                  editor.on('change', function (e) {  
+                    
+                  });
+                },
+                theme: "modern",
+                fontsize_formats: "8pt 10pt 12pt 14pt 18pt 24pt 36pt",
+                font_formats: "Andale Mono=andale mono,times;"+
+                "Arial=arial,helvetica,sans-serif;"+
+                "Arial Black=arial black,avant garde;"+
+                "Book Antiqua=book antiqua,palatino;"+
+                "Comic Sans MS=comic sans ms,sans-serif;"+
+                "Courier New=courier new,courier;"+
+                "Georgia=georgia,palatino;"+
+                "Helvetica=helvetica;"+
+                "Impact=impact,chicago;"+
+                "Symbol=symbol;"+
+                "Tahoma=tahoma,arial,helvetica,sans-serif;"+
+                "Terminal=terminal,monaco;"+
+                "Times New Roman=times new roman,times;"+
+                "Trebuchet MS=trebuchet ms,geneva;"+
+                "Verdana=verdana,geneva;"+
+                "Webdings=webdings;"+
+                "Wingdings=wingdings,zapf dingbats; Open Sans='Open Sans', sans-serif;Playfair Display='Playfair Display', serif;",
+                toolbar: ["undo redo | removeformat bold italic underline | fontsizeselect | forecolor backcolor | fontselect | letterspacing | lineheight"],
+                plugins: "textcolor"
+              });
+            } else {
+            setTimeout(arguments.callee, 50);
+            }
+          })();
+          //]]>
+        </script>      
+      </div>
     </div>  
     
 
