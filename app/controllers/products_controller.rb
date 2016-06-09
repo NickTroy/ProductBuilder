@@ -385,7 +385,9 @@ class ProductsController < AuthenticatedController
     end
     
     def product_info_params
-      params.permit(:why_we_love_this, :be_sure_to_note)
+      params.permit(:why_we_love_this, :be_sure_to_note, :country_of_origin, :primary_materials, 
+                    :requires_assembly, :care_instructions, :shipping_restrictions, :return_policy,
+                    :lead_time, :lead_time_unit)
     end
 
 
