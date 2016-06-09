@@ -176,6 +176,7 @@
       <li><a href="#tabs-2">360° Viewer Settings</a></li>
       <li><a href="#tabs-3">Image Scaling Settings</a></li>
       <li><a href="#tabs-4">Images Sets Listing</a></li>
+      <li><a href="#tabs-5">Shipping Methods</a></li>
     </ul>
     <div id="tabs-1" class="products_listing">      
       <h3>All Products</h3>
@@ -339,7 +340,10 @@
       <% end %>
       <%= link_to "Create New Image Set", new_three_sixty_image_url(:protocol => 'https') , :class => "btn btn-info" %> 
     </div>
-
+    
+    <div id="tabs-5" class="shipping_methods_listing">
+      <%= render 'shipping_methods' %>
+    </div>
   </div>
   
 </div>

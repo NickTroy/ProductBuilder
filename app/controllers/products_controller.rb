@@ -10,6 +10,7 @@ class ProductsController < AuthenticatedController
     @variants = Variant.all
     @slider_images_params = SliderImagesParam.all
     @three_sixty_images = ThreeSixtyImage.order('title ASC')
+    @shipping_methods = ShippingMethod.all
   end
 
   def new

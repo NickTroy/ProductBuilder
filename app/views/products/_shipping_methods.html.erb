@@ -1,0 +1,26 @@
+<% if notice %>
+  <div class="alert alert-success" role="alert">
+    <%= notice %>
+  </div>
+<% end %>
+<div class="shipping_methods_listing">
+  <div class="row">
+    <div class="col-md-4">
+      <strong>Shipping Method Name</strong>
+    </div>
+    <div class="col-md-4">
+      <strong>Delete Shipping Method</strong>
+    </div>
+  </div>  
+  <% @shipping_methods.each do |shipping_method| %>
+  <div class="row shipping_method_row">
+    <div class="col-md-4">
+      <%= link_to shipping_method.name, edit_shipping_method_url(protocol: 'https', id: shipping_method.id) %>
+    </div>
+    <div class="col-md-4">
+      <%= link_to "Delete", shipping_method_url(protocol: 'https', id: shipping_method.id), :method => :delete, :confirm => "Are you sure you want to delete this shipping_method?" %>
+    </div>
+  </div>
+  <% end %>
+</div>
+<%= link_to "Add New Shipping Method", new_shipping_method_url(protocol: 'https'), class: "btn btn-primary" %>

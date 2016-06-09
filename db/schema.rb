@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160609123719) do
+ActiveRecord::Schema.define(version: 20160609142117) do
 
   create_table "images_variants", force: :cascade do |t|
     t.integer  "image_id",   limit: 4
@@ -110,6 +110,15 @@ ActiveRecord::Schema.define(version: 20160609123719) do
 
   add_index "products_options", ["option_id"], name: "index_products_options_on_option_id", using: :btree
   add_index "products_options", ["product_id"], name: "index_products_options_on_product_id", using: :btree
+
+  create_table "shipping_methods", force: :cascade do |t|
+    t.string   "name",           limit: 255
+    t.text     "description",    limit: 65535
+    t.string   "lead_time",      limit: 255
+    t.string   "lead_time_unit", limit: 255
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
+  end
 
   create_table "shops", force: :cascade do |t|
     t.string   "shopify_domain", limit: 255, null: false

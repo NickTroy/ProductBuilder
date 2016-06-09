@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  description: MyText
+  lead_time: MyString
+  lead_time_unit: MyString
+
+two:
+  name: MyString
+  description: MyText
+  lead_time: MyString
+  lead_time_unit: MyString
