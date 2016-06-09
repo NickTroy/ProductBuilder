@@ -494,10 +494,11 @@ function add_make_main_variant_button_click(){
 
 $(document).ready(function(){
   
+  $('.product_type_select').val('<%= @product.product_type %>');
+  
   $('.product_type_select').change(function(){
     var product_type = $(this).val();
     $('.product_type').val(product_type);
-    alert($('.product_type').val());
   })
   $('.search_label').click(function(){
     $('.glyphicon-menu-down').toggle();
