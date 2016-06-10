@@ -9,9 +9,9 @@ class ThreeSixtyImage < ActiveRecord::Base
   
   def update_product_image
     self.variants.each do |variant|
-      @product = ShopifyAPI::Product.find(variant.product_id)
       unless self.plane_images.empty? 
         if variant.main_variant   
+          @product = ShopifyAPI::Product.find(variant.product_id)
           @first_plane_image = self.plane_images.first
           @shopify_product_image = @product.images.first
           unless @shopify_product_image.nil?
