@@ -1,3 +1,21 @@
+<script>
+$(document).ready(function(){
+  $('.lead_time_select option:contains("<%= @shipping_method.lead_time %>")').prop("selected", true);
+  
+  $('.lead_time_select').change(function(){
+    var lead_time = $(this).val();
+    $('.lead_time').val(lead_time);
+  });
+  
+  $('.lead_time_unit_select option:contains("<%= @shipping_method.lead_time_unit %>")').prop("selected", true);
+  
+  $('.lead_time_unit_select').change(function(){
+    var lead_time_unit = $(this).val();
+    $('.lead_time_unit').val(lead_time_unit);
+  });
+});
+</script>
+
 <div class="container">
   <div class="col-md-12">
 
@@ -16,6 +34,79 @@
       <%= f.label "interface[name]", "Name:" %>
       <%= f.text_field :name, class: "form-control" %>     
     </div>
+    
+    <div class="col-md-6">
+      <%= label_tag 'shipping_method[description]', "Description:" %>  
+      <%= f.text_area :description, class: "form-control description tinymce" %>
+      <script> 
+        //<![CDATA[
+        (function() {
+          if (typeof tinyMCE != 'undefined') {
+            tinyMCE.init({
+              selector: "textarea.tinymce.description",
+              statusbar: false,
+              menubar: false,
+              resize: false,
+              setup: function (editor) {
+                editor.on('change', function (e) {  
+                  
+                });
+              },
+              theme: "modern",
+              fontsize_formats: "8pt 10pt 12pt 14pt 18pt 24pt 36pt",
+              font_formats: "Andale Mono=andale mono,times;"+
+              "Arial=arial,helvetica,sans-serif;"+
+              "Arial Black=arial black,avant garde;"+
+              "Book Antiqua=book antiqua,palatino;"+
+              "Comic Sans MS=comic sans ms,sans-serif;"+
+              "Courier New=courier new,courier;"+
+              "Georgia=georgia,palatino;"+
+              "Helvetica=helvetica;"+
+              "Impact=impact,chicago;"+
+              "Symbol=symbol;"+
+              "Tahoma=tahoma,arial,helvetica,sans-serif;"+
+              "Terminal=terminal,monaco;"+
+              "Times New Roman=times new roman,times;"+
+              "Trebuchet MS=trebuchet ms,geneva;"+
+              "Verdana=verdana,geneva;"+
+              "Webdings=webdings;"+
+              "Wingdings=wingdings,zapf dingbats; Open Sans='Open Sans', sans-serif;Playfair Display='Playfair Display', serif;",
+              toolbar: ["undo redo | removeformat bold italic underline | fontsizeselect | forecolor backcolor | fontselect | letterspacing | lineheight"],
+              plugins: "textcolor"
+            });
+          } else {
+          setTimeout(arguments.callee, 50);
+          }
+        })();
+        //]]>
+      </script>      
+    </div>
+    <div class="col-md-2">
+        <%= label_tag 'shipping_method[lead_time]', "Lead Time:" %>
+        <%= f.hidden_field :lead_time, class: "form-control lead_time" %>
+        <select class="form-control lead_time_select">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+          <option value="12">12</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <%= f.hidden_field :lead_time_unit, class: "form-control lead_time_unit" %>
+        <br>
+        <select class="form-control lead_time_unit_select">
+          <option value="Day(s)">Day(s)</option>
+          <option value="Week(s)">Week(s)</option>
+        </select>
+      </div>
   </div><br>
   <div class="row">
     <div class="col-md-6">

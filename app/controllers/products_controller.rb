@@ -22,6 +22,7 @@ class ProductsController < AuthenticatedController
     @product_info = ProductInfo.find_by(main_product_id: @product.id) || ProductInfo.create(:main_product_id => @product.id)
     @images = ProductImage.where(product_id: @product.id)
     @three_sixty_images = ThreeSixtyImage.order('title ASC')
+    @shipping_methods = ShippingMethod.all
     @main_variant = Variant.where(:product_id => @product.id, :main_variant => true)[0]
     @main_variant_present = Variant.where(:product_id => @product.id, :main_variant => true).length == 1
     @options = Option.all
@@ -117,6 +118,11 @@ class ProductsController < AuthenticatedController
     @product = ShopifyAPI::Product.find(params[:id])
     @product_info = ProductInfo.find_by(:main_product_id => @product.id) || ProductInfo.create(:main_product_id => @product.id)
     @product_info.update_attributes(product_info_params)
+    shipping_method_id = params[:shipping_method_id]
+    unless shipping_method_id == "0" or shipping_method_id == nil or shipping_method_id == ""
+      @shipping_method = ShippingMethod.find(shipping_method_id)
+      @shipping_method.product_infos << @product_info
+    end
     @collect = ShopifyAPI::Collect.new(:product_id => @product.id, :collection_id => params[:collection_id])
     @collect.save
     respond_to do |format|

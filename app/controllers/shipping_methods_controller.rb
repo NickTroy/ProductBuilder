@@ -40,7 +40,7 @@ class ShippingMethodsController < AuthenticatedController
   private
   
   def shipping_method_params
-    params.require("shipping_method").permit(:name)
+    params.require("shipping_method").permit(:name, :description, :lead_time, :lead_time_unit)
   end
   
   def set_shipping_method

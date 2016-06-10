@@ -493,6 +493,9 @@ function add_make_main_variant_button_click(){
 }
 
 $(document).ready(function(){
+  <% unless @product_info.shipping_method.nil? %>
+  $('.shipping_method_select option[value="' + <%= @product_info.shipping_method.id %> + '"]').prop("selected", true);
+  <% end %>
   
   $('.lead_time_select option:contains("<%= @product_info.lead_time.to_s %>")').prop("selected", true);
   
@@ -1614,6 +1617,15 @@ $(document).ready(function(){
           })();
           //]]>
         </script>      
+      </div>
+      <div class="col-md-6 form-group">
+        <label>Shipping Method</label>
+        <select class="form-control shipping_method_select" name="shipping_method_id">
+          <option value="0">-Select Shipping Method-</option>
+          <% @shipping_methods.each do |shipping_method| %>
+          <option value="<%= shipping_method.id %>"><%= shipping_method.name %></option>
+          <% end %>
+        </select>
       </div>
     </div>
 

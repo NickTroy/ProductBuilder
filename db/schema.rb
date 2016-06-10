@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160609142117) do
+ActiveRecord::Schema.define(version: 20160610081927) do
 
   create_table "images_variants", force: :cascade do |t|
     t.integer  "image_id",   limit: 4
@@ -99,7 +99,10 @@ ActiveRecord::Schema.define(version: 20160609142117) do
     t.text     "return_policy",         limit: 65535
     t.string   "lead_time",             limit: 255
     t.string   "lead_time_unit",        limit: 255
+    t.integer  "shipping_method_id",    limit: 4
   end
+
+  add_index "product_infos", ["shipping_method_id"], name: "index_product_infos_on_shipping_method_id", using: :btree
 
   create_table "products_options", force: :cascade do |t|
     t.integer  "product_id", limit: 8
@@ -198,6 +201,7 @@ ActiveRecord::Schema.define(version: 20160609142117) do
   add_foreign_key "option_values", "options"
   add_foreign_key "options", "option_groups"
   add_foreign_key "plane_images", "three_sixty_images"
+  add_foreign_key "product_infos", "shipping_methods"
   add_foreign_key "products_options", "options"
   add_foreign_key "variant_images", "three_sixty_images"
   add_foreign_key "variants", "product_images"
