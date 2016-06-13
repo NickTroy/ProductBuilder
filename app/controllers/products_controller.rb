@@ -175,11 +175,26 @@ class ProductsController < AuthenticatedController
     @import_file = Roo::Excel.new(params[:file].path)
     @import_file.sheets.each_with_index do |sheet, index|
       @last_column = @import_file.sheet(index).last_column
-      @number_of_variants = @import_file.sheet(index).column(@last_column).compact.count - 2
       @product_row = @import_file.sheet(index).row(6)
-      @product_title = @product_row[2]
-      @product_details = @product_row[3]
-      @product_vendor = @product_row[4]
+      @product_title = @product_row[0]
+      @product_details = @product_row[1]
+      @product_type = @product_row[2]
+
+      @why_we_love_this = @product_row[4]
+      @be_sure_to_note = @product_row[5]
+      @country_of_origin = @product_row[6]
+      @primary_materials = @product_row[7]
+      @requires_assembly = @product_row[8]
+      @product_lead_time = @product_row[9].split[0]
+      @product_lead_time_unit = @product_row[9].split[1]
+      @product_care_instructions = @product_row[10]
+      @shipping_restrictions = @product_row[11]
+      @return_policy = @product_row[12]
+      @shipping_method_name = @product_row[13]
+      @shipping_method_description = @product_row[14]
+      @shipping_method_lead_time = @product_row[15].split[0]
+      @shipping_method_lead_time_unit = @product_row[15].split[1]
+      
       
       @options_row = @import_file.sheet(index).row(2)
       @options_count = 0
@@ -189,46 +204,52 @@ class ProductsController < AuthenticatedController
             @options_count += 1
             @first_option_column ||= ind
           end
-          if cell.include? "Variant ITEM #"
-            @sku_column = ind
-          end
-          if cell.include? "Variant length"
-            @length_column = ind
-          end
-          if cell.include? "Variant height"
-            @height_column = ind
-          end
-          if cell.include? "Variant depth"
-            @depth_column = ind
-          end
-          if cell.include? "Variant price"
-            @price_column = ind
-          end
-          if cell.include? "Variant Images"
-            @variant_images_column = ind
-          end
+          @sku_column = ind if cell.include? "Variant ITEM #"
+          @length_column = ind if cell.include? "Variant length"
+          @height_column = ind if cell.include? "Variant height"
+          @depth_column = ind if cell.include? "Variant depth"
+          @price_column = ind if cell.include? "Variant price"
+          @variant_images_column = ind if cell.include? "Variant Images"
+          @vendor_sku_column = ind if cell.include? "Vendor SKU"
+          @weight_column = ind if cell.include? "Variant Weight"
+          @room_column = ind if cell.include? "Variant Room"
+          @condition_column = ind if cell.include? "Variant Condition"
+          @variant_care_instructions_column = ind if cell.include? "Variant Care Instructions"
         end
       end
-      
+      @number_of_variants = @import_file.sheet(index).column(@first_option_column + 1).compact.count - 2
       @product = ShopifyAPI::SmartCollection.where(title:"Product_builder_products")[0].products.find { |product| product.title == @product_title }
       if @product.nil?
         @product = ShopifyAPI::Product.new({
           :title => @product_title,
           :body_html => @product_details,
-          :vendor => @product_vendor
+          :vendor => @product_vendor,
+          :product_type => @product_type
         })
       
         @product.attributes[:tags] = "product" unless @product.attributes[:tags] == "product"
         @product.save
       end
-      @product_info = ProductInfo.create(:main_product_id => @product.id, :handle => @product.handle)
+      @product_info = ProductInfo.find_by(main_product_id: @product.id) || ProductInfo.create(:main_product_id => @product.id, :handle => @product.handle)
+      @product_info.update_attributes({
+        :why_we_love_this => @why_we_love_this,
+        :be_sure_to_note => @be_sure_to_note,
+        :country_of_origin => @country_of_origin,
+        :primary_materials => @primary_materials,
+        :requires_assembly => @requires_assembly,
+        :lead_time => @product_lead_time,
+        :lead_time_unit => @product_lead_time_unit,
+        :care_instructions => @product_care_instructions,
+        :shipping_restrictions => @shipping_restrictions,
+        :return_policy => @return_policy
+      })
       1.upto(@number_of_variants) do |i|
         variant_updating = true
         @variant_row = @import_file.sheet(index).row(5 + i)
         @variant = Variant.where(:product_id => @product.id, :sku => @variant_row[@sku_column])[0]
-        if @variant.nil?
+        if @variant.nil? or @variant_row[@sku_column] == "" or @variant_row[@sku_column].nil? or @variant.sku.nil?
           variant_updating = false
-          @variant = Variant.new(:product_id => @product.id) 
+          @variant = Variant.create(:product_id => @product.id) 
           @pseudo_product_title = ""
           @first_option_column.upto(@first_option_column + @options_count - 1) do |j|
             @option_name = @options_row[j]
@@ -256,7 +277,13 @@ class ProductsController < AuthenticatedController
         @variant.height = @variant_row[@height_column].to_s unless @variant_row[@height_column].nil? 
         @variant.depth = @variant_row[@depth_column].to_s unless @variant_row[@depth_column].nil?
         @variant.price = @variant_row[@price_column].to_s unless @variant_row[@price_column].nil?
+        @variant.vendor_sku = @variant_row[@vendor_sku_column].to_s unless @variant_row[@vendor_sku_column].nil?
+        @variant.weight = @variant_row[@weight_column].to_s unless @variant_row[@weight_column].nil?
+        @variant.room = @variant_row[@room_column].to_s unless @variant_row[@room_column].nil?
+        @variant.condition = @variant_row[@condition_column].to_s unless @variant_row[@condition_column].nil?
+        @variant.care_instructions = @variant_row[@variant_care_instructions_column].to_s unless @variant_row[@variant_care_instructions_column].nil?
         @variant.save
+        
         unless @variant_images_column.nil? or variant_updating
           variant_images_links = @variant_row[@variant_images_column].split(',') unless @variant_row[@variant_images_column].nil?
           unless variant_images_links.nil?
@@ -276,11 +303,15 @@ class ProductsController < AuthenticatedController
 
         @variant.save
         sleep 0.5
-        @pseudo_product = ShopifyAPI::Product.create(title: "#{@pseudo_product_title}")
-        @pseudo_product_variant = @pseudo_product.variants.first
-        @pseudo_product_variant.update_attributes(:option1 => @pseudo_product_title, :price => @variant.price, :sku => @variant.sku)
-        @variant.update_attributes(:pseudo_product_id => @pseudo_product.id, 
-                                 :pseudo_product_variant_id => @pseudo_product_variant.id)
+        unless variant_updating
+          @pseudo_product = ShopifyAPI::Product.create(title: "#{@pseudo_product_title}") 
+          @pseudo_product_variant = @pseudo_product.variants.first
+          @pseudo_product_variant.update_attributes(:option1 => @pseudo_product_title, :price => @variant.price, :sku => @variant.sku)
+          @variant.update_attributes(:pseudo_product_id => @pseudo_product.id, 
+                                     :pseudo_product_variant_id => @pseudo_product_variant.id)
+        end
+        
+
       end
     end
     @import_file.close
@@ -295,29 +326,51 @@ class ProductsController < AuthenticatedController
     @product_ids = params[:product_ids].split(',').map!(&:to_i)
     @product_ids.each_with_index do |product_id, index|
       @product = ShopifyAPI::Product.find(product_id)
+      @product_info = ProductInfo.find_by(main_product_id: @product.id)
       sheet = book.create_worksheet(:name => "product ##{index + 1}")
       title_row = sheet.row(0)
       description_row = sheet.row(1)
       product_row = sheet.row(5)
       title_row[0] = "Product Title"
       product_row[0] = @product.title
-      title_row[1] = "URL - Handle"
-      title_row[2] = "Product Title"
-      product_row[2] = @product.title
-      title_row[3] = "Product Details - Body (HTML)"
-      product_row[3] = @product.body_html
-      title_row[4] = "Brand - Vendor"
-      product_row[4] = @product.vendor
-      title_row[5] = "Type"
-      title_row[6] = "Detail - Tags"
-      title_row[7] = "Make Visible"
-
-      
+      title_row[1] = "Product Details - Body (HTML)"
+      product_row[1] = @product.body_html
+      title_row[2] = "Brand - Vendor"
+      product_row[2] = @product.vendor
+      title_row[3] = "Type"
+      product_row[3] = @product.product_type
+      title_row[4] = "Detail - Tags"
+      title_row[4] = "Why We Love This"
+      product_row[4] = @product_info.why_we_love_this
+      title_row[5] = "Be Sure To Note"
+      product_row[5] = @product_info.be_sure_to_note
+      title_row[6] = "Country of Origin"
+      product_row[6] = @product_info.country_of_origin
+      title_row[7] = "Primary Materials"
+      product_row[7] = @product_info.primary_materials
+      title_row[8] = "Requires Assembly"
+      product_row[8] = @product_info.requires_assembly
+      title_row[9] = "Lead Time"
+      product_row[9] = @product_info.lead_time + " " + @product_info.lead_time_unit
+      title_row[10] = "Care Instructions"
+      product_row[10] = @product_info.care_instructions
+      title_row[11] = "Shipping Restrictions"
+      product_row[11] = @product_info.shipping_restrictions
+      title_row[12] = "Return Policy"
+      product_row[12] = @product_info.return_policy
+      title_row[13] = "Shipping Method Name"
+      title_row[14] = "Shipping Method Description"
+      title_row[15] = "Shipping Method Lead Time"
+      unless @product_info.shipping_method.nil?
+        product_row[13] = @product_info.shipping_method.name
+        product_row[14] = @product_info.shipping_method.description
+        product_row[15] = @product_info.shipping_method.lead_time + " " + @product_info.shipping_method.lead_time_unit
+      end
       @product_options = []
       ProductsOption.where(:product_id => product_id).each do |pr_opt|
         @product_options.push(Option.find(pr_opt.option_id))
       end
-      options_index_offset = 8
+      options_index_offset = 16
       @product_options.sort! { |option1, option2| option1.order_number <=> option2.order_number }
       @product_options.each_with_index do |option, option_index|
         
@@ -328,28 +381,43 @@ class ProductsController < AuthenticatedController
       sku_column = @product_options.count + options_index_offset
       title_row[sku_column] = "Variant ITEM #"
       
-      price_column = @product_options.count + options_index_offset + 1
+      vendor_sku_column = @product_options.count + options_index_offset + 1
+      title_row[vendor_sku_column] = "Vendor SKU"
+      
+      price_column = @product_options.count + options_index_offset + 2
       title_row[price_column] = "Variant price"
       description_row[price_column] = "price"
-      variant_images_column = @product_options.count + options_index_offset + 2
+      variant_images_column = @product_options.count + options_index_offset + 3
       title_row[variant_images_column] = "Variant Images"
       
-      length_column = @product_options.count + options_index_offset + 3
+      length_column = @product_options.count + options_index_offset + 4
       title_row[length_column] = "Variant length"
       description_row[length_column] = "length"
-      height_column = @product_options.count + options_index_offset + 4
+      height_column = @product_options.count + options_index_offset + 5
       title_row[height_column] = "Variant height"
       description_row[height_column] = "height"
-      depth_column = @product_options.count + options_index_offset + 5
+      depth_column = @product_options.count + options_index_offset + 6
       title_row[depth_column] = "Variant depth"
       description_row[depth_column] = "depth"
+      weight_column = @product_options.count + options_index_offset + 7
+      title_row[weight_column] = "Variant Weight"
+      description_row[depth_column] = "weight"
+      room_column = @product_options.count + options_index_offset + 8
+      title_row[room_column] = "Variant Room"
+      description_row[room_column] = "room"
+      condition_column = @product_options.count + options_index_offset + 9
+      title_row[condition_column] = "Variant Condition"
+      description_row[condition_column] = "condition"
+      care_instructions_column = @product_options.count + options_index_offset + 10
+      title_row[care_instructions_column] = "Variant Care Instructions"
+      description_row[care_instructions_column] = "care instructons"
       
       
       @product_variants = Variant.where(:product_id => product_id)
       @product_variants.each_with_index do |variant, variant_index|
         variant_row_offset = 5
-        variant_row = sheet.row(5 + variant_index)
-        options_index_offset = 8
+        variant_row = sheet.row(variant_row_offset + variant_index)
+        options_index_offset = 16
         variant.option_values.sort { |opt_val1, opt_val2| opt_val1.option.order_number <=> opt_val2.option.order_number }.each_with_index do |option_value, option_value_index|
           variant_row[options_index_offset + option_value_index] = option_value.value
           variant_row[sku_column] = variant.sku
@@ -357,6 +425,11 @@ class ProductsController < AuthenticatedController
           variant_row[height_column] = variant.height
           variant_row[depth_column] = variant.depth
           variant_row[price_column] = variant.price
+          variant_row[weight_column] = variant.weight
+          variant_row[room_column] = variant.room
+          variant_row[condition_column] = variant.condition
+          variant_row[care_instructions_column] = variant.care_instructions
+          variant_row[vendor_sku_column] = variant.vendor_sku
         end
         images_links = []
         unless variant.three_sixty_image.nil?
