@@ -192,8 +192,10 @@ class ProductsController < AuthenticatedController
       @return_policy = @product_row[12]
       @shipping_method_name = @product_row[13]
       @shipping_method_description = @product_row[14]
-      @shipping_method_lead_time = @product_row[15].split[0]
-      @shipping_method_lead_time_unit = @product_row[15].split[1]
+      unless @product_row[15].nil?
+        @shipping_method_lead_time = @product_row[15].split[0]
+        @shipping_method_lead_time_unit = @product_row[15].split[1]
+      end
       
       
       @options_row = @import_file.sheet(index).row(2)
@@ -231,6 +233,12 @@ class ProductsController < AuthenticatedController
         @product.save
       end
       @product_info = ProductInfo.find_by(main_product_id: @product.id) || ProductInfo.create(:main_product_id => @product.id, :handle => @product.handle)
+      unless @shipping_method_name.nil?
+        @shipping_method = ShippingMethod.find_by(name: @shipping_method_name) || ShippingMethod.create(name: @shipping_method_name)
+        @shipping_method.update_attributes(description: @shipping_method_description, 
+                                           lead_time: @shipping_method_lead_time, 
+                                           lead_time_unit: @shipping_method_lead_time_unit)
+      end
       @product_info.update_attributes({
         :why_we_love_this => @why_we_love_this,
         :be_sure_to_note => @be_sure_to_note,
