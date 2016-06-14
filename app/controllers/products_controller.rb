@@ -238,6 +238,7 @@ class ProductsController < AuthenticatedController
         @shipping_method.update_attributes(description: @shipping_method_description, 
                                            lead_time: @shipping_method_lead_time, 
                                            lead_time_unit: @shipping_method_lead_time_unit)
+        @shipping_method.product_infos << @product_info
       end
       @product_info.update_attributes({
         :why_we_love_this => @why_we_love_this,
