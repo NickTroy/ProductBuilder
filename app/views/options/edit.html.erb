@@ -54,25 +54,45 @@ $(document).ready(function(){
   });  
   
 
-$(document).on('click', '.update_image_params', function(e){
-        e.preventDefault();
-        var option_height = $(this).parents(".options_height_width").find(".option_height").val();
-        var option_width = $(this).parents(".options_height_width").find(".option_width").val();
-        var option_value_id_js = $(this).attr('data-option-value-id');
-        $.ajax({
-            type: 'POST',
-            dataType: 'JSON',
-            url:'/options/' + '<%= @option.id %>' + '/option_values/' + option_value_id_js + '/edit_height_width',
-            data: { 
-              _method: 'PATCH',
-              width: option_width, 
-              height: option_height
-            },
-            success: function(){
-              alert('Option value image parameters were updated.')
-            }
-        });
+  $(document).on('click', '.update_image_params', function(e){
+    e.preventDefault();
+    var option_height = $(this).parents(".options_height_width").find(".option_height").val();
+    var option_width = $(this).parents(".options_height_width").find(".option_width").val();
+    var option_value_id_js = $(this).attr('data-option-value-id');
+    $.ajax({
+      type: 'POST',
+      dataType: 'JSON',
+      url:'/options/' + '<%= @option.id %>' + '/option_values/' + option_value_id_js + '/edit_height_width',
+      data: { 
+        _method: 'PATCH',
+        width: option_width, 
+        height: option_height
+      },  
+      success: function(){
+        alert('Option value color range was updated.')
+      }
     });
+  });
+  
+  
+  $('.update_color_range').on('click', function(e){
+    e.preventDefault();
+    var update_color_range_button = $(this);
+    var color_range = update_color_range_button.parents(".color_range_update").find(".color_range").val();
+    var option_value_id = update_color_range_button.attr('data-option-value-id');
+    $.ajax({
+      type: 'POST',
+      dataType: 'JSON',
+      url:'/options/' + '<%= @option.id %>' + '/option_values/' + option_value_id + '/update_color_range',
+      data: { 
+        _method: 'PATCH',
+        color_range: color_range
+      },  
+      success: function(){
+        alert('Option value image parameters were updated.')
+      }
+    });
+  });
   
 })
   
@@ -101,7 +121,7 @@ $(document).on('click', '.update_image_params', function(e){
         <div class="option_value_image<%= i + 1 %> dropzone" id="<%= option_value.id %>">
     
         </div>
-        <div class='options_height_width'>
+        <div class='options_height_width' style="display:none;">
           <div class='col-md-6 form-group'>
             <label for="option_value_width">Width</label>
             <input class="form-control option_width" type="text" value="<%= option_value.width %>">
@@ -112,6 +132,16 @@ $(document).on('click', '.update_image_params', function(e){
           </div>
           <div class='col-md-6'>
             <button data-option-value-id="<%= option_value.id %>" class="btn btn-info update_image_params" href="#">Update image dimensions</button>
+          </div>
+        </div>
+        <div class='color_range_update'>
+          <div class='col-md-6 form-group'>
+            <label for="option_value_color_range">Color Range</label>
+            <input class="form-control color_range" type="text" value="<%= option_value.color_range %>">
+          </div>
+          <div class='col-md-6'>
+            <br>
+            <button data-option-value-id="<%= option_value.id %>" class="btn btn-info update_color_range">Update Color Range</button>
           </div>
         </div>
       </div>

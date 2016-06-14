@@ -25,6 +25,12 @@ class OptionValuesController < ApplicationController
     render json: { message: "success" }, :status => 200
   end
   
+  def update_color_range
+    @option_value = OptionValue.find(params[:option_value_id])
+    @option_value.update_attributes(color_range: params[:color_range])
+    render json: { message: "success" }, :status => 200
+  end
+  
   def destroy
     @option_value = OptionValue.find(params[:id])
     if @option_value.destroy
