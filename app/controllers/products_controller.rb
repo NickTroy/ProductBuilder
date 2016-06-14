@@ -360,7 +360,7 @@ class ProductsController < AuthenticatedController
       title_row[8] = "Requires Assembly"
       product_row[8] = @product_info.requires_assembly
       title_row[9] = "Lead Time"
-      product_row[9] = @product_info.lead_time + " " + @product_info.lead_time_unit
+      product_row[9] = @product_info.lead_time + " " + @product_info.lead_time_unit unless @product_info.lead_time.nil? or @product_info.lead_time_unit.nil?
       title_row[10] = "Care Instructions"
       product_row[10] = @product_info.care_instructions
       title_row[11] = "Shipping Restrictions"
