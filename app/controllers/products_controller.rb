@@ -185,8 +185,13 @@ class ProductsController < AuthenticatedController
       @country_of_origin = @product_row[6]
       @primary_materials = @product_row[7]
       @requires_assembly = @product_row[8]
-      @product_lead_time = @product_row[9].split[0]
-      @product_lead_time_unit = @product_row[9].split[1]
+      if @product_row[9].nil?
+        @product_lead_time = ""
+        @product_lead_time_unit = ""
+      else
+        @product_lead_time = @product_row[9].split[0] 
+        @product_lead_time_unit = @product_row[9].split[1]
+      end
       @product_care_instructions = @product_row[10]
       @shipping_restrictions = @product_row[11]
       @return_policy = @product_row[12]
