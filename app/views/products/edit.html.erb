@@ -22,7 +22,12 @@
   .variant-actions .btn {
     margin-bottom: 10px !important;
   }
-
+  .unassign_from_collection {
+    cursor: pointer !important; 
+  }
+  .unassign_from_collection:hover{
+    color: #FA5858;
+  }
 </style>
 <script type="text/javascript">
 
@@ -625,17 +630,20 @@ $(document).ready(function(){
   $('.unassign_from_collection').click(function(){
     var collection_row = $(this).parents('.collection_row');
     var collection_id = $(this).data("collection_id");
-    $.ajax({
-      url: "<%= product_unassign_from_collection_url(:protocol => 'https', :product_id => @product.id) %>",
-      method: 'POST',
-      data: {
-        collection_id: collection_id,
-        _method: 'DELETE'
-      },
-      success: function(){
-        collection_row.remove();
-      }
-    })
+    var collection_title = collection_row.find('.collection_title').text();
+    if (confirm("Are you sure you would like to remove this product from " + collection_title + " collection?")) {
+      $.ajax({
+        url: "<%= product_unassign_from_collection_url(:protocol => 'https', :product_id => @product.id) %>",
+        method: 'POST',
+        data: {
+          collection_id: collection_id,
+          _method: 'DELETE'
+        },
+        success: function(){
+          collection_row.remove();
+        }
+      }) 
+    }
   })
   // search
   $('.search_option_value').change(function(){
@@ -866,7 +874,7 @@ $(document).ready(function(){
         <div class="form-control collections_list">
           <% @product_collections.each do |collection| %>
             <div class="collection_row">
-              <span><%= collection.title %></span>
+              <span class="collection_title"><%= collection.title %></span>
               <span data-collection_id="<%= collection.id %>" class="glyphicon glyphicon-remove-sign unassign_from_collection"></span>
             </div>
           <% end %>    

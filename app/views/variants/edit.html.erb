@@ -100,7 +100,11 @@ $(document).ready(function(){
 
       <div class="col-md-6 form-group">
         <%= f.label 'variant[price]', "Price" %>
-        <%= f.text_field :price, class: "form-control" %>
+        <div class="input-group">
+          <span class="input-group-addon">$</span>
+          <%= f.text_field :price, class: "form-control" %>  
+        </div>
+        
       </div>
       
       <div class="col-md-6 form-group">
@@ -126,31 +130,6 @@ $(document).ready(function(){
       </div>
       
       <div class="col-md-6 form-group">
-        <%= f.label 'variant[height]', "Height" %>
-        <%= f.number_field :height, class: "form-control", min: 0 %>
-      </div>
-      
-      <div class="col-md-6 form-group">
-        <%= f.label 'variant[depth]', "Depth" %>
-        <%= f.number_field :depth, class: "form-control", min: 0 %>
-      </div>
-      
-      <div class="col-md-6 form-group">
-        <%= f.label 'variant[weight]', "Weight" %>
-        <%= f.number_field :weight, class: "form-control", min: 0 %>
-      </div>
-      
-      <div class="col-md-6 from-group">
-        <%= label_tag 'variant[room]', "Room" %>
-        <%= f.hidden_field :room, class: "form-control room" %>
-        <select class="form-control room_select">
-          <option value="Indoor">Indoor</option>
-          <option value="Outdoor">Outdoor</option>
-          <option value="Both">Both</option>
-        </select>
-      </div>
-      
-      <div class="col-md-6 from-group">
         <%= label_tag 'variant[conditon]', "Condition" %>
         <%= f.hidden_field :condition, class: "form-control condition" %>
         <select class="form-control condition_select">
@@ -162,7 +141,53 @@ $(document).ready(function(){
         </select>
       </div>
       
+      <div class="col-md-6 form-group">
+        <%= f.label 'variant[height]', "Height" %>
+        <%= f.number_field :height, class: "form-control", min: 0 %>
+      </div>
+      
+      <div class="col-md-6 form-group">
+        <%= label_tag 'variant[room]', "Room" %>
+        <%= f.hidden_field :room, class: "form-control room" %>
+        <select class="form-control room_select">
+          <option value="Indoor">Indoor</option>
+          <option value="Outdoor">Outdoor</option>
+          <option value="Both">Both</option>
+        </select>
+      </div>
+      
+      <div class="col-md-6 form-group">
+        <%= f.label 'variant[depth]', "Depth" %>
+        <%= f.number_field :depth, class: "form-control", min: 0 %>
+      </div>
+      
+      <div class="col-md-6 form-group">
+        <label>Assign Image Set</label>
+        <select class="form-control select_three_sixty_image">
+          <option value="0">-Select Image Set-</option>
+          <% @three_sixty_images.each do |three_sixty_image| %>
+            <option value="<%= three_sixty_image.id %>">
+              <span class="three_sixty_title">
+                <%= three_sixty_image.title %>
+              </span>
+            </option>  
+          <% end %>
+        </select>
+      </div>
+      
+      <div class="col-md-6 form-group">
+        <%= f.label 'variant[weight]', "Weight" %>
+        <%= f.number_field :weight, class: "form-control", min: 0 %>
+      </div>
+      
       <div class="col-md-6">
+        <br>
+        <button class="btn btn-info assign_three_sixty_image">
+          Confirm Image Set Assignment
+        </button>
+      </div>
+      <br>
+      <div class="col-md-12">
         <%= label_tag 'variant[care_instructions]', "Care Instructions:" %>  
         <%= f.text_area :care_instructions, class: "form-control care_instructions tinymce" %>
         <script> 
@@ -213,25 +238,8 @@ $(document).ready(function(){
 
     <div class="three-sixty-images-container">
       <div class="row three_sixty_image_assignment">
-        <div class="col-md-6">
-          <label>Assign Image Set</label>
-          <select class="form-control select_three_sixty_image">
-            <option value="0">-Select Image Set-</option>
-            <% @three_sixty_images.each do |three_sixty_image| %>
-              <option value="<%= three_sixty_image.id %>">
-                <span class="three_sixty_title">
-                  <%= three_sixty_image.title %>
-                </span>
-              </option>  
-            <% end %>
-          </select>
-        </div>
-        <div class="col-md-6">
-          <br>
-          <button class="btn btn-info assign_three_sixty_image">
-            Confirm Image Set Assignment
-          </button>
-        </div>
+        
+        
       </div>
       <div class="row current_three_sixty_image">
         <div class="col-md-12">
@@ -251,11 +259,11 @@ $(document).ready(function(){
 
 
     <div class="row">
-      <div class="col-md-2">
-        <%= f.submit "Save", :class => "btn btn-success" %>
+      <div class="col-md-6">
+        <%= f.submit "Save", :class => "btn btn-success", style:"width:100%;" %>
       </div>
-      <div class="col-md-2">
-        <%= f.submit "Cancel", :class => 'btn btn-warning' %>
+      <div class="col-md-6">
+        <%= f.submit "Cancel", :class => 'btn btn-warning', style:"width:100%" %>
       </div>     
     </div>
 <% end %>    
