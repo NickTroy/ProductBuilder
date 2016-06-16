@@ -11,6 +11,8 @@ class ColorRangesController < AuthenticatedController
     else
       @color_range.color
     end
+    @color_option_values = Option.find_by(name: "Color").option_values unless Option.find_by(name: "Color").nil?
+    @color_range_option_values = @color_range.option_values
   end
   
   def create

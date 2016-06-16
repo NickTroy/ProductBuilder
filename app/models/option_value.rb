@@ -1,5 +1,6 @@
 class OptionValue < ActiveRecord::Base
   belongs_to :option
+  belongs_to :color_range
   has_many :variants_option_values, dependent: :destroy
   has_many :variants, through: :variants_option_values, dependent: :nullify
   #has_and_belongs_to_many :variants

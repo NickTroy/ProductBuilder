@@ -34,6 +34,26 @@
   </div><br>
   <div class="row">
     <div class="col-md-6">
+      <% @color_option_values.each do |option_value| %>
+      <div class="text-center">
+        <%= option_value.value %>
+        <span class="glyphicon glyphicon-chevron-right pull-right assign_to_color_range" data-option_value_id="<%= option_value.id %>"></span>
+      </div>
+      <% end %>
+    </div>
+    
+    <div class="col-md-6">
+      <% @color_range_option_values.each do |option_value| %>
+      <div class="text-center">
+        <span class="glyphicon glyphicon-chevron-left pull-left unassign_from_color_range" data-opton_value_id="<%= option_value.id %>"></span>
+        <%= option_value.value %>
+      </div>
+      <% end %>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-6">
      <%= f.submit "Save", class: "btn btn-success" %>
     </div>
   </div>

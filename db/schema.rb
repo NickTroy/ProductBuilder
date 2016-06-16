@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160616095225) do
+ActiveRecord::Schema.define(version: 20160616142632) do
 
   create_table "color_ranges", force: :cascade do |t|
     t.string   "name",       limit: 255
@@ -47,8 +47,10 @@ ActiveRecord::Schema.define(version: 20160616095225) do
     t.datetime "image_updated_at"
     t.integer  "height",             limit: 4
     t.integer  "width",              limit: 4
+    t.integer  "color_range_id",     limit: 4
   end
 
+  add_index "option_values", ["color_range_id"], name: "index_option_values_on_color_range_id", using: :btree
   add_index "option_values", ["option_id"], name: "index_option_values_on_option_id", using: :btree
   add_index "option_values", ["value"], name: "index_option_values_on_value", using: :btree
 
@@ -205,6 +207,7 @@ ActiveRecord::Schema.define(version: 20160616095225) do
 
   add_foreign_key "images_variants", "product_images", column: "image_id"
   add_foreign_key "images_variants", "variants"
+  add_foreign_key "option_values", "color_ranges"
   add_foreign_key "option_values", "options"
   add_foreign_key "options", "option_groups"
   add_foreign_key "plane_images", "three_sixty_images"
