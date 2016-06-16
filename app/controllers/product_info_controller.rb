@@ -56,7 +56,9 @@ class ProductInfoController < ApplicationController
       end
       @product_option_groups.push(option_group) if @include_option_group
     end
-    product_option_values = OptionValue.joins("left join variants_option_values on option_values.id=variants_option_values.option_value_id inner join variants on variants.id=variants_option_values.variant_id and variants.product_id=#{params[:id]}").distinct
+    # remove upholstery option values from all option values due to front end logic changes
+    upholstery_option_values = Option.find_by(name: "Upholstery").option_values.to_a
+    product_option_values = OptionValue.joins("left join variants_option_values on option_values.id=variants_option_values.option_value_id inner join variants on variants.id=variants_option_values.variant_id and variants.product_id=#{params[:id]}").distinct - upholstery_option_values
     product_option_values.each do |option_value|
       product_option = @product_options.find { |option| option[:option_name] == option_value.option.name }
       product_option[:option_values].push(option_value.value).uniq!
