@@ -1,0 +1,2 @@
+module ColorRangesHelper
+end

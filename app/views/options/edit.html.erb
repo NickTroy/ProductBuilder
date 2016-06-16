@@ -74,26 +74,6 @@ $(document).ready(function(){
     });
   });
   
-  
-  $('.update_color_range').on('click', function(e){
-    e.preventDefault();
-    var update_color_range_button = $(this);
-    var color_range = update_color_range_button.parents(".color_range_update").find(".color_range").val();
-    var option_value_id = update_color_range_button.attr('data-option-value-id');
-    $.ajax({
-      type: 'POST',
-      dataType: 'JSON',
-      url:'/options/' + '<%= @option.id %>' + '/option_values/' + option_value_id + '/update_color_range',
-      data: { 
-        _method: 'PATCH',
-        color_range: color_range
-      },  
-      success: function(){
-        alert('Option value image parameters were updated.')
-      }
-    });
-  });
-  
 })
   
 </script>
@@ -132,16 +112,6 @@ $(document).ready(function(){
           </div>
           <div class='col-md-6'>
             <button data-option-value-id="<%= option_value.id %>" class="btn btn-info update_image_params" href="#">Update image dimensions</button>
-          </div>
-        </div>
-        <div class='color_range_update'>
-          <div class='col-md-6 form-group'>
-            <label for="option_value_color_range">Color Range</label>
-            <input class="form-control color_range" type="text" value="<%= option_value.color_range %>">
-          </div>
-          <div class='col-md-6'>
-            <br>
-            <button data-option-value-id="<%= option_value.id %>" class="btn btn-info update_color_range">Update Color Range</button>
           </div>
         </div>
       </div>

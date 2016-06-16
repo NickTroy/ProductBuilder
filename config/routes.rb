@@ -26,6 +26,7 @@ Rails.application.routes.draw do
   
   resources :slider_images_params
   resources :shipping_methods
+  resources :color_ranges
   
   get '/export_products', to: 'products#export'
   

@@ -11,6 +11,7 @@ class ProductsController < AuthenticatedController
     @slider_images_params = SliderImagesParam.all
     @three_sixty_images = ThreeSixtyImage.order('title ASC')
     @shipping_methods = ShippingMethod.all
+    @color_ranges = ColorRange.all
   end
 
   def new

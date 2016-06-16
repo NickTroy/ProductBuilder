@@ -1,0 +1,26 @@
+<% if notice %>
+  <div class="alert alert-success" role="alert">
+    <%= notice %>
+  </div>
+<% end %>
+<div class="color_ranges_listing">
+  <div class="row">
+    <div class="col-md-4">
+      <strong>Color Range Name</strong>
+    </div>
+    <div class="col-md-4">
+      <strong>Delete Color Range</strong>
+    </div>
+  </div>  
+  <% @color_ranges.each do |color_range| %>
+  <div class="row color_range_row">
+    <div class="col-md-4">
+      <%= link_to color_range.name, edit_color_range_url(protocol: 'https', id: color_range.id) %>
+    </div>
+    <div class="col-md-4">
+      <%= link_to "Delete", color_range_url(protocol: 'https', id: color_range.id), :method => :delete, :confirm => "Are you sure you want to delete this color range?", class: "btn btn-danger" %>
+    </div>
+  </div>
+  <% end %>
+</div>
+<%= link_to "Add New Color Range", new_color_range_url(protocol: 'https'), class: "btn btn-primary" %>
