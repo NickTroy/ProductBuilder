@@ -1,3 +1,15 @@
+<script>
+  $(document).ready(function() {
+    $('.minicolors').minicolors({
+      theme: 'bootstrap',
+      defaultValue: "<%= @color %>",
+      change: function(value) {
+        
+      }
+    });
+  });
+
+</script>
 <div class="container">
   <% if flash[:error] %>
   <div class="alert alert-danger" role="alert">
@@ -10,11 +22,15 @@
   <% end %>
   <%= form_for @color_range do |f|  %>
   <div class="row">
-    <div class="col-md-12">
-      <%= f.label "interface[name]", "Name:" %>
+    <div class="col-md-6">
+      <%= f.label "color_range[name]", "Name:" %>
       <%= f.text_field :name, class: "form-control" %>     
     </div>
-
+    
+    <div class="col-md-6">
+      <%= f.label "color_range[color]", "Color:" %>
+      <%= f.text_field :color, class: "form-control minicolors" %>
+    </div>
   </div><br>
   <div class="row">
     <div class="col-md-6">

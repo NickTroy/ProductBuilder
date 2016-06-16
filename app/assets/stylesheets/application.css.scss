@@ -1,6 +1,7 @@
 @import "bootstrap-sprockets";
 @import "bootstrap";
 @import "dropzone/dropzone";
+@import "jquery.minicolors";
 @import "jquery-ui";
 @import "jquery-ui/core";
 @import "jquery-ui/theme";
@@ -56,6 +57,7 @@
  *= require dropzone/basic
  *= require dropzone/dropzone
  *= require image-picker
+ *= require jquery.minicolors
  *= require_tree .
  *= require_self
  */

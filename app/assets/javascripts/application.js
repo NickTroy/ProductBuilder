@@ -23,4 +23,5 @@
 //= require jquery.elevatezoom
 //= require turbolinks
 //= require jquery-filestyle.min
+//= require jquery.minicolors.min
 //= require_tree .

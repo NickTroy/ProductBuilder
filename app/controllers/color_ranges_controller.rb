@@ -6,6 +6,11 @@ class ColorRangesController < AuthenticatedController
   end
   
   def edit
+    @color = if @color_range.color.nil? or @color_range.color == "" 
+      "#000000" 
+    else
+      @color_range.color
+    end
   end
   
   def create
@@ -40,7 +45,7 @@ class ColorRangesController < AuthenticatedController
   private
   
   def color_range_params
-    params.require("color_range").permit(:name, :description, :lead_time, :lead_time_unit)
+    params.require("color_range").permit(:name, :color)
   end
   
   def set_color_range
