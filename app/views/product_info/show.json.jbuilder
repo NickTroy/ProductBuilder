@@ -16,6 +16,12 @@ json.slider_images_params @slider_images_params do |slider_images_param|
   json.product_type slider_images_param.product_type
   json.base_size_ratio slider_images_param.base_size_ratio
 end
+json.color_ranges @color_ranges do |color_range|
+  json.name color_range[:name]
+  json.option_values color_range[:option_values] do |option_value|
+    json.value option_value
+  end
+end
 json.options @product_options do |option|
   json.option_name option[:option_name]
   json.option_order_number option[:order_number]
