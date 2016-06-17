@@ -26,7 +26,10 @@ Rails.application.routes.draw do
   
   resources :slider_images_params
   resources :shipping_methods
-  resources :color_ranges
+  resources :color_ranges do
+    post '/assign_option_values', to: 'color_ranges#assign_option_values'
+    delete '/unassign_option_values', to: 'color_ranges#unassign_option_values'
+  end
   
   get '/export_products', to: 'products#export'
   

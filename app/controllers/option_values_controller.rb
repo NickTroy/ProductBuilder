@@ -1,6 +1,10 @@
 class OptionValuesController < ApplicationController
   
   skip_before_action :verify_authenticity_token
+  
+  def index
+    @option_values = OptionValue.find(params[:option_values_ids])
+  end
    
   def assign_image
     @option_value = OptionValue.find(params[:option_value_id])

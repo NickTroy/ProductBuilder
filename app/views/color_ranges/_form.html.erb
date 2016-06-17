@@ -7,6 +7,69 @@
         
       }
     });
+    
+    $('.assign_option_values').click(function(e){
+      e.preventDefault();
+      var option_values_ids = [];
+      $('.color_option_value').each(function(){
+        var check_for_action = $(this).find('.check_for_action');
+        if (check_for_action.prop("checked")) {
+          var option_value_id = check_for_action.data('option_value_id');
+          option_values_ids.push(option_value_id);  
+        }
+      })
+      $.ajax({
+        url: "<%= color_range_assign_option_values_url(protocol: "https", color_range_id: @color_range.id) %>", 
+        method: "POST",
+        data: {
+          id: "<%= @color_range.id %>",
+          option_values_ids: option_values_ids
+        },
+        success: function(){
+          for (option_value_id_index in option_values_ids) {
+            var option_value = $('.check_for_action[data-option_value_id="' + option_values_ids[option_value_id_index] + '"]').parents('.color_option_value');
+            option_value.insertBefore('.unassign_button_container')
+                        .removeClass('color_option_value')
+                        .addClass('color_range_option_value');
+          }
+          $('.check_for_action').each(function(){
+            $(this).prop("checked", false);
+          })
+        }
+      })
+    });
+    
+    $('.unassign_option_values').click(function(e){
+      e.preventDefault();
+      var option_values_ids = [];
+      $('.color_range_option_value').each(function(){
+        var check_for_action = $(this).find('.check_for_action');
+        if (check_for_action.prop("checked")) {
+          var option_value_id = check_for_action.data('option_value_id');
+          option_values_ids.push(option_value_id);  
+        }
+      })
+      $.ajax({
+        url: "<%= color_range_unassign_option_values_url(protocol: "https", color_range_id: @color_range.id) %>", 
+        method: "POST",
+        data: {
+          _method: "DELETE",
+          id: "<%= @color_range.id %>",
+          option_values_ids: option_values_ids
+        },
+        success: function(option_values_info){
+          for (option_value_id_index in option_values_ids) {
+            var option_value = $('.check_for_action[data-option_value_id="' + option_values_ids[option_value_id_index] + '"]').parents('.color_range_option_value');
+            option_value.insertBefore('.assign_button_container')
+                        .addClass('color_option_value')
+                        .removeClass('color_range_option_value')
+          }
+          $('.check_for_action').each(function(){
+            $(this).prop("checked", false);
+          })
+        }
+      })
+    });
   });
 
 </script>
@@ -33,25 +96,52 @@
     </div>
   </div><br>
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-6 color_option_values">
+      <p class="text-center">
+        Color Option Values
+      </p>
       <% @color_option_values.each do |option_value| %>
-      <div class="text-center">
+      <div class="col-md-6 color_option_value">
+        <% unless option_value.image.nil? %>
+          <% unless option_value.image.url.include? "missing" %>
+            <%= image_tag option_value.image.url, width: "20px" %>
+          <% end %>
+        <% end %>
         <%= option_value.value %>
-        <span class="glyphicon glyphicon-chevron-right pull-right assign_to_color_range" data-option_value_id="<%= option_value.id %>"></span>
+        <input type="checkbox" class="check_for_action pull-right" data-option_value_id="<%= option_value.id %>">
       </div>
       <% end %>
+      <div class="col-md-12 text-center assign_button_container">
+        <button class="assign_option_values btn btn-info">
+          Assign Selected Option Values
+        </button>
+      </div>
+      
     </div>
     
-    <div class="col-md-6">
+    <div class="col-md-6 color_range_option_values">
+      <p class="text-center">
+        Color Range Option Values
+      </p>
       <% @color_range_option_values.each do |option_value| %>
-      <div class="text-center">
-        <span class="glyphicon glyphicon-chevron-left pull-left unassign_from_color_range" data-opton_value_id="<%= option_value.id %>"></span>
+      <div class="col-md-6 color_range_option_value">
+        <% unless option_value.image.nil? %>
+          <% unless option_value.image.url.include? "missing" %>
+            <%= image_tag option_value.image.url, width: "20px" %>
+          <% end %>
+        <% end %>
         <%= option_value.value %>
+        <input type="checkbox" class="check_for_action pull-right" data-option_value_id="<%= option_value.id %>">
       </div>
       <% end %>
+      <div class="col-md-12 text-center unassign_button_container">
+        <button class="unassign_option_values btn btn-warning">
+          Unassign Selected Option Values
+        </button>
+      </div>
     </div>
   </div>
-  
+  <br>
   <div class="row">
     <div class="col-md-6">
      <%= f.submit "Save", class: "btn btn-success" %>
