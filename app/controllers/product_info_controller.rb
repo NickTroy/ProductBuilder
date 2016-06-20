@@ -70,14 +70,14 @@ class ProductInfoController < ApplicationController
     option_values_with_color_ranges = OptionValue.joins("left join variants_option_values on option_values.id=variants_option_values.option_value_id inner join variants on variants.id=variants_option_values.variant_id and variants.product_id=#{params[:id]}")
                                .distinct.where(option_id: color_option_id)
                                .joins("join color_ranges on color_ranges.id = option_values.color_range_id ")
-                               .select("color_ranges.name as color_range_name, option_values.value as value")
+                               .select("color_ranges.name as color_range_name, option_values.value as value, color_ranges.color as color")
     @color_ranges = []       
     
     option_values_with_color_ranges.each do |option_value|
       color_range_name = option_value.color_range_name
       color_range = @color_ranges.find { |col_range| col_range[:name] == color_range_name }
       if color_range.nil?
-        color_range = { name: color_range_name, option_values: [] }
+        color_range = { name: color_range_name, option_values: [], color: option_value.color }
         @color_ranges.push(color_range)
       end
       color_range[:option_values].push(option_value.value)

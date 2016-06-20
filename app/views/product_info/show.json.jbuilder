@@ -17,6 +17,7 @@ json.slider_images_params @slider_images_params do |slider_images_param|
 end
 json.color_ranges @color_ranges do |color_range|
   json.name color_range[:name]
+  json.color color_range[:color]
   json.option_values color_range[:option_values] 
 end
 json.options @product_options do |option|
