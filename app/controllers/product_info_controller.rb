@@ -27,6 +27,8 @@ class ProductInfoController < ApplicationController
 
   def show
     @variants = Variant.where(product_id: params[:id])
+    @product_info = ProductInfo.find_by(main_product_id: params[:id])
+    @shipping_method = @product_info.shipping_method
     if @variants.length == 0 
       render json: { message: "No variants found" }, :status => 200
       return true

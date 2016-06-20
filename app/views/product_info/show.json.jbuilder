@@ -1,7 +1,6 @@
 unless @first_image.nil?
   json.product_first_image_source asset_url(@first_image.image.url)
 end
-json.product_details @variants.last.product_details
 json.option_dependency @option_dependency
 json.option_groups @product_option_groups do |option_group|
   json.option_group_name option_group.name
@@ -18,9 +17,7 @@ json.slider_images_params @slider_images_params do |slider_images_param|
 end
 json.color_ranges @color_ranges do |color_range|
   json.name color_range[:name]
-  json.option_values color_range[:option_values] do |option_value|
-    json.value option_value
-  end
+  json.option_values color_range[:option_values] 
 end
 json.options @product_options do |option|
   json.option_name option[:option_name]
@@ -70,6 +67,31 @@ json.main_variant do
       json.image_source asset_url(variant_image.image.url, :host => 'https://productbuilder.arborgentry.com', :host => 'https://productbuilder.arborgentry.com')
     end
   end
+end
+
+json.product_data do
+  json.(@product_info, :why_we_love_this, :be_sure_to_note, :country_of_origin, :primary_materials, :requires_assembly, 
+                       :care_instructions, :shipping_restrictions, :return_policy)
+  if @product_info.lead_time.nil? or @product_info.lead_time_unit.nil?
+    json.lead_time "not set"
+  else
+    json.lead_time @product_info.lead_time + " " + @product_info.lead_time_unit                       
+  end
+  
+  if @shipping_method.nil?
+    json.shipping_method nil
+  else
+    json.shipping_method do
+      json.(@shipping_method, :name, :description)
+      
+      if @shipping_method.lead_time.nil? or @shipping_method.lead_time_unit.nil?
+        json.lead_time "not set"
+      else
+        json.lead_time @shipping_method.lead_time + " " + @shipping_method.lead_time_unit                       
+      end
+    end
+  end
+  json.(@main_variant, :sku, :vendor_sku, :price, :length, :condition, :height, :room, :depth, :weight)
 end
 
 json.sketch_front_image @sketch_front_image.nil? ? "" : asset_url(@sketch_front_image.image.url, :host => 'https://productbuilder.arborgentry.com')
