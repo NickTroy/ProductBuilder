@@ -1,0 +1,3 @@
+<% if (@three_sixty_images.length) %>
+    $('#imagesSetList').empty().append( "<%= j render partial: "three_sixty_image", collection: @three_sixty_images %>");
+<% end %>    

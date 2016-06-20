@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
   
-
   resources :products do
     get 'page/:page', :action => :index, :on => :collection
     resources :variants
@@ -51,6 +50,7 @@ Rails.application.routes.draw do
   post '/generate_variants', to: 'variants#generate_product_variants'
   put '/generate_variants', to: 'variants#generate_product_variants'
   put '/update_three_sixty_parameters', to: 'three_sixty_images#update_all_three_sixty_images_parameters'
+  post '/products_search', to: 'products#search'
 
   root :to => 'products#index'
 

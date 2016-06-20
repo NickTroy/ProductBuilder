@@ -142,7 +142,9 @@ class ProductsController < AuthenticatedController
     end
   end
 
-  
+  def search
+    @three_sixty_images = ThreeSixtyImage.order('title ASC').where "title like '%#{ params[:search] }%'"
+  end
   
   def destroy
     @product = ShopifyAPI::Product.find(params[:id])
@@ -476,7 +478,7 @@ class ProductsController < AuthenticatedController
     def product_params
       params.permit(:body_html, :handle, :options, 
                     :product_type, :published_scope, :tags,
-                    :template_suffix, :title, :variants, :vendor)
+                    :template_suffix, :title, :variants, :vendor, :search)
     end
     
     def product_info_params
