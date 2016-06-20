@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160616142632) do
+ActiveRecord::Schema.define(version: 20160620120714) do
 
   create_table "color_ranges", force: :cascade do |t|
     t.string   "name",       limit: 255
@@ -159,13 +159,14 @@ ActiveRecord::Schema.define(version: 20160616142632) do
   end
 
   create_table "variant_images", force: :cascade do |t|
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
+    t.datetime "created_at",                                   null: false
+    t.datetime "updated_at",                                   null: false
     t.string   "image_file_name",      limit: 255
     t.string   "image_content_type",   limit: 255
     t.integer  "image_file_size",      limit: 4
     t.datetime "image_updated_at"
     t.integer  "three_sixty_image_id", limit: 4
+    t.integer  "position",             limit: 4,   default: 0
   end
 
   add_index "variant_images", ["three_sixty_image_id"], name: "index_variant_images_on_three_sixty_image_id", using: :btree

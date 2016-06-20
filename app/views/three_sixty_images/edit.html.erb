@@ -1,4 +1,5 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/image-picker/0.2.4/image-picker.min.js"></script>
+
 <link href='https://cdnjs.cloudflare.com/ajax/libs/image-picker/0.2.4/image-picker.min.css' rel='stylesheet' type='text/css'>
 <style>
   .reel img {
@@ -13,8 +14,6 @@
     margin: auto auto;
   }
   .image_picker_image {
-    height: 120px !important;
-    width: 100%;
   }
 </style>
 
@@ -63,14 +62,13 @@ $(document).ready(function(){
           this.emit("thumbnail", existingFiles[<%= index %>], "<%= image.image.url %>");
           $('.dropzone-previews').find('.dz-remove:last').attr('id', <%= image.id %>);
         <% end %>
-      
-      this.on("removedfile", function(file){
-		      
-      })
+      this.on("addedfile", function(file){
+    	  console.log('add file' + file);	      
+      });
+
     }
-		
-  });	
-	
+  });
+  
   $('.dz-remove').click(function(){
     var id = $(this).attr('id'); 
     // make a DELETE ajax request to delete the file
@@ -87,6 +85,30 @@ $(document).ready(function(){
 
   })
 
+  $('.dropzone-previews').sortable({
+    items:'.dz-preview',
+    cursor: 'move',
+    opacity: 0.5,
+    distance: 20,
+    tolerance: 'pointer',
+    stop: function( event, ui ) {
+      var link_list = $('.dz-remove');
+      var image_order = [];
+      link_list.each( function(i){
+        image_order.push( $(this).attr('id') );
+      });
+      
+      $.ajax({
+        url: " <%= three_sixty_image_update_order_url(:protocol => 'https', :three_sixty_image_id => @three_sixty_image.id) %>  ",
+        method: 'put',
+        data: { image_order },
+        success: function(){
+          //Nop
+        }
+      });  
+    }
+  });
+  
 });
   
 </script>
@@ -251,6 +273,7 @@ $(document).ready(function(){
         <h2>Upload product variant images</h2>
         <div class="dropzone-previews dropzone">
           <div class="dz-default dz-message"><span>Drop files here to upload</span>
+          <div data-dz-id></div>
           </div>
         </div>
       </div>

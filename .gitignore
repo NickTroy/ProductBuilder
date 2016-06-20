@@ -18,3 +18,4 @@ public/assets/tinymce/tinymce.js
 /config/initializers/shopify_app.rb
 /Gemfile.lock
 passenger.3000.pid.lock
+.byebug_history

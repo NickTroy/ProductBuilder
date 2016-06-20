@@ -43,7 +43,7 @@
       </h2>
       <select class="image-picker show-html" id="selectImage" name="image_id">
         <% @variant_images.each_with_index do |img, i| %>
-          <option data-img-src="<%= img.image.url(:medium) %>" value="<%= img.id %>"></option>
+          <option data-img-src="<%= img.image.url(:original) %>" value="<%= img.id %>"></option>
         <% end %>
       </select>
     <% end %>  

@@ -8,7 +8,7 @@ class ThreeSixtyImagesController < AuthenticatedController
   def edit
     @three_sixty_image = ThreeSixtyImage.find(params[:id])
     @plane_images = @three_sixty_image.plane_images
-    @variant_images = @three_sixty_image.variant_images
+    @variant_images = @three_sixty_image.variant_images.sort_by &:position
     unless @three_sixty_image.nil?
       unless @three_sixty_image.plane_images.empty?      
         @first_plane_image = @three_sixty_image.plane_images.first.image.url
@@ -38,6 +38,18 @@ class ThreeSixtyImagesController < AuthenticatedController
     else 
       render json: { message: "failed" }, :status => 500
     end
+  end
+
+  def update_order
+    
+    new_images_order = params[:image_order]
+    new_images_order.each_index do |index|
+      image = VariantImage.find new_images_order[index]
+      image.position = index
+      image.save
+    end
+    
+    render :nothing => true
   end
 
   def update

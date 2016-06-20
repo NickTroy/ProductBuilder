@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   
   resources :three_sixty_images do
     resources :variant_images
+    put '/update_order', to: 'three_sixty_images#update_order'
     post '/upload_plane_images', to: 'three_sixty_images#upload_plane_images'
     post '/assign_to_variant', to: 'three_sixty_images#assign_to_variant'
     delete '/delete_plane_images', to: 'three_sixty_images#delete_plane_images'
