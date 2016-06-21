@@ -76,7 +76,10 @@ json.product_data do
   if @product_info.lead_time.nil? or @product_info.lead_time_unit.nil?
     json.lead_time "not set"
   else
-    json.lead_time @product_info.lead_time + " " + @product_info.lead_time_unit                       
+    json.lead_time do
+      json.number @product_info.lead_time 
+      json.period @product_info.lead_time_unit
+    end
   end
   
   if @shipping_method.nil?
@@ -88,11 +91,14 @@ json.product_data do
       if @shipping_method.lead_time.nil? or @shipping_method.lead_time_unit.nil?
         json.lead_time "not set"
       else
-        json.lead_time @shipping_method.lead_time + " " + @shipping_method.lead_time_unit                       
+        json.lead_time do
+          json.number @shipping_method.lead_time 
+          json.period @shipping_method.lead_time_unit
+        end
       end
     end
   end
-  json.(@main_variant, :sku, :vendor_sku, :price, :length, :condition, :height, :room, :depth, :weight)
+  json.(@main_variant, :sku, :price, :length, :condition, :height, :room, :depth, :weight)
 end
 
 json.sketch_front_image @sketch_front_image.nil? ? "" : asset_url(@sketch_front_image.image.url, :host => 'https://productbuilder.arborgentry.com')
