@@ -2,6 +2,7 @@ unless @first_image.nil?
   json.product_first_image_source asset_url(@first_image.image.url)
 end
 json.option_dependency @option_dependency
+json.color_and_material_values @color_and_material_values
 json.option_groups @product_option_groups do |option_group|
   json.option_group_name option_group.name
   json.options option_group.options do |option|
