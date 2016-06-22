@@ -18,3 +18,32 @@
 .products_table .col-md-2:first-child {
   margin-bottom: 30px !important;
 }
+.option_values {
+  overflow: hidden;
+  white-space: nowrap;
+}
+.images-container .dropzone .dz-preview .dz-image {
+  height: auto !important;
+  width: auto !important;
+}
+.variant-info.row {
+  border-bottom: 1px solid black;
+  margin-bottom: 5px;
+  padding: 5px;
+}
+.collections_list {
+  height: 140px;
+  overflow-y: scroll;
+}
+.search_label h4:hover {
+  text-decoration: underline;
+}
+.variant-actions .btn {
+  margin-bottom: 10px !important;
+}
+.unassign_from_collection {
+  cursor: pointer !important; 
+}
+.unassign_from_collection:hover{
+  color: #FA5858;
+}
