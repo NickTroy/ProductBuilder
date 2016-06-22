@@ -22,4 +22,9 @@ class PlaneImage < ActiveRecord::Base
                         :content_type => { :content_type => /\Aimage\/.*\Z/ },
                         :size => { :less_than => 1.megabyte }
   
+  def image_from_url url
+    url.gsub!(' ','');
+    self.image = URI.parse(url)
+  end
+  
 end

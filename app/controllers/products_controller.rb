@@ -21,6 +21,7 @@ class ProductsController < AuthenticatedController
   def edit
     @product = ShopifyAPI::Product.find(params[:id])
     @product_info = ProductInfo.find_by(main_product_id: @product.id) || ProductInfo.create(:main_product_id => @product.id)
+    
     @images = ProductImage.where(product_id: @product.id)
     @three_sixty_images = ThreeSixtyImage.order('title ASC')
     @shipping_methods = ShippingMethod.all
@@ -169,7 +170,6 @@ class ProductsController < AuthenticatedController
     respond_to do |format|
       format.html { redirect_to products_url(:protocol => 'https'), notice: 'Product was successfully deleted.' }
     end
-    
   end
 
   
@@ -181,29 +181,20 @@ class ProductsController < AuthenticatedController
       @product_row = @import_file.sheet(index).row(6)
       @product_title = @product_row[0]
       @product_details = @product_row[1]
-      @product_type = @product_row[2]
+      @product_vendor = @product_row[2]
+      @product_type = @product_row[3]
 
       @why_we_love_this = @product_row[4]
       @be_sure_to_note = @product_row[5]
       @country_of_origin = @product_row[6]
       @primary_materials = @product_row[7]
       @requires_assembly = @product_row[8]
-      if @product_row[9].nil?
-        @product_lead_time = ""
-        @product_lead_time_unit = ""
-      else
-        @product_lead_time = @product_row[9].split[0] 
-        @product_lead_time_unit = @product_row[9].split[1]
-      end
-      @product_care_instructions = @product_row[10]
-      @shipping_restrictions = @product_row[11]
-      @return_policy = @product_row[12]
-      @shipping_method_name = @product_row[13]
-      @shipping_method_description = @product_row[14]
-      unless @product_row[15].nil?
-        @shipping_method_lead_time = @product_row[15].split[0]
-        @shipping_method_lead_time_unit = @product_row[15].split[1]
-      end
+      @product_lead_time = @product_row[9] 
+      @product_lead_time_unit = @product_row[10]
+      @product_care_instructions = @product_row[11]
+      @shipping_restrictions = @product_row[12]
+      @return_policy = @product_row[13]
+      @shipping_method_name = @product_row[14]
       
       
       @options_row = @import_file.sheet(index).row(2)
@@ -220,6 +211,7 @@ class ProductsController < AuthenticatedController
           @depth_column = ind if cell.include? "Variant depth"
           @price_column = ind if cell.include? "Variant price"
           @variant_images_column = ind if cell.include? "Variant Images"
+          @plane_images_column = ind if cell.include? "Variant Plane Images"
           @vendor_sku_column = ind if cell.include? "Vendor SKU"
           @weight_column = ind if cell.include? "Variant Weight"
           @room_column = ind if cell.include? "Variant Room"
@@ -303,18 +295,29 @@ class ProductsController < AuthenticatedController
         
         unless @variant_images_column.nil? or variant_updating
           variant_images_links = @variant_row[@variant_images_column].split(',') unless @variant_row[@variant_images_column].nil?
+          plane_images_links = @variant_row[@plane_images_column].split(',') unless @variant_row[@plane_images_column].nil?
           unless variant_images_links.nil?
             @three_sixty_image = @variant.three_sixty_image
             if @three_sixty_image.nil?
               @three_sixty_image = ThreeSixtyImage.create(:title => @pseudo_product_title)
             end
             
+            byebug
+            
             @three_sixty_image.variants << @variant
+            byebug
             variant_images_links.each do |image_link|
               @variant_image = VariantImage.new(:three_sixty_image_id => @three_sixty_image.id)
               @variant_image.image_from_url(image_link)
               @variant_image.save
             end
+            
+            plane_images_links.each do |image_link|
+              @plane_image = PlaneImage.new(:three_sixty_image_id => @three_sixty_image.id)
+              @plane_image.image_from_url(image_link)
+              @plane_image.save
+            end
+            
           end
         end
 
@@ -327,19 +330,14 @@ class ProductsController < AuthenticatedController
           @variant.update_attributes(:pseudo_product_id => @pseudo_product.id, 
                                      :pseudo_product_variant_id => @pseudo_product_variant.id)
         end
-        
-
       end
     end
     @import_file.close
     redirect_to root_url(:protocol => 'https'), notice: "Product imported."
-    
   end
   
   def export
-    
     book = Spreadsheet::Workbook.new
-
     @product_ids = params[:product_ids].split(',').map!(&:to_i)
     @product_ids.each_with_index do |product_id, index|
       @product = ShopifyAPI::Product.find(product_id)
@@ -356,7 +354,6 @@ class ProductsController < AuthenticatedController
       product_row[2] = @product.vendor
       title_row[3] = "Type"
       product_row[3] = @product.product_type
-      title_row[4] = "Detail - Tags"
       title_row[4] = "Why We Love This"
       product_row[4] = @product_info.why_we_love_this
       title_row[5] = "Be Sure To Note"
@@ -368,20 +365,18 @@ class ProductsController < AuthenticatedController
       title_row[8] = "Requires Assembly"
       product_row[8] = @product_info.requires_assembly
       title_row[9] = "Lead Time"
-      product_row[9] = @product_info.lead_time + " " + @product_info.lead_time_unit unless @product_info.lead_time.nil? or @product_info.lead_time_unit.nil?
-      title_row[10] = "Care Instructions"
-      product_row[10] = @product_info.care_instructions
-      title_row[11] = "Shipping Restrictions"
-      product_row[11] = @product_info.shipping_restrictions
-      title_row[12] = "Return Policy"
-      product_row[12] = @product_info.return_policy
-      title_row[13] = "Shipping Method Name"
-      title_row[14] = "Shipping Method Description"
-      title_row[15] = "Shipping Method Lead Time"
+      product_row[9] = @product_info.lead_time unless @product_info.lead_time.nil? 
+      title_row[10] = "Lead Time Unit"
+      product_row[10] = @product_info.lead_time_unit unless @product_info.lead_time_unit.nil?
+      title_row[11] = "Care Instructions"
+      product_row[11] = @product_info.care_instructions
+      title_row[12] = "Shipping Restrictions"
+      product_row[12] = @product_info.shipping_restrictions
+      title_row[13] = "Return Policy"
+      product_row[13] = @product_info.return_policy
+      title_row[14] = "Shipping Method Name"
       unless @product_info.shipping_method.nil?
-        product_row[13] = @product_info.shipping_method.name
-        product_row[14] = @product_info.shipping_method.description
-        product_row[15] = @product_info.shipping_method.lead_time + " " + @product_info.shipping_method.lead_time_unit
+        product_row[14] = @product_info.shipping_method.name
       end
       @product_options = []
       ProductsOption.where(:product_id => product_id).each do |pr_opt|
@@ -429,6 +424,8 @@ class ProductsController < AuthenticatedController
       title_row[care_instructions_column] = "Variant Care Instructions"
       description_row[care_instructions_column] = "care instructons"
       
+      plane_images_column = @product_options.count + options_index_offset + 11
+      title_row[plane_images_column] = "Variant Plane Images"
       
       @product_variants = Variant.where(:product_id => product_id)
       @product_variants.each_with_index do |variant, variant_index|
@@ -455,6 +452,14 @@ class ProductsController < AuthenticatedController
           end
         end
         variant_row[variant_images_column] = images_links.join(',')
+        
+        images_links = []
+        unless variant.three_sixty_image.nil?
+          variant.three_sixty_image.plane_images.each do |plane_image|
+            images_links.push URI.join(request.url, plane_image.image.url).to_s
+          end
+        end
+        variant_row[plane_images_column] = images_links.join(',')
       end
     end
     book.write './public/assets/export.xls'
@@ -468,10 +473,7 @@ class ProductsController < AuthenticatedController
     else
       render json: { message: "failed" }, :status => 500
     end
-    
   end
-
-
 
   private
 
@@ -487,9 +489,8 @@ class ProductsController < AuthenticatedController
                     :lead_time, :lead_time_unit)
     end
 
-
-  def filtering_params
-    params[:filtering_params]
-  end
+    def filtering_params
+      params[:filtering_params]
+    end
 
 end
