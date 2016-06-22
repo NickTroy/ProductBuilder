@@ -3,8 +3,10 @@ json.array! @variants do |variant|
     json.main_variant_id variant.id
   end
   json.variant_id variant.id
-  unless variant.main_image_id.nil?
-    json.image_source VariantImage.find(variant.main_image_id).image.url(:thumb) 
+  unless variant.three_sixty_image.nil?
+    unless variant.three_sixty_image.main_image_id.nil?
+    json.image_source VariantImage.find(variant.three_sixty_image.main_image_id)
+    end
   end
   if !(variant.sku.nil?)
     json.sku variant.sku 
@@ -16,4 +18,4 @@ json.array! @variants do |variant|
     json.option_name option_value.option.name
     json.option_value option_value.value
   end
-end    
+end
