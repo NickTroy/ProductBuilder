@@ -502,14 +502,18 @@ $(document).ready(function(){
   $('.shipping_method_select option[value="' + <%= @product_info.shipping_method.id %> + '"]').prop("selected", true);
   <% end %>
   
-  $('.lead_time_select option:contains("<%= @product_info.lead_time.to_s %>")').prop("selected", true);
+  <% unless @product_info.lead_time.nil? %>
+    $('.lead_time_select option:contains("<%= @product_info.lead_time.to_s %>")').prop("selected", true);
+  <% end %> 
   
   $('.lead_time_select').change(function(){
     var lead_time = $(this).val();
     $('.lead_time').val(lead_time);
   });
   
-  $('.lead_time_unit_select option:contains("<%= @product_info.lead_time_unit %>")').prop("selected", true);
+ <% unless @product_info.lead_time_unit.nil? %>
+   $('.lead_time_unit_select option:contains("<%= @product_info.lead_time_unit %>")').prop("selected", true);
+ <% end %>
   
   $('.lead_time_unit_select').change(function(){
     var lead_time_unit = $(this).val();
@@ -1583,6 +1587,9 @@ $(document).ready(function(){
         <%= label_tag 'product_info[lead_time]', "Lead Time:" %>
         <%= hidden_field_tag :lead_time, @product_info.lead_time, class: "form-control lead_time" %>
         <select class="form-control lead_time_select">
+          <% if @product_info.lead_time.nil? %>
+            <option selected>..</option>
+          <% end %>
           <option value="1">1</option>
           <option value="2">2</option>
           <option value="3">3</option>
@@ -1598,9 +1605,13 @@ $(document).ready(function(){
         </select>
       </div>
       <div class="col-md-2">
+        <%= label_tag 'product_info[lead_time_unit]', "Lead Time Unit:" %>
         <%= hidden_field_tag :lead_time_unit, @product_info.lead_time_unit, class: "form-control lead_time_unit" %>
         <br>
         <select class="form-control lead_time_unit_select">
+          <% if @product_info.lead_time_unit.nil? %>
+            <option selected>..</option>
+          <% end %>
           <option value="Day(s)">Day(s)</option>
           <option value="Week(s)">Week(s)</option>
         </select>
