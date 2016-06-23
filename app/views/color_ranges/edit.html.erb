@@ -1,1 +1,67 @@
+<script>
+  $(document).ready(function(){
+    $('.assign_option_values').click(function(e){
+      e.preventDefault();
+      var option_values_ids = [];
+      $('.color_option_value').each(function(){
+        var check_for_action = $(this).find('.check_for_action');
+        if (check_for_action.prop("checked")) {
+          var option_value_id = check_for_action.data('option_value_id');
+          option_values_ids.push(option_value_id);  
+        }
+      })
+      $.ajax({
+        url: "<%= color_range_assign_option_values_url(protocol: "https", color_range_id: @color_range.id) %>", 
+        method: "POST",
+        data: {
+          id: "<%= @color_range.id %>",
+          option_values_ids: option_values_ids
+        },
+        success: function(){
+          for (option_value_id_index in option_values_ids) {
+            var option_value = $('.check_for_action[data-option_value_id="' + option_values_ids[option_value_id_index] + '"]').parents('.color_option_value');
+            option_value.insertBefore('.unassign_button_container')
+                        .removeClass('color_option_value')
+                        .addClass('color_range_option_value');
+          }
+          $('.check_for_action').each(function(){
+            $(this).prop("checked", false);
+          })
+        }
+      })
+    });
+    
+    $('.unassign_option_values').click(function(e){
+      e.preventDefault();
+      var option_values_ids = [];
+      $('.color_range_option_value').each(function(){
+        var check_for_action = $(this).find('.check_for_action');
+        if (check_for_action.prop("checked")) {
+          var option_value_id = check_for_action.data('option_value_id');
+          option_values_ids.push(option_value_id);  
+        }
+      })
+      $.ajax({
+        url: "<%= color_range_unassign_option_values_url(protocol: "https", color_range_id: @color_range.id) %>", 
+        method: "POST",
+        data: {
+          _method: "DELETE",
+          id: "<%= @color_range.id %>",
+          option_values_ids: option_values_ids
+        },
+        success: function(option_values_info){
+          for (option_value_id_index in option_values_ids) {
+            var option_value = $('.check_for_action[data-option_value_id="' + option_values_ids[option_value_id_index] + '"]').parents('.color_range_option_value');
+            option_value.insertBefore('.assign_button_container')
+                        .addClass('color_option_value')
+                        .removeClass('color_range_option_value')
+          }
+          $('.check_for_action').each(function(){
+            $(this).prop("checked", false);
+          })
+        }
+      })
+    });
+  })
+</script>
 <%= render 'form' %>
