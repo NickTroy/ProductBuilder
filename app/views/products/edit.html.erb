@@ -467,6 +467,29 @@ function add_make_main_variant_button_click(){
 }
 
 $(document).ready(function(){
+  
+  $('.variant_state').bootstrapSwitch();
+  
+  $('.variant_state').on('switchChange.bootstrapSwitch', function(event, state){
+    var this_switch = jQuery(this);
+    var variant_id = this_switch.data("variant_id");
+    $.ajax({
+      url: "<%= product_variants_url(product_id: @product.id, protocol: 'https') %>" + '/' + variant_id,
+      method: "POST",
+      dataType: "json",
+      data: {
+        _method: "PUT",
+        variant_id: variant_id,
+        variant: {
+          state: state,
+        }
+      },
+      success: function(){
+        alert("Variant state was toggled.")
+      }
+    })
+  })
+  
   <% unless @product_info.shipping_method.nil? %>
   $('.shipping_method_select option[value="' + <%= @product_info.shipping_method.id %> + '"]').prop("selected", true);
   <% end %>
@@ -1927,7 +1950,6 @@ $(document).ready(function(){
               <span class="glyphicon glyphicon-edit"></span>
             <% end %>
             <br>
-            
             <%= link_to product_variant_url(:product_id => @product.id, :variant_id => variant.id, :protocol => 'https', :_method => 'delete'), 
                         { :method => :delete, class: "btn btn-danger", style: "width: 100% !important", data: { confirm: 'Are you sure, you want to delete this product variant?' } } do %>
               <span>Delete Variant</span>
@@ -1941,6 +1963,8 @@ $(document).ready(function(){
             <% if variant.main_variant %>
               <div class="main_variant_label"><strong> Main produt variant</strong></div>
             <% end %>
+            
+            <input class="variant_state" type="checkbox" <%= variant.state ? "checked" : "" %> data-variant_id="<%= variant.id %>"></input>
           </div>
         
         </div>

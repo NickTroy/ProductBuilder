@@ -24,4 +24,5 @@
 //= require turbolinks
 //= require jquery-filestyle.min
 //= require jquery.minicolors.min
+//= require bootstrap-switch
 //= require_tree .

@@ -51,59 +51,67 @@ class VariantsController < AuthenticatedController
       return true
     end
     @variant = Variant.find(params[:variant_id])
-    unless params[:image_id].nil? 
-      @image_selected = VariantImage.find(params[:image_id])
-      @variant.main_image_id = params[:image_id]
-      @variant.save
-    end
-    
-    if variant_attributes[:main_variant]
-      Variant.where(:main_variant => true, :product_id => @variant.product_id).each do |v|
-        v.update_attributes(:main_variant => false) 
-      end
-    end
-    
-    @variant.update_attributes(variant_attributes)
-    
-    begin
-      @pseudo_product = ShopifyAPI::Product.find(@variant.pseudo_product_id)
-    rescue
-      recreate_pseudo_product
-    ensure
-      @product = ShopifyAPI::Product.find(@variant.product_id)
-      @pseudo_product = ShopifyAPI::Product.find(@variant.pseudo_product_id) if @pseudo_product.nil?
-      
-      @pseudo_product_title = "#{@product.title} "
-      @color_option_value = @variant.option_values.find { |opt_val| opt_val.option.name == "Color"}
-      @pseudo_product_title += @color_option_value.nil? ? "(" : "(#{@color_option_value.value} " 
-      @upholstery_option_value = @variant.option_values.find { |opt_val| opt_val.option.name == "Upholstery"}
-      @pseudo_product_title += @upholstery_option_value.nil? ? ")" : "#{@upholstery_option_value.value})"
-      @variant_length = @variant.option_values.find { |opt_val| opt_val.option.name == "Lengths" }
-      @variant_length = @variant_length.value unless @variant_length.nil?
-      @variant_depth = @variant.option_values.find { |opt_val| opt_val.option.name == "Depth" }
-      @variant_depth = @variant_depth.value unless @variant_depth.nil?
-      @pseudo_product_title = "#{@variant_length} #{@variant_depth} #{@pseudo_product_title}"
-      @pseudo_product.update_attributes(:title => @pseudo_product_title)
-      
-      @pseudo_product_variant = @pseudo_product.variants.first
-      @pseudo_product_variant.update_attributes(:option1 => @pseudo_product_title)
-      
-      @inventory_management = params[:inventory_management] == "shopify" ? "shopify" : nil
-      @pseudo_product_variant.update_attributes(:price => variant_attributes[:price], :sku => variant_attributes[:sku], :inventory_management => @inventory_management, :option1 => @pseudo_product_title)
-      unless params[:inventory_management].nil?
-        @pseudo_product_variant.update_attributes(:inventory_quantity => params[:inventory_quantity].to_i)
-      end
-      
-      unless params[:image_id].nil? 
-        @pseudo_product_image = @pseudo_product.images.first
-        unless @pseudo_product_image.nil?
-          @pseudo_product_image.destroy
+    respond_to do |format|
+      format.html do
+        unless params[:image_id].nil? 
+          @image_selected = VariantImage.find(params[:image_id])
+          @variant.main_image_id = params[:image_id]
+          @variant.save
         end
-        @pseudo_product_image = ShopifyAPI::Image.new(:product_id => @pseudo_product.id) 
-        @pseudo_product_image.src = URI.join(request.url, @image_selected.image.url).to_s
-        @pseudo_product_image.save
+      
+        if variant_attributes[:main_variant]
+          Variant.where(:main_variant => true, :product_id => @variant.product_id).each do |v|
+            v.update_attributes(:main_variant => false) 
+          end
+        end
+        
+        @variant.update_attributes(variant_attributes)
+        
+        begin
+          @pseudo_product = ShopifyAPI::Product.find(@variant.pseudo_product_id)
+        rescue
+          recreate_pseudo_product
+        ensure
+          @product = ShopifyAPI::Product.find(@variant.product_id)
+          @pseudo_product = ShopifyAPI::Product.find(@variant.pseudo_product_id) if @pseudo_product.nil?
+          
+          @pseudo_product_title = "#{@product.title} "
+          @color_option_value = @variant.option_values.find { |opt_val| opt_val.option.name == "Color"}
+          @pseudo_product_title += @color_option_value.nil? ? "(" : "(#{@color_option_value.value} " 
+          @upholstery_option_value = @variant.option_values.find { |opt_val| opt_val.option.name == "Upholstery"}
+          @pseudo_product_title += @upholstery_option_value.nil? ? ")" : "#{@upholstery_option_value.value})"
+          @variant_length = @variant.option_values.find { |opt_val| opt_val.option.name == "Lengths" }
+          @variant_length = @variant_length.value unless @variant_length.nil?
+          @variant_depth = @variant.option_values.find { |opt_val| opt_val.option.name == "Depth" }
+          @variant_depth = @variant_depth.value unless @variant_depth.nil?
+          @pseudo_product_title = "#{@variant_length} #{@variant_depth} #{@pseudo_product_title}"
+          @pseudo_product.update_attributes(:title => @pseudo_product_title)
+          
+          @pseudo_product_variant = @pseudo_product.variants.first
+          @pseudo_product_variant.update_attributes(:option1 => @pseudo_product_title)
+          
+          @inventory_management = params[:inventory_management] == "shopify" ? "shopify" : nil
+          @pseudo_product_variant.update_attributes(:price => variant_attributes[:price], :sku => variant_attributes[:sku], :inventory_management => @inventory_management, :option1 => @pseudo_product_title)
+          unless params[:inventory_management].nil?
+            @pseudo_product_variant.update_attributes(:inventory_quantity => params[:inventory_quantity].to_i)
+          end
+          
+          unless params[:image_id].nil? 
+            @pseudo_product_image = @pseudo_product.images.first
+            unless @pseudo_product_image.nil?
+              @pseudo_product_image.destroy
+            end
+            @pseudo_product_image = ShopifyAPI::Image.new(:product_id => @pseudo_product.id) 
+            @pseudo_product_image.src = URI.join(request.url, @image_selected.image.url).to_s
+            @pseudo_product_image.save
+          end
+          redirect_to edit_product_url(:protocol => 'https', :id => params[:product_id])
+        end
       end
-      redirect_to edit_product_url(:protocol => 'https', :id => params[:product_id])
+      format.json do 
+        @variant.update_attributes(variant_attributes)
+        render json: { message: "updated" }, status: 200
+      end
     end
   end
   
@@ -199,7 +207,7 @@ class VariantsController < AuthenticatedController
     def variant_attributes
       params.require(:variant).permit(:price, :sku, :length, :height, :depth, 
                                       :main_variant, :vendor_sku, :room, :care_instructions,
-                                      :weight, :condition)
+                                      :weight, :condition, :state)
     end
     
     def recreate_pseudo_product
