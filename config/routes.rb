@@ -13,6 +13,8 @@ Rails.application.routes.draw do
     delete '/delete_all_variants', to: 'variants#delete_all_variants'
     delete '/delete_selected_variants', to: 'variants#delete_selected_variants'
     delete '/unassign_from_collection', to: 'products#unassign_from_collection'
+    put '/turn_off_variants', to: 'variants#turn_off_variants'
+    put '/turn_on_variants', to: 'variants#turn_on_variants'
   end
   
   resources :three_sixty_images do

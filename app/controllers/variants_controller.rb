@@ -200,7 +200,25 @@ class VariantsController < AuthenticatedController
     render json: { message: "success"}, :status => 200 
   end
   
-
+  def turn_off_variants
+    variants_ids = params[:variants_ids]
+    variants_ids.each do |variant_id|
+      variant = Variant.find(variant_id)
+      variant.update_attributes(state: false)
+    end
+    
+    render json: { message: "turned off"}, :status => 200 
+  end
+  
+  def turn_on_variants
+    variants_ids = params[:variants_ids]
+    variants_ids.each do |variant_id|
+      variant = Variant.find(variant_id)
+      variant.update_attributes(state: true)
+    end
+  
+    render json: { message: "turned on"}, :status => 200 
+  end
   
   private
   

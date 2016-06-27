@@ -465,8 +465,66 @@ function add_make_main_variant_button_click(){
     })
   })
 }
+function get_selected_variants_ids(){
+  var variants_ids = [];
+  $('.select_for_action:checked').each(function(){
+    this_variant_checkbox = $(this);
+    variants_ids.push(this_variant_checkbox.data('variant-id'));
+  });
+  return variants_ids;
+}
 
 $(document).ready(function(){
+  //variant state functionality
+  $('.turn_off_variants').click(function(e){
+    e.preventDefault();
+    var selected_variants_ids = get_selected_variants_ids();
+    var turned_on_variants_ids = selected_variants_ids.filter(function(variant_id){
+      var variant_state = $('.variant_state[data-variant_id="' + variant_id + '"]').bootstrapSwitch('state');
+      if (variant_state) {
+        return variant_id;
+      }
+    });
+    $.ajax({
+      url: "<%= product_turn_off_variants_url(product_id: @product.id, protocol: "https") %>",
+      type: "POST",
+      data: {
+        _method: "PUT",
+        variants_ids: turned_on_variants_ids
+      },
+      success: function(){
+        turned_on_variants_ids.forEach(function(variant_id){
+          $('.variant_state[data-variant_id="' + variant_id + '"]').bootstrapSwitch('state', false, true);  
+          $('.select_for_action[data-variant-id="' + variant_id + '"]').prop('checked', false);  
+        })
+      }
+    })
+  })
+  
+  $('.turn_on_variants').click(function(e){
+    e.preventDefault();
+    var selected_variants_ids = get_selected_variants_ids();
+    var turned_off_variants_ids = selected_variants_ids.filter(function(variant_id){
+      var variant_state = $('.variant_state[data-variant_id="' + variant_id + '"]').bootstrapSwitch('state');
+      if (!(variant_state)) {
+        return variant_id;
+      }
+    });
+    $.ajax({
+      url: "<%= product_turn_on_variants_url(product_id: @product.id, protocol: "https") %>",
+      type: "POST",
+      data: {
+        _method: "PUT",
+        variants_ids: turned_off_variants_ids
+      },
+      success: function(){
+        turned_off_variants_ids.forEach(function(variant_id){
+          $('.variant_state[data-variant_id="' + variant_id + '"]').bootstrapSwitch('state', true, true);  
+          $('.select_for_action[data-variant-id="' + variant_id + '"]').prop('checked', false);  
+        })
+      }
+    })
+  })
   
   $('.variant_state').bootstrapSwitch();
   
@@ -580,13 +638,8 @@ $(document).ready(function(){
   });
   $('.assign_3d_image').click(function(e){
     e.preventDefault();
-    var variants_ids = [];
     var three_sixty_image_title = $('.select_3d_image option:selected').text();
-    $('.select_for_action:checked').each(function(){
-      this_variant_checkbox = $(this);
-      
-      variants_ids.push($(this).data('variant-id'));
-    });
+    var variants_ids = get_selected_variants_ids();
     var three_sixty_image_id = $('.select_3d_image').val();
     $.ajax({
       url: "<%= product_multiple_three_sixty_image_assignment_url(:product_id => @product.id, :protocol => 'https') %>",
@@ -1873,6 +1926,24 @@ $(document).ready(function(){
           <br>
           <button class="btn btn-info assign_3d_image" style="width:100%">
             <span>Confirm Assignment</span>
+          </button>
+        </div>
+      </div>
+      <div class="change_variants_state">
+        <div class="col-md-4 text-center">
+          <br>
+          <span>Change state of selected variants</span>
+        </div>
+        <div class="col-md-4">
+          <br>
+          <button class="btn btn-success turn_on_variants" style="width:100%">
+            <span>Turn On Variants</span>
+          </button>
+        </div>
+        <div class="col-md-4">
+          <br>
+          <button class="btn btn-info turn_off_variants" style="width:100%">
+            <span>Turn Off Variants</span>
           </button>
         </div>
       </div>
