@@ -26,15 +26,15 @@ class ProductInfoController < ApplicationController
   end
 
   def show
-    @variants = Variant.where(product_id: params[:id])
+    @variants = Variant.where(product_id: params[:id], state: true)
     @product_info = ProductInfo.find_by(main_product_id: params[:id])
     @shipping_method = @product_info.shipping_method
     if @variants.length == 0 
       render json: { message: "No variants found" }, :status => 200
       return true
     end
-    @main_variant = Variant.where(product_id: params[:id], main_variant: true)[0] unless Variant.where(product_id: params[:id], main_variant: true)[0].nil?
-    @main_variant ||= Variant.where(product_id: params[:id]).first
+    @main_variant = Variant.where(product_id: params[:id], main_variant: true, state: true)[0] unless Variant.where(product_id: params[:id], main_variant: true, state: true)[0].nil?
+    @main_variant ||= Variant.where(product_id: params[:id], state: true).first
     @main_variant_id = @main_variant.id
     #@main_variant_id = Variant.where(product_id: params[:id], main_variant: true)[0].id unless Variant.where(product_id: params[:id], main_variant: true)[0].nil?
     #@main_variant_id ||= Variant.where(product_id: params[:id]).first.id    
