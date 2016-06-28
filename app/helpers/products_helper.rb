@@ -172,12 +172,11 @@ module ProductsHelper
       
       unless variants[i]['three_sixty_image'].nil? or variants[i]['three_sixty_image'] == ''
         imgSet = ThreeSixtyImage.where( :title => variants[i]['three_sixty_image'] ).first
-        unless imgSet.nil?
-          variant.three_sixty_image = imgSet
-        else
+        
+        if imgSet.nil?
           imgSet = ThreeSixtyImage.create(:title => variants[i]['three_sixty_image'])
           variants[i]['variant_images'].each do |img|
-            variant_image = VariantImage.new(:three_sixty_image_id => imgSet.id)
+            variant_image = VariantImage.create(:image => img, :three_sixty_image_id => imgSet.id)
             variant_image.image_from_url(img)
             variant_image.save
           end
@@ -186,8 +185,8 @@ module ProductsHelper
             plane_image.image_from_url(img)
             plane_image.save
           end
-          
-        end
+        end  
+        variant.three_sixty_image = imgSet
       end
       variant.save
       sleep 0.5

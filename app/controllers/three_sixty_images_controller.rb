@@ -32,9 +32,9 @@ class ThreeSixtyImagesController < AuthenticatedController
       return true
     end
     
-    @three_sixty_image = ThreeSixtyImage.new(three_sixty_image_params)
-    if @three_sixty_image.save
-      redirect_to edit_three_sixty_image_url(:id => @three_sixty_image.id, :protocol => 'https')
+    three_sixty_image = ThreeSixtyImage.new(three_sixty_image_params)
+    if three_sixty_image.save
+      redirect_to edit_three_sixty_image_url(:id => three_sixty_image.id, :protocol => 'https')
     else 
       render json: { message: "failed" }, :status => 500
     end
@@ -122,23 +122,23 @@ class ThreeSixtyImagesController < AuthenticatedController
   end 
 
   def destroy
-    @three_sixty = ThreeSixtyImage.find(params[:id])
-    @three_sixty.variants.each do |variant|
-      @product = ShopifyAPI::Product.find(variant.product_id)
-      @main_variant_image = VariantImage.find(@three_sixty.main_image_id) unless @three_sixty.main_image_id.nil?
-      @shopify_product_image = @product.images.first
-      unless @shopify_product_image.nil?
-        @shopify_product_image.destroy
+    three_sixty = ThreeSixtyImage.find(params[:id])
+    three_sixty.variants.each do |variant|
+      product = ShopifyAPI::Product.find(variant.product_id)
+      main_variant_image = VariantImage.find(three_sixty.main_image_id) unless three_sixty.main_image_id.nil?
+      shopify_product_image = product.images.first
+      unless shopify_product_image.nil?
+        shopify_product_image.destroy
       end
-      unless @main_variant_image.nil?
+      unless main_variant_image.nil?
         if variant.main_variant
-          @shopify_product_image = ShopifyAPI::Image.new(:product_id => @product.id, :position => 1)
-          @shopify_product_image.src = 'https://productbuilder.arborgentry.com/' + @main_variant_image.image.url
-          @shopify_product_image.save
+          shopify_product_image = ShopifyAPI::Image.new(:product_id => product.id, :position => 1)
+          shopify_product_image.src = 'https://productbuilder.arborgentry.com/' + main_variant_image.image.url
+          shopify_product_image.save
         end
       end
     end
-    if @three_sixty.destroy
+    if three_sixty.destroy
       redirect_to :back
     else
       render json: { message: "failed" }, :status => 500

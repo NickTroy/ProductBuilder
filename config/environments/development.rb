@@ -43,3 +43,11 @@ end
 
 Paperclip.options[:image_magick_path] = "/etc/ImageMagick/"
 Paperclip.options[:command_path] = "/etc/ImageMagick/"
+Paperclip::Attachment.default_options[:storage] = :azure_storage
+Paperclip::Attachment.default_options[:url] = ':azure_path_url'
+Paperclip::Attachment.default_options[:path] = ":class/:attachment/:id/:style/:filename"
+Paperclip::Attachment.default_options[:azure_credentials] = {
+    account_name: 'agproductbuilder',
+    access_key:   "ZArHNPphlhc72UInXRAJZyxfksEgGP7xv6Gsw/Dcsbu6G2IzckmV2Bxa4VzZ4jp+z8siemgp0/pmRZZz7kF0+A==",
+    azure_container:    'productbuilder'
+}
