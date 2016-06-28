@@ -64,6 +64,7 @@ module ProductsHelper
     
     variant_offset = col_pointer
     variant_data_row = sheet.row DATA_ROW
+    
     variants.each_with_index do |variant, i|
       col_pointer = variant_offset
       title_row[col_pointer] = 'variant'
@@ -86,19 +87,20 @@ module ProductsHelper
         col_pointer += 1
       end
       
-      variant['variant_images'].each do |img|
-        title_row[col_pointer] = 'variant v_imgs'
-        variant_data_row[col_pointer] =  URI.join(request.url, img.image.url).to_s
-        col_pointer += 1
+      unless variant['three_sixty_image'].nil?
+        variant['variant_images'].each do |img|
+          title_row[col_pointer] = 'variant v_imgs'
+          variant_data_row[col_pointer] =  URI.join(request.url, img.image.url).to_s
+          col_pointer += 1
+        end 
+        
+        variant['plane_images'].each do |img|
+          title_row[col_pointer] = 'variant p_imgs'
+          variant_data_row[col_pointer] =  URI.join(request.url, img.image.url).to_s
+          col_pointer += 1
+        end
       end
-      
-      variant['plane_images'].each do |img|
-        title_row[col_pointer] = 'variant p_imgs'
-        variant_data_row[col_pointer] =  URI.join(request.url, img.image.url).to_s
-        col_pointer += 1
-      end
-      
-      variant_data_row = sheet.row(DATA_ROW + 1)
+      variant_data_row = sheet.row(DATA_ROW + i)
     end
   end
   
@@ -261,17 +263,18 @@ module ProductsHelper
   
   def get_product_variants product
     product_variants = Variant.where(:product_id => product.id)
-      _variants_a = product_variants.collect do |p|
-        variant_keys = p.attributes.keys.collect! { |x| x unless FORBIDDEN_FIELDS.include? x }.compact!
-        _h = Hash[variant_keys.collect { |v| [v, eval("p.#{v}")] } ]
+    _variants_a = product_variants.collect do |p|
+      variant_keys = p.attributes.keys.collect! { |x| x unless FORBIDDEN_FIELDS.include? x }.compact!
+      _h = Hash[variant_keys.collect { |v| [v, eval("p.#{v}")] } ]
+      _h['options'] = p.option_values.collect { |v| Hash[ Option.where("id = #{v.option_id}").first.name, v.value ]}
+      unless p.three_sixty_image.nil?
         _h['three_sixty_image'] = ThreeSixtyImage.find(p.three_sixty_image_id).title
-        _h['options'] = p.option_values.collect { |v| Hash[ Option.where("id = #{v.option_id}").first.name, v.value ]}
-        unless p.three_sixty_image.nil?
-          _h['variant_images'] = p.three_sixty_image.variant_images.to_a
-          _h['plane_images'] = p.three_sixty_image.plane_images.to_a
-        end
-        _h
+        _h['variant_images'] = p.three_sixty_image.variant_images.to_a
+        _h['plane_images'] = p.three_sixty_image.plane_images.to_a
       end
+      _h
+    end
+    _variants_a
   end
 
 end
