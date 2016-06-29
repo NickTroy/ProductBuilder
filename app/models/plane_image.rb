@@ -2,14 +2,13 @@ class PlaneImage < ActiveRecord::Base
   belongs_to :three_sixty_image
    
   has_attached_file :image,
-      path: ":rails_root/public/system/three_sixty_images/:three_sixty_image_id/:filename",
-      url: "/system/three_sixty_images/:three_sixty_image_id/:filename"
+      path: ":class/:attachment/:three_sixty_image_id/:filename"
+     
       
       
   has_attached_file :big_image,
-      path: ":rails_root/public/system/three_sixty_images/:three_sixty_image_id/big_images/:filename",
-      url: "/system/three_sixty_images/:three_sixty_image_id/big_images/:filename",
-      :styles => { :big => "1500x1500" }, :whiny => true
+      path: ":class/images/:three_sixty_image_id/:attachment/:filename",
+      :styles => { :original => "1500x1500" }, :whiny => true
 
    Paperclip.interpolates :three_sixty_image_id do |attachment, style|
       attachment.instance.three_sixty_image_id
@@ -23,8 +22,8 @@ class PlaneImage < ActiveRecord::Base
                         :size => { :less_than => 1.megabyte }
   
   def image_from_url url
-    url.gsub!(' ','');
     self.image = URI.parse(url)
+    self.big_image = URI.parse(url)
   end
   
 end
