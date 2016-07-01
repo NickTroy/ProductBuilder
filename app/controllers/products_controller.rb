@@ -194,7 +194,7 @@ class ProductsController < AuthenticatedController
   private
   
     def product_params
-      params.permit(:body_html, :handle, :options, 
+      params.permit(:body_html, :handle, :options, :template_suffix, 
                     :product_type, :published_scope, :tags,
                     :template_suffix, :title, :variants, :vendor, :search)
     end

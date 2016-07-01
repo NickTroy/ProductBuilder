@@ -1348,12 +1348,17 @@ $(document).ready(function(){
         <%= text_field_tag :vendor, @product.vendor, class: "form-control" %>
       </div>
       
-      <div class="col-md-3">
+      <div class="col-md-3 form-group">
         <br>
         <button class="btn btn-primary edit_main_variant" style="width: 100% !important;" <%= "disabled" unless @main_variant_present %>>
           Edit Product's Main Variant 
           <span class="glyphicon glyphicon-edit"></span>
         </button>
+      </div>
+      
+      <div class="col-md-4 form-group">
+        <%= label_tag 'product[template_suffix]', "Template Suffix:" %>
+        <%= text_field_tag :template_suffix, @product.template_suffix, class: "form-control" %>
       </div>
     </div>
     <div class="row">
