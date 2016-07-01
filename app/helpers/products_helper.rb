@@ -88,15 +88,16 @@ module ProductsHelper
       end
       
       unless variant['three_sixty_image'].nil?
+        byebug
         variant['variant_images'].each do |img|
           title_row[col_pointer] = 'variant v_imgs'
-          variant_data_row[col_pointer] =  URI.join(request.url, img.image.url).to_s
+          variant_data_row[col_pointer] =  URI.join(request.url, img.azure_image.url).to_s
           col_pointer += 1
         end 
         
         variant['plane_images'].each do |img|
           title_row[col_pointer] = 'variant p_imgs'
-          variant_data_row[col_pointer] =  URI.join(request.url, img.image.url).to_s
+          variant_data_row[col_pointer] =  URI.join(request.url, img.azure_image.url).to_s
           col_pointer += 1
         end
       end
@@ -175,15 +176,18 @@ module ProductsHelper
         unless imgSet.nil?
           variant.three_sixty_image = imgSet
         else
-          imgSet = ThreeSixtyImage.create(:title => variants[i]['three_sixty_image'])
+          imgSet = ThreeSixtyImage.create(:title => variants[i]['three_sixty_image'],
+                                          :rotation_speed => variants[i]['three_sixty_image_rs'], 
+                                          :rotations_count => variants[i]['three_sixty_image_rc'] , 
+                                          :clockwise => variants[i]['three_sixty_image_c'] )
           variants[i]['variant_images'].each do |img|
             variant_image = VariantImage.new(:three_sixty_image_id => imgSet.id)
-            variant_image.image_from_url(img)
+            variant_image.azure_image_from_url img
             variant_image.save
           end
           variants[i]['plane_images'].each do |img|
             plane_image = PlaneImage.new(:three_sixty_image_id => imgSet.id)
-            plane_image.image_from_url(img)
+            plane_image.azure_image_from_url img
             plane_image.save
           end
           
@@ -269,6 +273,11 @@ module ProductsHelper
       _h['options'] = p.option_values.collect { |v| Hash[ Option.where("id = #{v.option_id}").first.name, v.value ]}
       unless p.three_sixty_image.nil?
         _h['three_sixty_image'] = ThreeSixtyImage.find(p.three_sixty_image_id).title
+        tsi = ThreeSixtyImage.find(p.three_sixty_image_id)
+        _h['three_sixty_image'] = tsi.title
+        _h['three_sixty_image_rs'] = tsi.rotation_speed
+        _h['three_sixty_image_rc'] = tsi.rotations_count
+        _h['three_sixty_image_c'] = tsi.clockwise
         _h['variant_images'] = p.three_sixty_image.variant_images.to_a
         _h['plane_images'] = p.three_sixty_image.plane_images.to_a
       end

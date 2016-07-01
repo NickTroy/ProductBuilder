@@ -5,15 +5,29 @@ class VariantImage < ActiveRecord::Base
   before_destroy :update_main_image_id
   after_destroy :update_main_product_image
   has_attached_file :image, :styles => { :medium => "300x300>",:thumb => "100x100>" }
+  
+  has_attached_file :azure_image,
+                    :storage => :azure_storage,
+                    :url => ':azure_path_url',
+                    :path => ":class/:attachment/:id/:style/:filename",
+                    :azure_credentials => {
+                      account_name: Rails.application.secrets.account_name,
+                      access_key:   Rails.application.secrets.access_key,
+                      azure_container: Rails.application.secrets.azure_container
+                    }
                   	
   validates_attachment 	:image, 
                         #:presence => true,
                         :content_type => { :content_type => /\Aimage\/.*\Z/ },
                         :size => { :less_than => 1.megabyte }
-
+                        
+                        
   def image_from_url url
-    url.gsub!(' ','');
     self.image = URI.parse(url)
+  end
+  
+  def azure_image_from_url url
+    self.azure_image = URI.parse(url)
   end
   
   private
