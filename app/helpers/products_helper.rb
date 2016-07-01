@@ -11,21 +11,16 @@ module ProductsHelper
   def parse_import_file import_file_path
     import_file = Roo::Excel.new( import_file_path )
     import_file.each_with_pagename do |name, sheet|
-      
-      
       _data = get_variable sheet, 'data'
       _info = get_variable sheet, 'info'
       _variants = get_variants sheet   
-      
       persist_product _data, _info, _variants
-
     end
     import_file.close
   end
 
   def create_export_file
     book = Spreadsheet::Workbook.new
-
     product_ids = params[:product_ids].split(',').map!(&:to_i)
     product_ids.each_with_index do |product_id, index|
       product = ShopifyAPI::Product.find(product_id)
@@ -33,9 +28,7 @@ module ProductsHelper
       _data     = get_product_data product
       _info     = get_product_info product
       _variants = get_product_variants product
-      
       write_product _sheet, _data, _info, _variants
-
     end
     book.write './public/assets/export.xls'
   end
@@ -88,13 +81,11 @@ module ProductsHelper
       end
       
       unless variant['three_sixty_image'].nil?
-        byebug
         variant['variant_images'].each do |img|
           title_row[col_pointer] = 'variant v_imgs'
           variant_data_row[col_pointer] =  URI.join(request.url, img.azure_image.url).to_s
           col_pointer += 1
         end 
-        
         variant['plane_images'].each do |img|
           title_row[col_pointer] = 'variant p_imgs'
           variant_data_row[col_pointer] =  URI.join(request.url, img.azure_image.url).to_s
@@ -108,12 +99,7 @@ module ProductsHelper
   def persist_product data, info, variants
     _product = ShopifyAPI::SmartCollection.where(title:"Product_builder_products").first.products.find { |product| product.title == data['title'] }
     if _product.nil?
-      _product = ShopifyAPI::Product.new({
-        :title => data['title'],
-        :body_html => data['body_html'],
-        :vendor => data['vendor'],
-        :product_type => data['type']
-      })
+      _product = ShopifyAPI::Product.new data
       _product.attributes[:tags] = "product" unless _product.attributes[:tags] == "product"
       _product.save
     end 
@@ -123,18 +109,7 @@ module ProductsHelper
       shipping_method = ShippingMethod.find_by(name: info['shipping_method_name'] ) || ShippingMethod.create(name: info['shipping_method_name'] )
       shipping_method.product_infos << _product_info
     end
-    _product_info.update_attributes({
-      :why_we_love_this => info['why_we_love_this'],
-      :be_sure_to_note => info['be_sure_to_note'],
-      :country_of_origin => info['country_of_origin'],
-      :primary_materials => info['primary_materials'],
-      :requires_assembly => info['requires_assembly'],
-      :lead_time => info['lead_time'],
-      :lead_time_unit => info['lead_time_unit'],
-      :care_instructions => info['care_instructions'],
-      :shipping_restrictions => info['shipping_restrictions'],
-      :return_policy => info['return_policy']
-    })
+    _product_info.update_attributes info
     
     0.upto( variants.length - 1 ) do |i|
       variant_updating = true
