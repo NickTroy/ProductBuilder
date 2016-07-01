@@ -1,11 +1,9 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/image-picker/0.2.4/image-picker.min.js"></script>
-
 <link href='https://cdnjs.cloudflare.com/ajax/libs/image-picker/0.2.4/image-picker.min.css' rel='stylesheet' type='text/css'>
 <style>
   .reel img {
     width: 400px !important;
     height: auto !important;
-
   }
   #three_sixty_image-reel {
     width: 575px !important;
@@ -22,25 +20,16 @@ $(document).ready(function(){
   Dropzone.autoDiscover = false;
   $("#product-variant-images").dropzone({
     url: "<%= three_sixty_image_variant_images_url(:protocol => 'https', :three_sixty_image_id => @three_sixty_image.id) %>",
-    // restrict image size to a maximum 1MB
     maxFilesize: 1,
-    // changed the passed param to one accepted by
-    // our rails app
-    paramName: "image",
+    paramName: "azure_image",
     previewsContainer: '.dropzone-previews',
     clickable: '.dropzone-previews',
-    // show remove links on each image upload
     addRemoveLinks: true,
     success: function(file, response){
-      // find the remove button link of the uploaded file and give it an id
-      // based of the fileID response from the server
       $('.dropzone-previews').find('.dz-remove:last').attr('id', response.imageID);
-      // add the dz-success class (the green tick sign)
       $('.dropzone-previews').addClass("dz-success");
-	    
       $('.dz-remove:last').click(function(){
         var id = $(this).attr('id'); 
-        // make a DELETE ajax request to delete the file
         $.ajax({
           type: 'POST',
           data: { _method: 'DELETE' },
@@ -59,7 +48,7 @@ $(document).ready(function(){
         <% @variant_images.each_with_index do |image, index| %>
           existingFiles.push({ id: "<%= image.id %>"});
           this.emit("addedfile", existingFiles[<%= index %>]);
-          this.emit("thumbnail", existingFiles[<%= index %>], "<%= image.image.url %>");
+          this.emit("thumbnail", existingFiles[<%= index %>], "<%= image.azure_image.url %>");
           $('.dropzone-previews').find('.dz-remove:last').attr('id', <%= image.id %>);
         <% end %>
       this.on("addedfile", function(file){
@@ -307,7 +296,7 @@ $(document).ready(function(){
     <input id="three_sixty_pictures" style="display:none;" name="three_sixty_pictures" type="file">
   </form>
   <form id="product-variant-images" action="" method="post" name="product-images">
-    <input id="image" style="display:none;" name="image" type="file">
+    <input id="azure_image" style="display:none;" name="azure_image" type="file">
   </form> 
 </div>
 
