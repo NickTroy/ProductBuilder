@@ -3,7 +3,7 @@ class VariantImagesController < AuthenticatedController
     
   def create
     @three_sixty_image = ThreeSixtyImage.find(params[:three_sixty_image_id])
-    @image = VariantImage.new(:image => params[:image], :three_sixty_image_id => @three_sixty_image.id)
+    @image = VariantImage.new(:azure_image => params[:azure_image], :three_sixty_image_id => @three_sixty_image.id)
     if @image.save
       render json: { message: "success", imageID: @image.id }, :status => 200 
     end
