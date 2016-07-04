@@ -40,7 +40,9 @@ class PlaneImage < ActiveRecord::Base
 
 
   validates_attachment  :image,
-                        #:presence => true,
+                        :content_type => { :content_type => /\Aimage\/.*\Z/ },
+                        :size => { :less_than => 1.megabyte }
+  validates_attachment  :azure_image,
                         :content_type => { :content_type => /\Aimage\/.*\Z/ },
                         :size => { :less_than => 1.megabyte }
   

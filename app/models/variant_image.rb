@@ -14,12 +14,15 @@ class VariantImage < ActiveRecord::Base
                       account_name: Rails.application.secrets.account_name,
                       access_key:   Rails.application.secrets.access_key,
                       azure_container: Rails.application.secrets.azure_container
-                    }
+                    },
+                    :styles => { :medium => "300x300>",:thumb => "100x100>" }
                   	
   validates_attachment 	:image, 
-                        #:presence => true,
                         :content_type => { :content_type => /\Aimage\/.*\Z/ },
                         :size => { :less_than => 1.megabyte }
+  validates_attachment 	:azure_image, 
+                        :content_type => { :content_type => /\Aimage\/.*\Z/ },
+                        :size => { :less_than => 1.megabyte }                      
                         
                         
   def image_from_url url
