@@ -251,7 +251,7 @@ $(document).ready(function(){
       <div class="variant_images_gallery row">
         <% @variant_images.each do |variant_image| %>
         <div class="col-md-4">
-          <%= image_tag asset_url(variant_image.image.url), :style => "width:100%" %>
+          <%= image_tag asset_url(variant_image.azure_image.url), :style => "width:100%" %>
         </div>
         <% end %>
       </div>
