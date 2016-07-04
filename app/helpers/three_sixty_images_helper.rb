@@ -2,9 +2,10 @@ module ThreeSixtyImagesHelper
     
   def mv_images_to_azure
     tsi = ThreeSixtyImage.all
-    tsi.each do |t|
-  
+    puts "Start moving " + tsi.length.to_s + " three_sixty_images"
+    tsi.each_with_index do |t, tsi_index|
       variant_images = t.variant_images
+      puts "Start moving " + tsi_index.to_s + " three sixty image."
       variant_images.each do |vi|
         if vi.image.exists?
           vi.azure_image =  vi.image
@@ -20,9 +21,7 @@ module ThreeSixtyImagesHelper
           pi.save
         end
       end
-  
     end
-  end  
-
-    
+    puts "All done."
+  end 
 end
