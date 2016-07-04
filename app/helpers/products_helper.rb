@@ -11,21 +11,16 @@ module ProductsHelper
   def parse_import_file import_file_path
     import_file = Roo::Excel.new( import_file_path )
     import_file.each_with_pagename do |name, sheet|
-      
-      
       _data = get_variable sheet, 'data'
       _info = get_variable sheet, 'info'
       _variants = get_variants sheet   
-      
       persist_product _data, _info, _variants
-
     end
     import_file.close
   end
 
   def create_export_file
     book = Spreadsheet::Workbook.new
-
     product_ids = params[:product_ids].split(',').map!(&:to_i)
     product_ids.each_with_index do |product_id, index|
       product = ShopifyAPI::Product.find(product_id)
@@ -33,9 +28,7 @@ module ProductsHelper
       _data     = get_product_data product
       _info     = get_product_info product
       _variants = get_product_variants product
-      
       write_product _sheet, _data, _info, _variants
-
     end
     book.write './public/assets/export.xls'
   end
@@ -90,13 +83,12 @@ module ProductsHelper
       unless variant['three_sixty_image'].nil?
         variant['variant_images'].each do |img|
           title_row[col_pointer] = 'variant v_imgs'
-          variant_data_row[col_pointer] =  URI.join(request.url, img.image.url).to_s
+          variant_data_row[col_pointer] =  URI.join(request.url, img.azure_image.url).to_s
           col_pointer += 1
         end 
-        
         variant['plane_images'].each do |img|
           title_row[col_pointer] = 'variant p_imgs'
-          variant_data_row[col_pointer] =  URI.join(request.url, img.image.url).to_s
+          variant_data_row[col_pointer] =  URI.join(request.url, img.azure_image.url).to_s
           col_pointer += 1
         end
 
@@ -108,12 +100,7 @@ module ProductsHelper
   def persist_product data, info, variants
     _product = ShopifyAPI::SmartCollection.where(title:"Product_builder_products").first.products.find { |product| product.title == data['title'] }
     if _product.nil?
-      _product = ShopifyAPI::Product.new({
-        :title => data['title'],
-        :body_html => data['body_html'],
-        :vendor => data['vendor'],
-        :product_type => data['type']
-      })
+      _product = ShopifyAPI::Product.new data
       _product.attributes[:tags] = "product" unless _product.attributes[:tags] == "product"
       _product.save
     end 
@@ -123,18 +110,7 @@ module ProductsHelper
       shipping_method = ShippingMethod.find_by(name: info['shipping_method_name'] ) || ShippingMethod.create(name: info['shipping_method_name'] )
       shipping_method.product_infos << _product_info
     end
-    _product_info.update_attributes({
-      :why_we_love_this => info['why_we_love_this'],
-      :be_sure_to_note => info['be_sure_to_note'],
-      :country_of_origin => info['country_of_origin'],
-      :primary_materials => info['primary_materials'],
-      :requires_assembly => info['requires_assembly'],
-      :lead_time => info['lead_time'],
-      :lead_time_unit => info['lead_time_unit'],
-      :care_instructions => info['care_instructions'],
-      :shipping_restrictions => info['shipping_restrictions'],
-      :return_policy => info['return_policy']
-    })
+    _product_info.update_attributes info
     
     0.upto( variants.length - 1 ) do |i|
       variant_updating = true
@@ -173,19 +149,35 @@ module ProductsHelper
       
       unless variants[i]['three_sixty_image'].nil? or variants[i]['three_sixty_image'] == ''
         imgSet = ThreeSixtyImage.where( :title => variants[i]['three_sixty_image'] ).first
+<<<<<<< HEAD
         if imgSet.nil?
           imgSet = ThreeSixtyImage.create(:title => variants[i]['three_sixty_image'], 
+=======
+        unless imgSet.nil?
+          variant.three_sixty_image = imgSet
+        else
+          imgSet = ThreeSixtyImage.create(:title => variants[i]['three_sixty_image'],
+>>>>>>> bf04443563d0d85d314d8f8e9f0d490754df3029
                                           :rotation_speed => variants[i]['three_sixty_image_rs'], 
                                           :rotations_count => variants[i]['three_sixty_image_rc'] , 
                                           :clockwise => variants[i]['three_sixty_image_c'] )
           variants[i]['variant_images'].each do |img|
+<<<<<<< HEAD
             variant_image = VariantImage.create(:image => img, :three_sixty_image_id => imgSet.id)
             variant_image.image_from_url(img)
+=======
+            variant_image = VariantImage.new(:three_sixty_image_id => imgSet.id)
+            variant_image.azure_image_from_url img
+>>>>>>> bf04443563d0d85d314d8f8e9f0d490754df3029
             variant_image.save
           end
           variants[i]['plane_images'].each do |img|
             plane_image = PlaneImage.new(:three_sixty_image_id => imgSet.id)
+<<<<<<< HEAD
             plane_image.image_from_url img
+=======
+            plane_image.azure_image_from_url img
+>>>>>>> bf04443563d0d85d314d8f8e9f0d490754df3029
             plane_image.save
           end
         end  
@@ -270,6 +262,10 @@ module ProductsHelper
       _h = Hash[variant_keys.collect { |v| [v, eval("p.#{v}")] } ]
       _h['options'] = p.option_values.collect { |v| Hash[ Option.where("id = #{v.option_id}").first.name, v.value ]}
       unless p.three_sixty_image.nil?
+<<<<<<< HEAD
+=======
+        _h['three_sixty_image'] = ThreeSixtyImage.find(p.three_sixty_image_id).title
+>>>>>>> bf04443563d0d85d314d8f8e9f0d490754df3029
         tsi = ThreeSixtyImage.find(p.three_sixty_image_id)
         _h['three_sixty_image'] = tsi.title
         _h['three_sixty_image_rs'] = tsi.rotation_speed

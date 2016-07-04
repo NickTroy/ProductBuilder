@@ -11,15 +11,14 @@ class ThreeSixtyImagesController < AuthenticatedController
     @variant_images = @three_sixty_image.variant_images.sort_by &:position
     unless @three_sixty_image.nil?
       unless @three_sixty_image.plane_images.empty?      
-        @first_plane_image = @three_sixty_image.plane_images.first.image.url
+        @first_plane_image = @three_sixty_image.plane_images.first.azure_image.url
         @three_sixty_image_url = URI.join(request.url, @first_plane_image).to_s
-        #@three_sixty_image_url.insert(4,'s')
         @images_path = @three_sixty_image_url.split('/')
         @images_path.delete_at(-1)
         @images_path = @images_path.join('/') 
         @images_names = []
         @three_sixty_image.plane_images.each do |plane_image|
-          @images_names.push(plane_image.image.original_filename)
+          @images_names.push(plane_image.azure_image.original_filename)
         end
         @images_names = @images_names.join(',')
       end
@@ -31,24 +30,28 @@ class ThreeSixtyImagesController < AuthenticatedController
       redirect_to root_url(:protocol => 'https')
       return true
     end
+<<<<<<< HEAD
     
     three_sixty_image = ThreeSixtyImage.new(three_sixty_image_params)
     if three_sixty_image.save
       redirect_to edit_three_sixty_image_url(:id => three_sixty_image.id, :protocol => 'https')
+=======
+    @three_sixty_image = ThreeSixtyImage.new(three_sixty_image_params)
+    if @three_sixty_image.save
+      redirect_to edit_three_sixty_image_url(:id => @three_sixty_image.id, :protocol => 'https')
+>>>>>>> bf04443563d0d85d314d8f8e9f0d490754df3029
     else 
       render json: { message: "failed" }, :status => 500
     end
   end
 
   def update_order
-    
     new_images_order = params[:image_order]
     new_images_order.each_index do |index|
       image = VariantImage.find new_images_order[index]
       image.position = index
       image.save
     end
-    
     render :nothing => true
   end
 
@@ -76,15 +79,14 @@ class ThreeSixtyImagesController < AuthenticatedController
       format.json do
         unless @three_sixty_image.nil?
           unless @three_sixty_image.plane_images.empty?      
-            @first_plane_image = @three_sixty_image.plane_images.first.image.url
+            @first_plane_image = @three_sixty_image.plane_images.first.azure_image.url
             @three_sixty_image_url = URI.join(request.url, @first_plane_image).to_s
-            #@three_sixty_image_url.insert(4,'s')
             @images_path = @three_sixty_image_url.split('/')
             @images_path.delete_at(-1)
             @images_path = @images_path.join('/') 
             @images_names = []
             @three_sixty_image.plane_images.each do |plane_image|
-              @images_names.push(plane_image.image.original_filename)
+              @images_names.push(plane_image.azure_image.original_filename)
             end
             @images_names = @images_names.join(',')
           end
@@ -101,22 +103,20 @@ class ThreeSixtyImagesController < AuthenticatedController
         end
       end
     end
-    
   end
   
   def show
     @three_sixty_image = ThreeSixtyImage.find(params[:three_sixty_image_id])
     unless @three_sixty_image.plane_images.empty?
-      @first_plane_image = @three_sixty_image.plane_images.first.image.url
+      @first_plane_image = @three_sixty_image.plane_images.first.azure_image.url
       @first_plane_image = URI.join(request.url, @first_plane_image).to_s
       @images_path = @first_plane_image.split('/')
       @images_path.delete_at(-1)
       @images_path = @images_path.join('/')
       @images_names = []
       @three_sixty_image.plane_images.each do |plane_image|
-        @images_names.push(plane_image.image.original_filename)
+        @images_names.push(plane_image.azure_image.original_filename)
       end
-      #@images_names = @images_names.join(',')
     end
     @variant_images = @three_sixty_image.variant_images
   end 
@@ -167,9 +167,7 @@ class ThreeSixtyImagesController < AuthenticatedController
       end
     end
 
-    @images.each do |img|
-      PlaneImage.create(:three_sixty_image_id => @three_sixty.id, :image => img, :big_image => img )
-    end
+    @images.each { |img| PlaneImage.create(:three_sixty_image_id => @three_sixty.id, :azure_image => img, :azure_big_image => img ) }
     @three_sixty.rotations_count = 5
     @three_sixty.rotation_speed = 5
     if @three_sixty.save
@@ -187,14 +185,14 @@ class ThreeSixtyImagesController < AuthenticatedController
       if @three_sixty_image.plane_images.empty? 
         render json: { message: "assigned" }, status: 200
       else
-        @first_plane_image = @three_sixty_image.plane_images.first.image.url
+        @first_plane_image = @three_sixty_image.plane_images.first.azure_image.url
         @first_plane_image = URI.join(request.url, @first_plane_image).to_s
         @images_path = @first_plane_image.split('/')
         @images_path.delete_at(-1)
         @images_path = @images_path.join('/')
         @images_names = []
         @three_sixty_image.plane_images.each do |plane_image|
-          @images_names.push(plane_image.image.original_filename)
+          @images_names.push(plane_image.azure_image.original_filename)
         end
         @variant_images = @three_sixty_image.variant_images
         render 'show'
