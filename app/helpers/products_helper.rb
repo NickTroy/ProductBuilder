@@ -157,11 +157,15 @@ module ProductsHelper
           variant.three_sixty_image = imgSet
         else
           imgSet = ThreeSixtyImage.create(:title => variants[i]['three_sixty_image'],
+<<<<<<< HEAD
 >>>>>>> bf04443563d0d85d314d8f8e9f0d490754df3029
+=======
+>>>>>>> e33b87e8a9dee365d1635edb66249653bdf222ed
                                           :rotation_speed => variants[i]['three_sixty_image_rs'], 
                                           :rotations_count => variants[i]['three_sixty_image_rc'] , 
                                           :clockwise => variants[i]['three_sixty_image_c'] )
           variants[i]['variant_images'].each do |img|
+<<<<<<< HEAD
 <<<<<<< HEAD
             variant_image = VariantImage.create(:image => img, :three_sixty_image_id => imgSet.id)
             variant_image.image_from_url(img)
@@ -169,15 +173,23 @@ module ProductsHelper
             variant_image = VariantImage.new(:three_sixty_image_id => imgSet.id)
             variant_image.azure_image_from_url img
 >>>>>>> bf04443563d0d85d314d8f8e9f0d490754df3029
+=======
+            variant_image = VariantImage.new(:three_sixty_image_id => imgSet.id)
+            variant_image.azure_image_from_url img
+>>>>>>> e33b87e8a9dee365d1635edb66249653bdf222ed
             variant_image.save
           end
           variants[i]['plane_images'].each do |img|
             plane_image = PlaneImage.new(:three_sixty_image_id => imgSet.id)
 <<<<<<< HEAD
+<<<<<<< HEAD
             plane_image.image_from_url img
 =======
             plane_image.azure_image_from_url img
 >>>>>>> bf04443563d0d85d314d8f8e9f0d490754df3029
+=======
+            plane_image.azure_image_from_url img
+>>>>>>> e33b87e8a9dee365d1635edb66249653bdf222ed
             plane_image.save
           end
         end  
@@ -265,7 +277,10 @@ module ProductsHelper
 <<<<<<< HEAD
 =======
         _h['three_sixty_image'] = ThreeSixtyImage.find(p.three_sixty_image_id).title
+<<<<<<< HEAD
 >>>>>>> bf04443563d0d85d314d8f8e9f0d490754df3029
+=======
+>>>>>>> e33b87e8a9dee365d1635edb66249653bdf222ed
         tsi = ThreeSixtyImage.find(p.three_sixty_image_id)
         _h['three_sixty_image'] = tsi.title
         _h['three_sixty_image_rs'] = tsi.rotation_speed

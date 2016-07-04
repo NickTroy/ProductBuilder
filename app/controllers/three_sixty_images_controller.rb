@@ -30,16 +30,9 @@ class ThreeSixtyImagesController < AuthenticatedController
       redirect_to root_url(:protocol => 'https')
       return true
     end
-<<<<<<< HEAD
-    
-    three_sixty_image = ThreeSixtyImage.new(three_sixty_image_params)
-    if three_sixty_image.save
-      redirect_to edit_three_sixty_image_url(:id => three_sixty_image.id, :protocol => 'https')
-=======
     @three_sixty_image = ThreeSixtyImage.new(three_sixty_image_params)
     if @three_sixty_image.save
       redirect_to edit_three_sixty_image_url(:id => @three_sixty_image.id, :protocol => 'https')
->>>>>>> bf04443563d0d85d314d8f8e9f0d490754df3029
     else 
       render json: { message: "failed" }, :status => 500
     end
