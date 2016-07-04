@@ -23,7 +23,7 @@ class PlaneImage < ActiveRecord::Base
   has_attached_file :azure_big_image,
                     :storage => :azure_storage,
                     :url => ':azure_path_url',
-                    :path => ":class/azure_image/:three_sixty_image_id/:attachment/:filename",
+                    :path => ":class/azure_images/:three_sixty_image_id/:attachment/:filename",
                     :azure_credentials => {
                       account_name: Rails.application.secrets.account_name,
                       access_key:   Rails.application.secrets.access_key,
