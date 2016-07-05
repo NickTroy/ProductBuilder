@@ -242,15 +242,15 @@ $(document).ready(function(){
         
       </div>
       <div class="row current_three_sixty_image">
-        <div class="col-md-12">
+        <div class="col-md-12 text-center">
           <div class="3d_image">
-            <img src="<%= @first_plane_image %>" width="400" height="auto" class="reel" id="three_sixty_image">
+            <img src="<%= @first_plane_image %>" width="400" height="400" class="reel" id="three_sixty_image">
           </div>
         </div>
       </div>
       <div class="variant_images_gallery row">
         <% @variant_images.each do |variant_image| %>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <%= image_tag asset_url(variant_image.azure_image.url), :style => "width:100%" %>
         </div>
         <% end %>

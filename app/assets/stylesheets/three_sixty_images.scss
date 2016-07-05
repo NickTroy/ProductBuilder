@@ -1,3 +1,17 @@
 // Place all the styles related to the three_sixty_images controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+.reel img {
+  width: 400px !important;
+  height: auto !important;
+}
+#three_sixty_image-reel {
+  width: 575px !important;
+  height: auto !important;
+  text-align: center;
+  margin: auto auto;
+}
+.image_picker_image {
+  width: 180px;
+}
+

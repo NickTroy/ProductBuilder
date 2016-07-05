@@ -1,19 +1,6 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/image-picker/0.2.4/image-picker.min.js"></script>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/image-picker/0.2.4/image-picker.min.css' rel='stylesheet' type='text/css'>
-<style>
-  .reel img {
-    width: 400px !important;
-    height: auto !important;
-  }
-  #three_sixty_image-reel {
-    width: 575px !important;
-    height: auto !important;
-    text-align: center;
-    margin: auto auto;
-  }
-  .image_picker_image {
-  }
-</style>
+
 
 <script type="text/javascript">
 $(document).ready(function(){
@@ -48,7 +35,7 @@ $(document).ready(function(){
         <% @variant_images.each_with_index do |image, index| %>
           existingFiles.push({ id: "<%= image.id %>"});
           this.emit("addedfile", existingFiles[<%= index %>]);
-          this.emit("thumbnail", existingFiles[<%= index %>], "<%= image.azure_image.url %>");
+          this.emit("thumbnail", existingFiles[<%= index %>], "<%= image.azure_image.url(:thumb) %>");
           $('.dropzone-previews').find('.dz-remove:last').attr('id', <%= image.id %>);
         <% end %>
       this.on("addedfile", function(file){
