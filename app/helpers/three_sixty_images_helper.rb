@@ -26,7 +26,7 @@ module ThreeSixtyImagesHelper
     product_images = ProductImage.all
     puts "Begin moving a product images to Azure Cloud"
     product_images.each_with_index do |image|
-      if image.exests?
+      if image.exists?
         image.azure_image = image.image
         image.save
       end

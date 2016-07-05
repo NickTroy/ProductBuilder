@@ -23,6 +23,8 @@ $(document).ready(function(){
     $('.inventory_quantity').toggle();
   });
   
+  $('.select_three_sixty_image').val('<%= @three_sixty_image.id %>');
+  
   $('.assign_three_sixty_image').click(function(e){
     e.preventDefault();
     var three_sixty_image_id = $('.select_three_sixty_image').val();
@@ -58,7 +60,7 @@ $(document).ready(function(){
           if (variant_images.length != 0) {
             for (var image_index in variant_images) {
               var image_url = variant_images[image_index]["image_url"];
-              $('<div class="col-md-4"><img src="' + image_url +'" style="width:100%;"></div>').appendTo('.variant_images_gallery');
+              $('<div class="col-md-3"><img src="' + image_url +'" style="width:100%;"></div>').appendTo('.variant_images_gallery');
             }
           }
         }

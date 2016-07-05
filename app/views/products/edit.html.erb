@@ -45,7 +45,7 @@ $(document).ready(function(){
       <% @images.each_with_index do |image, index| %>
         existingFiles.push({ id: "<%= image.id %>"});
         this.emit("addedfile", existingFiles[<%= index %>]);
-        this.emit("thumbnail", existingFiles[<%= index %>], "<%= image.image.url %>");
+        this.emit("thumbnail", existingFiles[<%= index %>], "<%= image.azure_image.url %>");
         $('.dropzone-previews').find('.dz-remove:last').attr('id', <%= image.id %>);
       <% end %>
     }

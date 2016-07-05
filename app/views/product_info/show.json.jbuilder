@@ -1,5 +1,5 @@
 unless @first_image.nil?
-  json.product_first_image_source asset_url(@first_image.image.url)
+  json.product_first_image_source asset_url(@first_image.azure_image.url)
 end
 json.option_dependency @option_dependency
 json.color_and_material_values @color_and_material_values
@@ -27,7 +27,7 @@ json.options @product_options do |option|
   json.option_values option[:option_values] do |option_value|
     json.option_value option_value
     unless OptionValue.where(:value => option_value)[0].image.url.include? "missing"
-      json.image_source asset_url(OptionValue.where(:value => option_value)[0].image.url(:thumb), :host => 'https://productbuilder.arborgentry.com')
+      json.image_source asset_url(OptionValue.where(:value => option_value)[0].image.url(:thumb))
     end
   end
 end
@@ -53,12 +53,12 @@ json.main_variant do
     json.three_sixty_image ''
   else
     json.three_sixty_image do
-      json.first_image asset_url(@main_variant.three_sixty_image.plane_images.first.image.url, :host => 'https://productbuilder.arborgentry.com')
+      json.first_image asset_url(@main_variant.three_sixty_image.plane_images.first.azure_image.url)
       json.rotation_speed @main_variant.three_sixty_image.rotation_speed
       json.rotations_count @main_variant.three_sixty_image.rotations_count
       json.clockwise @main_variant.three_sixty_image.clockwise
       json.plane_images_urls @main_variant.three_sixty_image.plane_images.each do |plane_image|
-        json.plane_image_url asset_url(plane_image.image.url, :host => 'https://productbuilder.arborgentry.com', :host => 'https://productbuilder.arborgentry.com')
+        json.plane_image_url asset_url(plane_image.azure_image.url)
       end
     end
   end
@@ -66,7 +66,7 @@ json.main_variant do
     json.variant_images []
   else
     json.variant_images @main_variant.three_sixty_image.variant_images.each do |variant_image|
-      json.image_source asset_url(variant_image.image.url, :host => 'https://productbuilder.arborgentry.com', :host => 'https://productbuilder.arborgentry.com')
+      json.image_source asset_url(variant_image.azure_image.url)
     end
   end
 end
@@ -102,5 +102,5 @@ json.product_data do
   json.(@main_variant, :sku, :price, :length, :condition, :height, :room, :depth, :weight)
 end
 
-json.sketch_front_image @sketch_front_image.nil? ? "" : asset_url(@sketch_front_image.image.url, :host => 'https://productbuilder.arborgentry.com')
-json.sketch_back_image @sketch_back_image.nil? ? "" : asset_url(@sketch_back_image.image.url, :host => 'https://productbuilder.arborgentry.com')
+json.sketch_front_image @sketch_front_image.nil? ? "" : asset_url(@sketch_front_image.azure_image.url)
+json.sketch_back_image @sketch_back_image.nil? ? "" : asset_url(@sketch_back_image.azure_image.url)
