@@ -23,7 +23,6 @@ class ProductsController < AuthenticatedController
   def edit
     @product = ShopifyAPI::Product.find(params[:id])
     @product_info = ProductInfo.find_by(main_product_id: @product.id) || ProductInfo.create(:main_product_id => @product.id)
-    
     @images = ProductImage.where(product_id: @product.id)
     @three_sixty_images = ThreeSixtyImage.order('title ASC')
     @shipping_methods = ShippingMethod.all

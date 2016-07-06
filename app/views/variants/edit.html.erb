@@ -23,7 +23,9 @@ $(document).ready(function(){
     $('.inventory_quantity').toggle();
   });
   
-  $('.select_three_sixty_image').val('<%= @three_sixty_image.id %>');
+  <% unless @three_sixty_image.nil? %>
+    $('.select_three_sixty_image').val('<%= @three_sixty_image.id %>');
+  <% end %>
   
   $('.assign_three_sixty_image').click(function(e){
     e.preventDefault();
@@ -255,7 +257,7 @@ $(document).ready(function(){
         <div class="col-md-3">
           <%= image_tag asset_url(variant_image.azure_image.url), :style => "width:100%" %>
         </div>
-        <% end %>
+        <% end unless @variant_images.nil? %>
       </div>
     </div>
 

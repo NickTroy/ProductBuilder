@@ -28,6 +28,7 @@ module ProductsHelper
       _data     = get_product_data product
       _info     = get_product_info product
       _variants = get_product_variants product
+      
       write_product _sheet, _data, _info, _variants
     end
     book.write './public/assets/export.xls'
@@ -57,6 +58,7 @@ module ProductsHelper
     
     variant_offset = col_pointer
     variant_data_row = sheet.row DATA_ROW
+    
     
     variants.each_with_index do |variant, i|
       col_pointer = variant_offset
@@ -92,6 +94,7 @@ module ProductsHelper
           col_pointer += 1
         end
       end
+      
       variant_data_row = sheet.row(DATA_ROW + i)
     end
   end
@@ -255,6 +258,11 @@ module ProductsHelper
         _h['three_sixty_image_c'] = tsi.clockwise
         _h['variant_images'] = p.three_sixty_image.variant_images.to_a
         _h['plane_images'] = p.three_sixty_image.plane_images.to_a
+      else
+        _h['three_sixty_image'] = nil
+        _h['three_sixty_image_rs'] = nil
+        _h['three_sixty_image_rc'] = nil
+        _h['three_sixty_image_c'] = nil
       end
       _h
     end

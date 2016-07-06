@@ -44,7 +44,7 @@ class OptionsController < AuthenticatedController
     @option.save
     1.upto(params[:number_of_option_values].to_i) do |i|
       unless params["option_value#{i}".to_sym] == ''
-        @option_value = OptionValue.where(value: params["option_value#{i}".to_sym])[0] || OptionValue.new(option_id:@option.id, value: params["option_value#{i}".to_sym])
+        @option_value = OptionValue.where(value: params["option_value#{i}".to_sym], option_id: @option.id)[0] || OptionValue.new(option_id:@option.id, value: params["option_value#{i}".to_sym])
         @option_value.save
       end
     end
