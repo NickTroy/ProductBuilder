@@ -8,6 +8,9 @@ json.height @variant.height
 json.price @variant.price
 json.sku @variant.sku
 
+json.why_we_love_this @variant.why_we_love_this
+json.care_instructions @variant.care_instructions
+
 json.options @option_values.each do |option_value|
   json.option_name option_value.option.name
   json.option_value option_value.value

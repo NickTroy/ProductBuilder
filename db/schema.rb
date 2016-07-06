@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160624102544) do
+ActiveRecord::Schema.define(version: 20160706124231) do
 
   create_table "color_ranges", force: :cascade do |t|
     t.string   "name",       limit: 255
@@ -66,31 +66,43 @@ ActiveRecord::Schema.define(version: 20160624102544) do
   add_index "options", ["option_group_id"], name: "index_options_on_option_group_id", using: :btree
 
   create_table "plane_images", force: :cascade do |t|
-    t.integer  "three_sixty_image_id",   limit: 4
-    t.datetime "created_at",                         null: false
-    t.datetime "updated_at",                         null: false
-    t.string   "image_file_name",        limit: 255
-    t.string   "image_content_type",     limit: 255
-    t.integer  "image_file_size",        limit: 4
+    t.integer  "three_sixty_image_id",         limit: 4
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
+    t.string   "image_file_name",              limit: 255
+    t.string   "image_content_type",           limit: 255
+    t.integer  "image_file_size",              limit: 4
     t.datetime "image_updated_at"
-    t.string   "big_image_file_name",    limit: 255
-    t.string   "big_image_content_type", limit: 255
-    t.integer  "big_image_file_size",    limit: 4
+    t.string   "big_image_file_name",          limit: 255
+    t.string   "big_image_content_type",       limit: 255
+    t.integer  "big_image_file_size",          limit: 4
     t.datetime "big_image_updated_at"
+    t.string   "azure_image_file_name",        limit: 255
+    t.string   "azure_image_content_type",     limit: 255
+    t.integer  "azure_image_file_size",        limit: 4
+    t.datetime "azure_image_updated_at"
+    t.string   "azure_big_image_file_name",    limit: 255
+    t.string   "azure_big_image_content_type", limit: 255
+    t.integer  "azure_big_image_file_size",    limit: 4
+    t.datetime "azure_big_image_updated_at"
   end
 
   add_index "plane_images", ["three_sixty_image_id"], name: "index_plane_images_on_three_sixty_image_id", using: :btree
 
   create_table "product_images", force: :cascade do |t|
-    t.integer  "product_id",         limit: 8
-    t.text     "image_source",       limit: 16777215
-    t.string   "title",              limit: 255
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
-    t.string   "image_file_name",    limit: 255
-    t.string   "image_content_type", limit: 255
-    t.integer  "image_file_size",    limit: 4
+    t.integer  "product_id",               limit: 8
+    t.text     "image_source",             limit: 16777215
+    t.string   "title",                    limit: 255
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
+    t.string   "image_file_name",          limit: 255
+    t.string   "image_content_type",       limit: 255
+    t.integer  "image_file_size",          limit: 4
     t.datetime "image_updated_at"
+    t.string   "azure_image_file_name",    limit: 255
+    t.string   "azure_image_content_type", limit: 255
+    t.integer  "azure_image_file_size",    limit: 4
+    t.datetime "azure_image_updated_at"
   end
 
   create_table "product_infos", force: :cascade do |t|
@@ -159,14 +171,18 @@ ActiveRecord::Schema.define(version: 20160624102544) do
   end
 
   create_table "variant_images", force: :cascade do |t|
-    t.datetime "created_at",                                   null: false
-    t.datetime "updated_at",                                   null: false
-    t.string   "image_file_name",      limit: 255
-    t.string   "image_content_type",   limit: 255
-    t.integer  "image_file_size",      limit: 4
+    t.datetime "created_at",                                       null: false
+    t.datetime "updated_at",                                       null: false
+    t.string   "image_file_name",          limit: 255
+    t.string   "image_content_type",       limit: 255
+    t.integer  "image_file_size",          limit: 4
     t.datetime "image_updated_at"
-    t.integer  "three_sixty_image_id", limit: 4
-    t.integer  "position",             limit: 4,   default: 0
+    t.integer  "three_sixty_image_id",     limit: 4
+    t.integer  "position",                 limit: 4,   default: 0
+    t.string   "azure_image_file_name",    limit: 255
+    t.string   "azure_image_content_type", limit: 255
+    t.integer  "azure_image_file_size",    limit: 4
+    t.datetime "azure_image_updated_at"
   end
 
   add_index "variant_images", ["three_sixty_image_id"], name: "index_variant_images_on_three_sixty_image_id", using: :btree
@@ -192,6 +208,7 @@ ActiveRecord::Schema.define(version: 20160624102544) do
     t.integer  "weight",                    limit: 4
     t.string   "condition",                 limit: 255
     t.boolean  "state",                                                  default: true
+    t.text     "why_we_love_this",          limit: 65535
   end
 
   add_index "variants", ["product_image_id"], name: "index_variants_on_product_image_id", using: :btree

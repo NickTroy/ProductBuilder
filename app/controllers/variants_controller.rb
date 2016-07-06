@@ -223,7 +223,7 @@ class VariantsController < AuthenticatedController
     def variant_attributes
       params.require(:variant).permit(:price, :sku, :length, :height, :depth, 
                                       :main_variant, :vendor_sku, :room, :care_instructions,
-                                      :weight, :condition, :state)
+                                      :weight, :condition, :state, :why_we_love_this)
     end
     
     def recreate_pseudo_product

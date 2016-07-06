@@ -42,6 +42,9 @@ json.main_variant do
 
   json.price @main_variant.price
   json.sku @main_variant.sku
+  
+  json.why_we_love_this @main_variant.why_we_love_this
+  json.care_instructions @main_variant.care_instructions
 
   json.options @main_variant.option_values.each do |option_value|
     json.option_name option_value.option.name
