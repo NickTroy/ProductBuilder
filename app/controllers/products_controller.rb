@@ -36,6 +36,7 @@ class ProductsController < AuthenticatedController
     ProductsOption.where(:product_id => @product.id).each do |product_option|
       @product_options.push(Option.where(id: product_option.option_id)[0])
     end
+    
     variant_option_values_query = "select distinct option_values.id, option_values.value, options.name from options " +
                                   "inner join option_values on options.id = option_values.option_id " + 
                                   "inner join variants_option_values on variants_option_values.option_value_id = option_values.id " +

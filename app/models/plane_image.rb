@@ -47,13 +47,15 @@ class PlaneImage < ActiveRecord::Base
                         :size => { :less_than => 1.megabyte }
   
   def image_from_url url
-    self.image = URI.parse(url)
-    self.big_image = URI.parse(url)
+    parsed_uri = URI.parse(url)
+    self.image = parsed_uri
+    self.big_image = parsed_uri
   end
   
   def azure_image_from_url url
-    self.azure_image = URI.parse(url)
-    self.azure_big_image = URI.parse(url)
+    parsed_uri = URI.parse(url)
+    self.azure_image = parsed_uri
+    self.azure_big_image = parsed_uri
   end
   
 end
