@@ -475,6 +475,66 @@ function get_selected_variants_ids(){
 }
 
 $(document).ready(function(){
+  //option groups actions
+  $('.delete_option_group').click(function(e){
+    e.preventDefault();
+    var delete_button = $(this);
+    var option_group_id = delete_button.data("option_group_id");
+    
+    $.ajax({
+      url: "<%= option_groups_url(protocol: 'https') %>/" + option_group_id,
+      method: "POST",
+      data: {
+        _method: "DELETE"
+      },
+      success: function(){
+        var option_group_row = $('.option_group_row[data-option_group_id="' + option_group_id + '"]');
+        option_group_row.remove();
+        $('.option_group_select').each(function(){
+          $(this).find('[value="' + option_group_id + '"]').remove();
+        })
+      }
+    })
+  });
+  
+  $('.save_option_group').click(function(){
+    var save_button = $(this);
+    var modal_body = save_button.parents(".modal-content").find('.modal-body');
+    var option_group_id = save_button.data("option_group_id");
+    var option_group_name = modal_body.find('.option_group_name').val();
+    var option_group_prefix = modal_body.find('.option_group_prefix').val();
+     $.ajax({
+       url: "<%= option_groups_url(protocol: 'https') %>/" + option_group_id,
+       method: "POST",
+       data: {
+         _method: "PUT",
+         name: option_group_name,
+         prefix: option_group_prefix
+       },
+       success: function(){
+         var option_group_row = $('.option_group_row[data-option_group_id="' + option_group_id + '"]');
+         option_group_row.find('.option_group_name').text(option_group_name);
+         option_group_row.find('.option_group_prefix').text(option_group_prefix);
+         $('.option_group_select').each(function(){
+           $(this).find('[value="' + option_group_id + '"]').text(option_group_name);
+         })
+         $('#edit_option_group').modal('hide');
+       }
+     })
+  })
+  $('#edit_option_group').on('show.bs.modal', function (event) {
+    var modal = $(this);
+    var edit_button = $(event.relatedTarget) // Button that triggered the modal
+    var option_group_id = edit_button.data('option_group_id')
+    
+    var option_group_row = $('.option_group_row[data-option_group_id="' + option_group_id + '"]');
+    var option_group_name = option_group_row.find('.option_group_name').text();
+    var option_group_prefix = option_group_row.find('.option_group_prefix').text();
+    
+    modal.find('.save_option_group').data("option_group_id", option_group_id);
+    modal.find('.option_group_name').val(option_group_name);
+    modal.find('.option_group_prefix').val(option_group_prefix);
+  })
   //variant state functionality
   $('.turn_off_variants').click(function(e){
     e.preventDefault();
@@ -813,35 +873,67 @@ $(document).ready(function(){
     $('#option_group_form').show();
     $(this).hide();
   })
-  $('#save_option_group').on('click', function(){
-    var option_group_name;
+  $('#create_option_group').on('click', function(){
+    var option_group_name, option_group_prefix;
     $('#add_option_group').show()
     $('#option_group_form').hide();
     option_group_name = $('#option_group_name').val();
+    option_group_prefix = $('#option_group_prefix').val();
     $.ajax({
       method: "POST",
       url: "<%= option_groups_url(:protocol => 'https') %>",
       dataType: 'json',
       data: {
-        option_group_name: option_group_name
+        name: option_group_name,
+        prefix: option_group_prefix
       },
       success: function(response){
         var id = response["id"];
-        $('<div class="col-md-2 option_group">' +
-            '<span class="option_group_name"> ' + option_group_name +
-            ' </span>' +
-            '<span class="delete_option_group">' +
-              '<a class="btn btn-danger" data-confirm="Are you sure, you want to delete this option group?" rel="nofollow" data-method="delete"' +  
-              'href="' + "<%= option_groups_url(:protocol => 'https') %>" +  '/' + id + '">X</a>' +
-            '</span>' +
-          '</div>').appendTo('.option_groups'); 
+        var name = response["name"];
+        var prefix = response["prefix"];
+        $('<tr data-option_group_id="' + id + '" class="option_group_row">' +
+            '<td class="option_group_name">' + name + '</td>' +
+            '<td class="option_group_prefix">' + prefix + '</td>' +
+            '<td>' +
+              '<button data-option_group_id="' + id + '" data-target="#edit_option_group" data-toggle="modal" class="btn btn-primary" type="button">' +
+                'Edit' + 
+                '<span class="glyphicon glyphicon-edit edit_option_group"></span>' + 
+              '</button> ' +
+              '<button data-option_group_id="' + id + '" class="btn btn-danger delete_option_group">' +
+                'Delete' +
+                '<span class="glyphicon glyphicon-remove-circle"></span>' +
+              '</button>' +
+            '</td>' +
+        '</tr>').appendTo('.group_options tbody'); 
         $('.option_group_select').each(function(){
           var this_select = $(this);
           $('<option value="' + id + '">' + option_group_name +'</option>').appendTo(this_select);
         });
+        $('.delete_option_group:last').click(function(e){
+          e.preventDefault();
+          var delete_button = $(this);
+          var option_group_id = delete_button.data("option_group_id");
+          
+          $.ajax({
+            url: "<%= option_groups_url(protocol: 'https') %>/" + option_group_id,
+            method: "POST",
+            data: {
+              _method: "DELETE"
+            },
+            success: function(){
+              var option_group_row = $('.option_group_row[data-option_group_id="' + option_group_id + '"]');
+              option_group_row.remove();
+              $('.option_group_select').each(function(){
+                $(this).find('[value="' + option_group_id + '"]').remove();
+              })
+            }
+          })
+        });
+        
       }
     })
     $('#option_group_name').val('');
+    $('#option_group_prefix').val('');
   })
 });
 
@@ -2102,7 +2194,64 @@ $(document).ready(function(){
   <input type="button" id="saveOptionsOrderAndGroups" class="btn btn-success" value="Save order and option groups">
   
   <h3>Option groups:</h3>
-  <div class="row option_groups">
+  <table class="table table-bordered table-striped table-hover group_options" style="width:auto; text-align:center;">
+    <thead>
+      <th>Option group nanme</th>
+      <th>Option group prefix</th>
+      <th>Edit/Delete option group</th>
+    </thead>
+    <tbody>
+    <% @option_groups.each do |option_group| %>
+      <tr class="option_group_row" data-option_group_id="<%= option_group.id %>">
+        <td class="option_group_name"><%= option_group.name %></td>
+        <td class="option_group_prefix"><%= option_group.prefix %></td>
+        <td>
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#edit_option_group" data-option_group_id="<%= option_group.id %>">
+            Edit
+            <span class="glyphicon glyphicon-edit edit_option_group"></span>  
+          </button>
+          <button class="btn btn-danger delete_option_group" data-option_group_id="<%= option_group.id %>">
+            Delete
+            <span class="glyphicon glyphicon-remove-circle"></span>
+          </button>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+  <div class="modal fade" id="edit_option_group" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title" id="myModalLabel">Edit Option Group</h4>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Option Group Name</label>
+                <input type="text" class="form-control option_group_name">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Option Group Prefix</label>
+                <input type="text" class="form-control option_group_prefix">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary save_option_group" data-option_group_id="">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--<div class="row option_groups">
     <% @option_groups.each do |option_group| %>
       <div class="col-md-2 option_group">
         <span class="option_group_name">
@@ -2116,13 +2265,15 @@ $(document).ready(function(){
       </div>
       
     <% end %>
-  </div><br>
+  </div><br>-->
   <input type="button" id="add_option_group" class="btn btn-info" value="Add new option group">
   <div id="option_group_form" class="row form-group">
     <div class="col-md-4">
       <label for="option_group_name">Option group name</label>
       <input id="option_group_name" class="form-control" type="text"><br>
-      <input id="save_option_group" class="btn btn-success" type="button" value="Save option group">
+      <label for="option_group_name">Option group prefix</label>
+      <input id="option_group_prefix" class="form-control" type="text"><br>
+      <input id="create_option_group" class="btn btn-success" type="button" value="Save option group">
     </div>
   </div>
   

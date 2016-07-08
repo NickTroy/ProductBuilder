@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160706124231) do
+ActiveRecord::Schema.define(version: 20160708082005) do
 
   create_table "color_ranges", force: :cascade do |t|
     t.string   "name",       limit: 255
@@ -32,8 +32,9 @@ ActiveRecord::Schema.define(version: 20160706124231) do
 
   create_table "option_groups", force: :cascade do |t|
     t.string   "name",       limit: 255
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
+    t.string   "prefix",     limit: 255, default: "Select"
   end
 
   create_table "option_values", force: :cascade do |t|
