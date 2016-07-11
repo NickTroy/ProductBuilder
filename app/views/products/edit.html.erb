@@ -2094,7 +2094,7 @@ $(document).ready(function(){
             
           </div>
           <div class="col-md-4 options_and_values">
-            <% variant.option_values.each do |opt_val| %>
+            <% variant.option_values.order( :option_id ).each do |opt_val| %>
               <div class="option_value_wrapper">
                 <span class="option-name-and-value" >
                   <strong><%= opt_val.option.name %></strong> : <%= opt_val.value %> 
