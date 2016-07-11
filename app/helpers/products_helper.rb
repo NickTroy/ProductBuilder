@@ -159,18 +159,17 @@ module ProductsHelper
           option.products_options.create(:product_id => _product.id)
         end
         unless variants[i]['options'][key].nil? 
-          curr_option = variant.option_values.where( option_id: option.id ).first
-          if curr_option.present? 
-            if curr_option.value != variants[i]['options'][key]
-              new_option = OptionValue.where( :value => variants[i]['options'][key] ).first
-              if new_option.nil?
-                new_option = OptionValue.create :option_id => option.id, :value => variants[i]['options'][key].capitalize
-              end
-              variant.option_values.delete curr_option
-              variant.option_values << new_option
+          curr_option_value = variant.option_values.where( option_id: option.id ).first
+          new_option_value = OptionValue.where( :value => variants[i]['options'][key].capitalize ).first
+          new_option_value = OptionValue.create :option_id => option.id, :value => variants[i]['options'][key].capitalize if new_option_value.nil?
+          
+          if curr_option_value.present? 
+            if curr_option_value.value != variants[i]['options'][key]
+              variant.option_values.delete curr_option_value
+              variant.option_values << new_option_value
             end
           else
-            variant.option_values << OptionValue.create(:option_id => option.id, :value => variants[i]['options'][key].capitalize)
+            variant.option_values << new_option_value
           end
         end
       end
