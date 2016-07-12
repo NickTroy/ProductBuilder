@@ -36,7 +36,8 @@ json.main_variant_id @main_variant_id
 json.main_variant do
   json.id @main_variant.id
   json.pseudo_product_variant_id @main_variant.pseudo_product_variant_id
-
+  
+  json.color_range_name @main_variant_color_range
   json.length @main_variant.length
   json.depth @main_variant.depth
   json.height @main_variant.height

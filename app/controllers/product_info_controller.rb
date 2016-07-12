@@ -35,9 +35,18 @@ class ProductInfoController < ApplicationController
     end
     @main_variant = Variant.where(product_id: params[:id], main_variant: true, state: true)[0] unless Variant.where(product_id: params[:id], main_variant: true, state: true)[0].nil?
     @main_variant ||= Variant.where(product_id: params[:id], state: true).first
+    color_option_id = Option.find_by(name: "Color").id
+    color_option_value = @main_variant.option_values.where(option_id: color_option_id)[0]
+    if color_option_value.nil?
+      @main_variant_color_range = ""
+    else
+      if color_option_value.color_range.nil?
+        @main_variant_color_range = ""
+      else
+        @main_variant_color_range = color_option_value.color_range.name
+      end
+    end
     @main_variant_id = @main_variant.id
-    #@main_variant_id = Variant.where(product_id: params[:id], main_variant: true)[0].id unless Variant.where(product_id: params[:id], main_variant: true)[0].nil?
-    #@main_variant_id ||= Variant.where(product_id: params[:id]).first.id    
     @product_options = []
     Option.all.each do |option|
       if option.products_options.where(:product_id => params[:id]).any?
@@ -66,7 +75,6 @@ class ProductInfoController < ApplicationController
       product_option[:option_values].push(option_value.value).uniq!
     end
     @product_options.sort_by! { |option| option[:order_number] }
-    color_option_id = Option.find_by(name: "Color").id
     option_values_with_color_ranges = OptionValue.joins("left join variants_option_values on option_values.id=variants_option_values.option_value_id inner join variants on variants.id=variants_option_values.variant_id and variants.product_id=#{params[:id]}")
                                .distinct.where(option_id: color_option_id)
                                .joins("join color_ranges on color_ranges.id = option_values.color_range_id ")
