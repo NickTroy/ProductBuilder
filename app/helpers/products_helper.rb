@@ -183,9 +183,7 @@ module ProductsHelper
       
       unless variants[i]['three_sixty_image'].blank?
         imgSet = ThreeSixtyImage.where( :title => variants[i]['three_sixty_image'] ).first
-        unless imgSet.nil?
-          variant.three_sixty_image = imgSet
-        else
+        if imgSet.nil?
           imgSet = ThreeSixtyImage.create(:title => variants[i]['three_sixty_image'],
                                           :rotation_speed => variants[i]['three_sixty_image_rs'], 
                                           :rotations_count => variants[i]['three_sixty_image_rc'] , 
@@ -204,11 +202,11 @@ module ProductsHelper
               plane_image.save
             end
           end
-          
         end
+        variant.three_sixty_image = imgSet
       end
       variant.save
-      sleep 0.5
+      
     end     
   end
   
