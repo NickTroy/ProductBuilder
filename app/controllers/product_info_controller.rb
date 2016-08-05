@@ -95,7 +95,7 @@ class ProductInfoController < ApplicationController
     @option_dependency = []
     @options_count = @product_options.count
     
-    query_for_variant_branches = "select " 
+    query_for_variant_branches = "select  " 
     @product_options.each_with_index do |option, index|
       option_query_row = "(select ov#{index}.value as v#{index} from option_values ov#{index}, variants_option_values vov#{index} where vov#{index}.variant_id = v.id and vov#{index}.option_value_id = ov#{index}.id and ov#{index}.option_id = #{option[:option_id]}), "
       query_for_variant_branches += option_query_row
