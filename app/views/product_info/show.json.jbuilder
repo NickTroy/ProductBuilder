@@ -59,6 +59,7 @@ json.main_variant do
       json.rotation_speed @main_variant.three_sixty_image.rotation_speed
       json.rotations_count @main_variant.three_sixty_image.rotations_count
       json.clockwise @main_variant.three_sixty_image.clockwise
+      json.caption_3d_image @main_variant.three_sixty_image.caption_3d_image
       json.plane_images_urls @main_variant.three_sixty_image.plane_images.each do |plane_image|
         json.plane_image_url asset_url(plane_image.azure_image.url)
       end
@@ -69,6 +70,7 @@ json.main_variant do
   else
     json.variant_images @main_variant.three_sixty_image.variant_images.each do |variant_image|
       json.image_source asset_url(variant_image.azure_image.url)
+      json.image_caption variant_image.caption
     end
   end
 end
