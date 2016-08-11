@@ -50,13 +50,16 @@ Rails.application.routes.draw do
       patch '/update_color_range', to: 'option_values#update_color_range'
     end
   end
+  post '/recreate_pseudo_products', to: 'variants#recreate_pseudo_products'
   post '/generate_variants', to: 'variants#generate_product_variants'
   put '/generate_variants', to: 'variants#generate_product_variants'
   put '/update_three_sixty_parameters', to: 'three_sixty_images#update_all_three_sixty_images_parameters'
   post '/products_search', to: 'products#search'
+  post '/update_captions', to: 'three_sixty_images#update_captions', as: 'update_captions'
 
   root :to => 'products#index'
 
+  
   mount ShopifyApp::Engine, at: '/'
 
   

@@ -200,10 +200,19 @@ class ThreeSixtyImagesController < AuthenticatedController
     end
     render json: { message: "deleted" }, :status => 200
   end
+
+  def update_captions
+    params_ids = params[:ids].split(' ')
+    params_ids.map do |id|
+      value = params[id.to_sym]
+      VariantImage.find(id.to_i).update_attribute(:caption, value)
+    end
+    render nothing: true, status: 200
+  end
   
   private
   
   def three_sixty_image_params
-    params.require("three_sixty_image").permit(:title, :rotations_count, :rotation_speed, :clockwise)
+    params.require("three_sixty_image").permit(:title, :rotations_count, :rotation_speed, :clockwise, :caption_3d_image, :captions_attr => [:caption])
   end
 end
