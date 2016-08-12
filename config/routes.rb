@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  
+
   resources :products do
     get 'page/:page', :action => :index, :on => :collection
     resources :variants
@@ -56,6 +56,9 @@ Rails.application.routes.draw do
   put '/update_three_sixty_parameters', to: 'three_sixty_images#update_all_three_sixty_images_parameters'
   post '/products_search', to: 'products#search'
   post '/update_captions', to: 'three_sixty_images#update_captions', as: 'update_captions'
+
+
+  post '/update_default_captions', to: 'default_captions#update', as: 'update_default_captions' 
 
   root :to => 'products#index'
 

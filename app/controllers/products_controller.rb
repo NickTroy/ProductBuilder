@@ -14,6 +14,7 @@ class ProductsController < AuthenticatedController
     @three_sixty_images = ThreeSixtyImage.order('title ASC')
     @shipping_methods = ShippingMethod.all
     @color_ranges = ColorRange.all
+    @default_captions = DefaultCaption.all
   end
 
   def new
@@ -116,7 +117,6 @@ class ProductsController < AuthenticatedController
       redirect_to edit_product_url(:protocol => 'https', :id => params[:id], :filtering_params => {:search_option_values_ids => params[:search_option_values_ids], :sku_like => params[:sku_like], :per_page => params[:per_page]})
       return true
     end
-    
     @product = ShopifyAPI::Product.find(params[:id])
     @product_info = ProductInfo.find_by(:main_product_id => @product.id) || ProductInfo.create(:main_product_id => @product.id)
     @product_info.update_attributes(product_info_params)
@@ -133,7 +133,8 @@ class ProductsController < AuthenticatedController
           @product_info.update_attributes(:handle => @product.handle)
           @product_details = @product.body_html
           unless @product_details.nil?
-            Variant.where(:product_id => @product.id).each do |variant|
+            variants = Variant.where(:product_id => @product.id)
+            variants.each do |variant|
               variant.update_attributes(:product_details => @product_details)
             end
           end
