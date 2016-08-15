@@ -26,6 +26,7 @@ class ProductInfoController < ApplicationController
   end
 
   def show
+    @default_captions = DefaultCaption.all
     @variants = Variant.where(product_id: params[:id], state: true)
     @product_info = ProductInfo.find_by(main_product_id: params[:id])
     @shipping_method = @product_info.shipping_method unless @product_info.nil?
