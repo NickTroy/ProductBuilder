@@ -6,7 +6,7 @@ module ProductsHelper
   FORBIDDEN_FIELDS = ["created_at", "updated_at", "variants", "images", "image",  "handle", "published_at", 
                           "template_suffix", "published_scope", "tags", "options","id", "handle", "main_product_id", 
                           "created_at", "updated_at", "product_id", "product_image_id", "pseudo_product_id", 
-                          "pseudo_product_variant_id", "product_details", "main_variant", "three_sixty_image_id", "shipping_method_id" ]
+                          "pseudo_product_variant_id", "product_details", "main_variant", "three_sixty_image_id" ]
   
   def parse_import_file import_file_path
     import_file = Roo::Excel.new( import_file_path )
@@ -111,6 +111,7 @@ module ProductsHelper
     end 
     
      _product_info = ProductInfo.find_by(main_product_id: _product.id) || ProductInfo.create(:main_product_id => _product.id, :handle => _product.handle)
+     
     unless info['shipping_method_name'].nil?
       shipping_method = ShippingMethod.find_by(name: info['shipping_method_name'] ) || ShippingMethod.create(name: info['shipping_method_name'] )
       shipping_method.product_infos << _product_info
@@ -126,8 +127,7 @@ module ProductsHelper
       "shipping_restrictions" => info["shipping_restrictions"],
       "return_policy"=> info["return_policy"],
       "lead_time"=> info["lead_time"],
-      "lead_time_unit"=> info["lead_time_unit"],
-      "shipping_method_id"=> shipping_method.id
+      "lead_time_unit"=> info["lead_time_unit"]
     })
     
     0.upto( variants.length - 1 ) do |i|
