@@ -25,11 +25,12 @@ class VariantInfoController < ApplicationController
   end    
   
   def show
+    @default_captions = DefaultCaption.all
     @variant = Variant.find(params[:id])
     @option_values = @variant.option_values
     @three_sixty_image = @variant.three_sixty_image
     if @three_sixty_image.nil?
-      main_variant = Variant.find_by(product_id: @variant.product_id, main_variant: true) || Variant.where(product_id: @variant.product_id).first
+      main_variant = Variant.find_by(product_id: @variant.product_id, main_variant: true).first || Variant.where(product_id: @variant.product_id).first
       @three_sixty_image = main_variant.three_sixty_image
     end
     @variant_images = []

@@ -78,7 +78,7 @@ json.main_variant do
     json.variant_images @main_variant.three_sixty_image.variant_images.each do |variant_image|
       json.image_source asset_url(variant_image.azure_image.url)
       if variant_image.caption.blank?
-        json.image_caption @default_captions[@image_index + 1].default_caption
+        json.image_caption @default_captions[@image_index].default_caption
         @image_index = @image_index + 1
       else
         json.image_caption variant_image.caption
