@@ -1,0 +1,2 @@
+module DefaultCaptionsHelper
+end

@@ -11,13 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160708082005) do
+ActiveRecord::Schema.define(version: 20160812120543) do
 
   create_table "color_ranges", force: :cascade do |t|
     t.string   "name",       limit: 255
     t.string   "color",      limit: 255
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
+  end
+
+  create_table "default_captions", force: :cascade do |t|
+    t.string   "image_number",    limit: 255
+    t.string   "default_caption", limit: 255
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
   end
 
   create_table "images_variants", force: :cascade do |t|
@@ -162,13 +169,14 @@ ActiveRecord::Schema.define(version: 20160708082005) do
   end
 
   create_table "three_sixty_images", force: :cascade do |t|
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
-    t.string   "rotation_speed",  limit: 255
-    t.string   "rotations_count", limit: 255
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
+    t.string   "rotation_speed",   limit: 255
+    t.string   "rotations_count",  limit: 255
     t.boolean  "clockwise"
-    t.string   "title",           limit: 255
-    t.integer  "main_image_id",   limit: 4
+    t.string   "title",            limit: 255
+    t.integer  "main_image_id",    limit: 4
+    t.string   "caption_3d_image", limit: 255
   end
 
   create_table "variant_images", force: :cascade do |t|
@@ -184,6 +192,7 @@ ActiveRecord::Schema.define(version: 20160708082005) do
     t.string   "azure_image_content_type", limit: 255
     t.integer  "azure_image_file_size",    limit: 4
     t.datetime "azure_image_updated_at"
+    t.string   "caption",                  limit: 255
   end
 
   add_index "variant_images", ["three_sixty_image_id"], name: "index_variant_images_on_three_sixty_image_id", using: :btree

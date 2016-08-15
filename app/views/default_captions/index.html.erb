@@ -1,0 +1,41 @@
+<script>
+   $(document).ready(function() {
+     $('.save_default_captions').click(function(event){
+      event.preventDefault();
+      var data = $('.default_captions_form').serialize();
+      $.ajax({
+        url: "/update_default_captions",
+        method: "POST",
+        data: data,
+        success: function(){
+        }
+      });
+    });
+   });
+  
+</script>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Image Number</th>
+      <th>Default Caption</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= form_tag update_default_captions_path, class: "default_captions_form" do %>
+    <% @default_captions.each do |caption| %>
+      <tr>
+        <td><%= caption.image_number %></td>
+        
+          <td><%= text_field_tag caption.id, caption.default_caption %></td>
+          <%= hidden_field_tag "ids", @default_captions.map(&:id) %>
+          <td></td>
+        
+      </tr>
+    <% end %>
+    <%= submit_tag "Save Captions", class: "btn btn-success btn-raised btn-sx save_default_captions" %>
+    <% end %>
+  </tbody>
+</table>
