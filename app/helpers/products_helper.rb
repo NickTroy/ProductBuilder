@@ -278,7 +278,7 @@ module ProductsHelper
       variant_keys = p.attributes.keys.collect! { |x| x unless FORBIDDEN_FIELDS.include? x }.compact!
       _h = Hash[variant_keys.collect { |v| [v, eval("p.#{v}")] } ]
       
-      _h['shipping_method_name'] = p.shipping_method.name
+      # _h['shipping_method_name'] = p.shipping_method.name
       
       _h['options'] = options.collect do |option|
         value = p.option_values.find_by(option_id: option.id) 

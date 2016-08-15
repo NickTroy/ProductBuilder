@@ -7,6 +7,29 @@ class VariantsController < AuthenticatedController
     end
   end
   
+  def recreate_pseudo_products product_id
+    product = ShopifyAPI::Product.find product_id #5418551557  Hudson-Sofa
+    variants = Variant.where product_id:product.id
+      puts "We find " + variants.length.to_s
+      variants.each_with_index do |variant,index|
+        begin
+          ps = ShopifyAPI::Variant.find(variant.pseudo_product_id)
+          puts ps.id
+        rescue
+          pseudo_product_title = ""
+          variant.option_values.each{ |option_value| pseudo_product_title += " #{option_value.option.name} : #{option_value.value}" }
+          puts "Try create " + pseudo_product_title
+          pseudo_product = ShopifyAPI::Product.create(title: "#{pseudo_product_title}")
+          pseudo_product_variant = pseudo_product.variants.first
+          pseudo_product_variant.update_attributes(:option1 => pseudo_product_title)
+          variant.update_attributes(:pseudo_product_id => pseudo_product.id,
+                                     :pseudo_product_variant_id => pseudo_product_variant.id)
+        end
+        sleep 1 if index%10 > 0
+    end
+    render json: { message: "recreated on"}, :status => 200
+  end
+
   
   def edit
     @variant = Variant.find(params[:variant_id])
@@ -36,7 +59,6 @@ class VariantsController < AuthenticatedController
         end
       end
     end
-    
   end
   
   def show
@@ -216,6 +238,32 @@ class VariantsController < AuthenticatedController
     end
   
     render json: { message: "turned on"}, :status => 200 
+  end
+  
+  def recreate_pseudo_products
+    # products = ShopifyAPI::Product.all
+    # products.each do |product|
+
+    product = ShopifyAPI::Product.find 5418551557
+    variants = Variant.where product_id:product.id
+      puts "We find " + variants.length.to_s
+      variants.each_with_index do |variant,index|
+        begin
+          ps = ShopifyAPI::Variant.find(variant.pseudo_product_id)
+          puts ps.id
+        rescue
+          pseudo_product_title = ""
+          variant.option_values.each{ |option_value| pseudo_product_title += " #{option_value.option.name} : #{option_value.value}" }
+          puts "Try create " + pseudo_product_title
+          pseudo_product = ShopifyAPI::Product.create(title: "#{pseudo_product_title}")
+          pseudo_product_variant = pseudo_product.variants.first
+          pseudo_product_variant.update_attributes(:option1 => pseudo_product_title)
+          variant.update_attributes(:pseudo_product_id => pseudo_product.id,
+                                     :pseudo_product_variant_id => pseudo_product_variant.id)
+        end
+        sleep 1 if index%10 > 0
+      end
+    render json: { message: "recreated on"}, :status => 200
   end
   
   private

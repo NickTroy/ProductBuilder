@@ -201,9 +201,10 @@ $(document).ready(function(){
         cw: clockwise
       });
     $('#update_three_sixty_parameters').on('click', function(){
-      var rotation_speed, rotations_count, clockwise;
+      var rotation_speed, rotations_count, clockwise, caption_3d_image;
       rotation_speed = $('#three_sixty_image_rotation_speed').val();
       rotations_count = $('#three_sixty_image_rotations_count').val();
+      caption_3d_image = $("#three_sixty_image_caption_3d_image").val();
       clockwise = $('#three_sixty_image_clockwise').prop('checked');  
       $.ajax({
         url: "<%= three_sixty_image_url(:three_sixty_image_id => @three_sixty_image.id, :protocol => 'https')%>",
@@ -214,6 +215,7 @@ $(document).ready(function(){
           three_sixty_image: {
             rotation_speed: rotation_speed,
             rotations_count: rotations_count,
+            caption_3d_image: caption_3d_image,
             clockwise: clockwise 
           }
         },
@@ -229,6 +231,7 @@ $(document).ready(function(){
             speed: rotation_speed / 10,
             cw: clockwise,
             duration: duration,
+            caption_3d_image: caption_3d_image,
             path: images_path + "/",
             images: images_names
           });  
@@ -237,6 +240,41 @@ $(document).ready(function(){
       });
     });  
     <% end %>
+  });
+</script>
+
+
+<script>
+  $(document).ready(function(){
+    var a = $('body').find('.image_picker_image');
+    var ids = $('#ids').val().split(" ");
+    $.each(a, function( index, value ) {
+      $.each(ids, function( i, v ) {
+        var match = $(value).attr('src').match(v);
+        if (match != null) {
+          var clone = $(".caption_image_text_" + v).clone();
+          var block = $(clone).css('display', 'block').removeClass('hidden');
+          $(block).insertAfter(value);
+        };
+      });
+    });
+    
+    $('.save_captions').click(function(event){
+      event.preventDefault();
+      $.each(ids, function( i, v ) {
+        var value = $(".caption_image_text_" + v).val();
+        $(".caption_image_text_" + v + ".hidden").val(value);
+      });
+      var data = $('.captions_form').serialize();
+      $.ajax({
+        url: "/update_captions",
+        method: "POST",
+        data: data,
+        success: function(){
+
+        }
+      });
+    });
   });
 </script>
 

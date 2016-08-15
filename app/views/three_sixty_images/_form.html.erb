@@ -18,6 +18,10 @@
         <%= f.label "three_sixty_image[rotations_count]", "Rotations Count" %>
         <%= f.number_field :rotations_count, :class => "form-control" %>    
       </div>
+      <div class="col-md-6">
+        <%= f.label "three_sixty_image[caption_3d_image]", "Caption 3d Image" %>
+        <%= f.text_field :caption_3d_image, :class => "form-control" %>    
+      </div>
       <div class="col-md-12">
         <%= f.label "three_sixty_image[clockwise]", "Reversed rotation direction" %>
         <%= f.check_box :clockwise %>    
@@ -48,5 +52,12 @@
       </select>
     <% end %>  
   <% end %>
+<%= form_tag "/update_captions", class: "captions_form" do %>
+    <% @variant_images.each do |img| %>
+        <%= text_field_tag "#{img.id}", img.caption, class: "form-control caption caption_image_text_#{img.id} hidden" %>
+    <% end %>
+    <%= hidden_field_tag "ids", @variant_images.map(&:id) %>
+    <%= submit_tag "Save Captions", class: "btn btn-info save_captions" %>
+<% end %>
   
   
