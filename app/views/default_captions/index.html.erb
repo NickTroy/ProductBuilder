@@ -29,7 +29,7 @@
       <tr>
         <td><%= caption.image_number %></td>
         
-          <td><%= text_field_tag caption.id, caption.default_caption %></td>
+          <td><%= text_field_tag caption.id, caption.default_caption, class: 'form-control' %></td>
           <%= hidden_field_tag "ids", @default_captions.map(&:id) %>
           <td></td>
         
