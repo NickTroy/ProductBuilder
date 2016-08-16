@@ -250,7 +250,7 @@ $(document).ready(function(){
     var ids = $('#ids').val().split(" ");
     $.each(a, function( index, value ) {
       $.each(ids, function( i, v ) {
-        var match = $(value).attr('src').match(v);
+        var match = $(value).attr('src').match('azure_images/' + v);
         if (match != null) {
           var clone = $(".caption_image_text_" + v).clone();
           var block = $(clone).css('display', 'block').removeClass('hidden');
