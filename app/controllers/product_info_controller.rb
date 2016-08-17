@@ -95,20 +95,16 @@ class ProductInfoController < ApplicationController
     @first_image = ProductImage.where(product_id: params[:id]).first
     @option_dependency = []
     @options_count = @product_options.count
-    
-    query_for_variant_branches = "select  " 
-    @product_options.each_with_index do |option, index|
-      option_query_row = "(select ov#{index}.value as v#{index} from option_values ov#{index}, variants_option_values vov#{index} where vov#{index}.variant_id = v.id and vov#{index}.option_value_id = ov#{index}.id and ov#{index}.option_id = #{option[:option_id]}), "
-      query_for_variant_branches += option_query_row
+    @variants_option_values = @variants.map do |variant|
+      crap = Array.new
+      @product_options.map { |product_option| crap << OptionValue.where(:option_id => product_option[:option_id]).includes( :variants ).where( :variants => { id: variant.id} ).first.value }
+      crap << variant.id
     end
-    query_for_variant_branches.chop!.chop!
-    query_for_variant_branches_with_variant_ids = query_for_variant_branches + ", v.id from variants v where v.product_id = #{params[:id]}"
-    query_for_variant_branches += "from variants v where v.product_id = #{params[:id]}"
-    @variants_option_values = ActiveRecord::Base.connection.execute(query_for_variant_branches_with_variant_ids)
     @color_and_material_values = @variants_option_values.to_a.map { |branch| [branch[-3], branch[-2]] }.uniq
+
     build_option_dependency_tree
     respond_to do |format|
-      format.json #{ render status: :ok, :callback => params[:callback] }
+      format.json 
     end
   end  
   
@@ -125,7 +121,7 @@ class ProductInfoController < ApplicationController
   private
 
   def build_option_dependency_tree
-    @variants_option_values.each do |variant_option_values|#@variants.each do |variant|
+    @variants_option_values.each do |variant_option_values|
       @variant_branch = []
       variant_option_values.reverse.each do |option_value|
         @variant_branch = [option_value, @variant_branch]
